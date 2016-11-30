@@ -1,0 +1,47 @@
+// Enable the following line and re-run the protocol compiler (protoc)
+// to generatete extremely fast parsing, serialization, and other code.
+//
+option optimize_for = SPEED;
+
+package SmartMet;
+
+message BroadcastMessage
+{
+ // Human-readable name of the sending host (REQUIRED)
+ required string name = 1;
+
+ // This specified the type of the BroadcastMessage (REQUIRED)
+ enum MessageTypes
+ {
+   SERVICE_DISCOVERY_REQUEST = 0;
+   SERVICE_DISCOVERY_REPLY = 1;
+   SERVICE_DISCOVERY_BEACON = 2;
+ }
+ required MessageTypes messageType = 2;
+
+ // This specified the BroadcastMessage sequence number, so that messages
+ // target to correct machine in case of multiple broadcasts.
+ required int32 seqnum = 3;
+
+ // hostInfo submessage used for server discovery
+ message HostInfo
+ {
+  required string ip = 1;	// IP address of the backend HTTP server
+  required int32 port = 2;	// IP port of the backend HTTP server
+  required string comment = 3;	// Comment associated with the backend server
+  required float load = 4;	// Current load of the backend server
+  optional int32 throttle = 5;	// How many unanswered transfers are allowed
+ }
+ optional HostInfo host = 4;
+
+ // Service submessage used for service discovery
+ message Service
+ {
+  required string uri = 1;	// URI of the service
+  required int32 lastupdate = 2;// Unix timestamp for the last data update
+  required bool allowcache = 4;	// Whether caching of this service is allowed
+
+ }
+ repeated Service services = 8;
+
+}
