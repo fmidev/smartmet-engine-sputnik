@@ -13,7 +13,6 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: smartmet-library-spine-devel >= 17.1.4
 BuildRequires: protobuf-compiler
-BuildRequires: protobuf-devel
 BuildRequires: protobuf
 Requires: protobuf
 Requires: smartmet-server >= 17.1.4
