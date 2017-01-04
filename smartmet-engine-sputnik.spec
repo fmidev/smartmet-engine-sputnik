@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 16.11.30
+Version: 17.1.4
 Release: 1%{?dist}.fmi
 License: FMI
 Group: SmartMet/Engines
@@ -11,13 +11,13 @@ URL: http://www.weatherproof.fi
 Source0: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
-BuildRequires: smartmet-library-spine-devel >= 16.11.29
+BuildRequires: smartmet-library-spine-devel >= 17.1.4
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
 BuildRequires: protobuf
 Requires: protobuf
-Requires: smartmet-server >= 16.11.30
-Requires: smartmet-library-spine >= 16.11.29
+Requires: smartmet-server >= 17.1.4
+Requires: smartmet-library-spine >= 17.1.4
 %if 0%{rhel} >= 7
 Requires: boost-date-time
 Requires: boost-system
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Wed Jan  4 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.1.4-1.fmi
+- Changed to use renamed SmartMet base libraries
+
 * Wed Nov 30 2016 Mika Heiskanen <mika.heiskanen@fmi.fi> - 16.11.30-1.fmi
 - No installation for configuration
 
