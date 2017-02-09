@@ -100,20 +100,20 @@ INSTALL_DATA = install -p -m 664
 
 # Compilation directories
 
-vpath %.cpp source
-vpath %.h include
+vpath %.cpp $(SUBNAME)
+vpath %.h $(SUBNAME)
 
 # The files to be compiled
 
 PB_SRCS = $(wildcard *.proto)
-COMPILED_PB_SRCS = $(patsubst %.proto, source/%.pb.cpp, $(PB_SRCS))
-COMPILED_PB_HDRS = $(patsubst %.proto, include/%.pb.h, $(PB_SRCS))
+COMPILED_PB_SRCS = $(patsubst %.proto, $(SUBNAME)/%.pb.cpp, $(PB_SRCS))
+COMPILED_PB_HDRS = $(patsubst %.proto, $(SUBNAME)/%.pb.h, $(PB_SRCS))
 
-SRCS = $(filter-out %.pb.cpp, $(wildcard source/*.cpp)) $(COMPILED_PB_SRCS)
-HDRS = $(filter-out %.pb.h, $(wildcard include/*.h)) $(COMPILED_PB_HDRS)
+SRCS = $(filter-out %.pb.cpp, $(wildcard $(SUBNAME)/*.cpp)) $(COMPILED_PB_SRCS)
+HDRS = $(filter-out %.pb.h, $(wildcard $(SUBNAME)/*.h)) $(COMPILED_PB_HDRS)
 OBJS = $(patsubst %.cpp, obj/%.o, $(notdir $(SRCS)))
 
-INCLUDES := -Iinclude $(INCLUDES)
+INCLUDES := -I$(SUBNAME) $(INCLUDES)
 
 .PHONY: test rpm
 
@@ -128,12 +128,12 @@ $(LIBFILE): $(SRCS) $(OBJS)
 	$(CXX) $(CFLAGS) -shared -rdynamic -o $(LIBFILE) $(OBJS) $(LIBS)
 
 clean:
-	rm -f $(LIBFILE) *~ source/*~ include/*~
+	rm -f $(LIBFILE) *~ $(SUBNAME)/*~
 	rm -rf obj
-	rm -f source/BroadcastMessage.pb.cpp include/BroadcastMessage.pb.h
+	rm -f $(SUBNAME)/BroadcastMessage.pb.cpp $(SUBNAME)/BroadcastMessage.pb.h
 
 format:
-	clang-format -i -style=file include/*.h source/*.cpp
+	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp
 
 install:
 	@mkdir -p $(includedir)/$(INCDIR)
@@ -154,7 +154,7 @@ objdir:
 rpm: clean protoc
 	@if [ -e $(SPEC).spec ]; \
 	then \
-	  tar -czvf $(SPEC).tar.gz --transform "s,^,engines/$(SPEC)/," * ; \
+	  tar -czvf $(SPEC).tar.gz --transform "s,^,$(SPEC)/," * ; \
 	  rpmbuild -ta $(SPEC).tar.gz ; \
 	  rm -f $(SPEC).tar.gz ; \
 	else \
@@ -168,13 +168,11 @@ obj/%.o: %.cpp
 
 protoc: $(COMPILED_PB_SRCS)
 
-source/%.pb.cpp include/%.pb.h : %.proto
+sputnik/%.pb.cpp sputnik/%.pb.h : %.proto
 	mkdir -p tmp
 	protoc --cpp_out=tmp BroadcastMessage.proto
-	mv tmp/BroadcastMessage.pb.h include/
-	mv tmp/BroadcastMessage.pb.cc source/BroadcastMessage.pb.cpp
+	mv tmp/BroadcastMessage.pb.h $(SUBNAME)/
+	mv tmp/BroadcastMessage.pb.cc $(SUBNAME)/BroadcastMessage.pb.cpp
 	rm -rf tmp
 
-ifneq ($(wildcard obj/*.d),)
 -include $(wildcard obj/*.d)
-endif
