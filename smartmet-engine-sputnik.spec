@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 17.1.4
+Version: 17.3.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -11,12 +11,12 @@ URL: https://github.com/fmidev/smartmet-engine-sputnik
 Source0: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
-BuildRequires: smartmet-library-spine-devel >= 17.1.4
+BuildRequires: smartmet-library-spine-devel >= 17.3.15
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf
 Requires: protobuf
-Requires: smartmet-server >= 17.1.4
-Requires: smartmet-library-spine >= 17.1.4
+Requires: smartmet-server >= 17.3.15
+Requires: smartmet-library-spine >= 17.3.15
 %if 0%{rhel} >= 7
 Requires: boost-date-time
 Requires: boost-system
@@ -64,6 +64,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Wed Mar 15 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.15-1.fmi
+- Recompiled since Spine::Exception changed
+
 * Wed Jan  4 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.1.4-1.fmi
 - Changed to use renamed SmartMet base libraries
 
