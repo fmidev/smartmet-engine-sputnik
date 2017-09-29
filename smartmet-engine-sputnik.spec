@@ -15,7 +15,7 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: smartmet-library-spine-devel >= 17.3.15
 BuildRequires: protobuf-compiler
-BuildRequires: protobuf
+BuildRequires: protobuf-devel
 Requires: protobuf
 Requires: smartmet-server >= 17.3.15
 Requires: smartmet-library-spine >= 17.3.15
