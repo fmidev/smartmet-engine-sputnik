@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 17.8.28
+Version: 18.2.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -13,12 +13,12 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
-BuildRequires: smartmet-library-spine-devel >= 17.3.15
+BuildRequires: smartmet-library-spine-devel >= 18.2.9
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
 Requires: protobuf
-Requires: smartmet-server >= 17.3.15
-Requires: smartmet-library-spine >= 17.3.15
+Requires: smartmet-server >= 17.11.10
+Requires: smartmet-library-spine >= 18.2.9
 %if 0%{rhel} >= 7
 Requires: boost-date-time
 Requires: boost-system
@@ -66,6 +66,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Fri Feb  9 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.2.9-1.fmi
+- Repackaged since base class SmartMetEngine size changed
+
 * Mon Aug 28 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.28-1.fmi
 - Upgrade to boost 1.65
 
