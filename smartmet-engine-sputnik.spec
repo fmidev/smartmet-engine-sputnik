@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 18.2.9
+Version: 18.3.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -66,6 +66,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Tue Mar 20 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.3.20-1.fmi
+- Full repackaging of the server
+
 * Fri Feb  9 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.2.9-1.fmi
 - Repackaged since base class SmartMetEngine size changed
 
