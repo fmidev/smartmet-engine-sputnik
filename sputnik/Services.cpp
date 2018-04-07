@@ -5,16 +5,16 @@
 #include <smartmet/spine/Table.h>
 #include <spine/Exception.h>
 
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/make_shared.hpp>
 
-#include <string>
 #include <iostream>
-#include <sstream>
-#include <map>
 #include <list>
+#include <map>
+#include <sstream>
+#include <string>
 
 namespace SmartMet
 {
@@ -249,7 +249,7 @@ bool Services::addService(BackendServicePtr theBackendService,
     if (!theBackendService)
       return false;
 
-// Check if URI is already known
+      // Check if URI is already known
 
 #ifdef MYDEBUG
     std::cout << boost::posix_time::second_clock::local_time() << " Adding service "

@@ -3,9 +3,9 @@
 #include "BackendSentinel.h"
 
 #include <iostream>
+#include <map>
 #include <stdexcept>
 #include <vector>
-#include <map>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>

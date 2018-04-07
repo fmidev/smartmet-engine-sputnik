@@ -1,12 +1,10 @@
 #include "InverseLoadForwarder.h"
-#include <spine/Exception.h>
 #include <boost/foreach.hpp>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {
-InverseLoadForwarder::~InverseLoadForwarder()
-{
-}
+InverseLoadForwarder::~InverseLoadForwarder() {}
 InverseLoadForwarder::InverseLoadForwarder(float balancingCoefficient)
     : BackendForwarder(balancingCoefficient)
 {

@@ -1,15 +1,15 @@
 #include "Engine.h"
-#include "Services.h"
 #include "BroadcastMessage.pb.h"
+#include "Services.h"
 
-#include <spine/Reactor.h>
 #include <spine/Exception.h>
+#include <spine/Reactor.h>
 
 #include <boost/bind.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/foreach.hpp>
 #include <boost/thread.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <iostream>
 
@@ -90,9 +90,7 @@ Engine::Engine(const char* theConfig)
 }
 
 // No-op, since construction is trivial
-void Engine::init()
-{
-}
+void Engine::init() {}
 // ----------------------------------------------------------------------
 /*!
  * \brief Shutdown the engine

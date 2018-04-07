@@ -9,9 +9,7 @@ BackendForwarder::BackendForwarder(float balancingCoefficient)
 {
 }
 
-BackendForwarder::~BackendForwarder()
-{
-}
+BackendForwarder::~BackendForwarder() {}
 
 void BackendForwarder::setBackends(const std::vector<BackendInfo>& backends)
 {

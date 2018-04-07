@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include <spine/Thread.h>
 #include <boost/noncopyable.hpp>
+#include <spine/Thread.h>
 
 namespace SmartMet
 {

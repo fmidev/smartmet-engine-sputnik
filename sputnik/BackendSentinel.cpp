@@ -8,9 +8,7 @@ BackendSentinel::BackendSentinel(unsigned int theThrottle)
 {
 }
 
-BackendSentinel::~BackendSentinel()
-{
-}
+BackendSentinel::~BackendSentinel() {}
 
 void BackendSentinel::setAlive()
 {

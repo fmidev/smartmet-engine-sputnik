@@ -8,16 +8,16 @@
 
 #include "Services.h"
 
-#include <boost/function.hpp>
 #include <boost/asio.hpp>
+#include <boost/function.hpp>
 
 #include <libconfig.h++>
 
 #include <spine/Reactor.h>
 #include <spine/SmartMetEngine.h>
 
-#include <string>
 #include <iostream>
+#include <string>
 
 namespace SmartMet
 {

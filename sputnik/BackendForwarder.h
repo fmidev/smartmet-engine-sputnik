@@ -16,8 +16,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace SmartMet
 {
