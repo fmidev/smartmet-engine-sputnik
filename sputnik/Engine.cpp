@@ -136,7 +136,7 @@ void Engine::backendMode()
     {
       itsSocket.bind(itsBackendSocket);
     }
-    catch (boost::system::system_error& err)
+    catch (const boost::system::system_error& err)
     {
       throw SmartMet::Spine::Exception(
           BCP, "Error: Broadcast Backend can't bind datagram socket: " + std::string(err.what()));
@@ -322,7 +322,7 @@ void Engine::startServiceDiscovery()
         }
       }
     }
-    catch (boost::system::system_error& err)
+    catch (const boost::system::system_error& err)
     {
       std::cerr << "Error: Broadcast failed to send discovery request: " << err.what() << std::endl;
     }
@@ -395,7 +395,7 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
         {
           itsSocket.send_to(boost::asio::buffer(responseBuffer), itsRemoteEnd);
         }
-        catch (boost::system::system_error& err)
+        catch (const boost::system::system_error& err)
         {
           std::cerr << "Error: Broadcast failed to send response: " << err.what() << std::endl;
         }
