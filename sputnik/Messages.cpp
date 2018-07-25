@@ -38,7 +38,7 @@ void Engine::sendDiscoveryRequest(std::string& theMessageBuffer, int theSequence
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -60,7 +60,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
     // The Server
     auto* host = message.mutable_host();
 
-    if (host == NULL)
+    if (host == nullptr)
     {
       std::cerr << "Broadcast failed to acquire host information" << std::endl;
       return;
@@ -86,9 +86,9 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
     for (auto iter = theHandlers.begin(); iter != theHandlers.end(); ++iter)
     {
       theService = message.add_services();
-      if (theService == NULL)
+      if (theService == nullptr)
       {
-        std::cerr << "Broadcast found a NULL service" << std::endl;
+        std::cerr << "Broadcast found a null service" << std::endl;
       }
       else
       {
@@ -102,7 +102,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -123,7 +123,7 @@ void Engine::processRequest(SmartMet::BroadcastMessage& theMessage, std::string&
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -193,7 +193,7 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

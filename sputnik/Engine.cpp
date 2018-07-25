@@ -44,7 +44,7 @@ Engine::Engine(const char* theConfig)
       itsUdpListenerPort(COMM_UDP_PORT),
       itsComment(""),
       itsThrottleLimit(),
-      itsReactor(NULL),
+      itsReactor(nullptr),
       itsIoService(),
       itsSocket(itsIoService, boost::asio::ip::udp::v4()),
       itsRemoteEnd(),
@@ -85,7 +85,7 @@ Engine::Engine(const char* theConfig)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Constructor failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Constructor failed!");
   }
 }
 
@@ -106,7 +106,7 @@ void Engine::shutdown()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Constructor failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Constructor failed!");
   }
 }
 
@@ -147,7 +147,7 @@ void Engine::backendMode()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -194,7 +194,7 @@ void Engine::frontendMode()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -247,7 +247,7 @@ void Engine::handleDeadlineTimer(const boost::system::error_code& err)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -287,7 +287,7 @@ void Engine::handleFrontendRead(const boost::system::error_code& e, std::size_t 
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -342,7 +342,7 @@ void Engine::startServiceDiscovery()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -359,7 +359,7 @@ void Engine::startListening()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -411,7 +411,7 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -452,7 +452,7 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -523,7 +523,7 @@ void Engine::status(std::ostream& out) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -550,7 +550,7 @@ void Engine::setBackendAlive(const std::string& theHostName,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -568,7 +568,7 @@ boost::shared_ptr<SmartMet::Spine::Table> Engine::backends(const std::string& se
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -586,7 +586,7 @@ Services::BackendList Engine::getBackendList(const std::string& service) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -606,7 +606,7 @@ std::string Engine::URI() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -4,7 +4,7 @@
 namespace SmartMet
 {
 BackendForwarder::BackendForwarder(float balancingCoefficient)
-    : itsGenerator(boost::numeric_cast<unsigned int>(time(NULL))),
+    : itsGenerator(boost::numeric_cast<unsigned int>(time(nullptr))),
       itsBalancingCoefficient(balancingCoefficient)
 {
 }
@@ -23,7 +23,7 @@ void BackendForwarder::setBackends(const std::vector<BackendInfo>& backends)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -37,7 +37,7 @@ std::size_t BackendForwarder::getBackend()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -53,7 +53,7 @@ void BackendForwarder::addBackend(const std::string& hostName, int port, float l
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -81,7 +81,7 @@ void BackendForwarder::removeBackend(const std::string& hostName, int port)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
