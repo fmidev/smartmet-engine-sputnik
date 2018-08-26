@@ -301,7 +301,7 @@ void Engine::startServiceDiscovery()
     {
       for (const auto& st : itsBackendUdpListeners)
       {
-        auto idx = st.find(":");
+        auto idx = st.find(':');
         if (idx != std::string::npos)
         {
           std::string addr = st.substr(0, idx);
