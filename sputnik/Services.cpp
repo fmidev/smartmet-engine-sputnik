@@ -5,6 +5,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
+#include <smartmet/macgyver/StringConversion.h>
 #include <smartmet/spine/Table.h>
 #include <spine/Exception.h>
 #include <iostream>
@@ -335,7 +336,7 @@ boost::shared_ptr<SmartMet::Spine::Table> Services::backends(const std::string& 
         {
           ret->set(0, row, (*it)->Backend()->Name());
           ret->set(1, row, (*it)->Backend()->IP());
-          ret->set(2, row, boost::lexical_cast<std::string>((*it)->Backend()->Port()));
+          ret->set(2, row, Fmi::to_string((*it)->Backend()->Port()));
           ++row;
         }
       }

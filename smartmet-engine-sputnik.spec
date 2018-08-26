@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 18.7.25
+Version: 18.8.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -14,17 +14,17 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
-BuildRequires: smartmet-library-spine-devel >= 18.7.23
+BuildRequires: smartmet-library-spine-devel >= 18.8.20
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
+BuildRequires: smartmet-library-macgyver-devel >= 18.8.20
 Requires: protobuf
-Requires: smartmet-server >= 18.7.25
-Requires: smartmet-library-spine >= 18.7.23
-%if 0%{rhel} >= 7
+Requires: smartmet-server >= 18.8.22
+Requires: smartmet-library-spine >= 18.8.20
+Requires: smartmet-library-macgyver >= 18.8.20
 Requires: boost-date-time
 Requires: boost-system
 Requires: boost-thread
-%endif
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-sputnik < 16.11.1
 Obsoletes: smartmet-brainstorm-sputnik-debuginfo < 16.11.1
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Sun Aug 26 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.26-1.fmi
+- Use Fmi::to_string instead of boost::lexical_cast
+
 * Wed Jul 25 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.7.25-1.fmi
 - Prefer nullptr over NULL
 
