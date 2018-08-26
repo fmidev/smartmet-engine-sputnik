@@ -4,7 +4,6 @@
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/foreach.hpp>
 #include <boost/thread.hpp>
 #include <spine/Exception.h>
 #include <spine/Reactor.h>
@@ -300,10 +299,8 @@ void Engine::startServiceDiscovery()
     // Send the discovery requests
     try
     {
-      for (auto it = itsBackendUdpListeners.begin(); it != itsBackendUdpListeners.end(); ++it)
+      for (const auto& st : itsBackendUdpListeners)
       {
-        std::string st = *it;
-
         auto idx = st.find(":");
         if (idx != std::string::npos)
         {
@@ -504,9 +501,9 @@ void Engine::status(std::ostream& out) const
         const auto theHandlers = itsReactor->getURIMap();
 
         out << "<ol>" << std::endl;
-        for (auto iter = theHandlers.begin(); iter != theHandlers.end(); ++iter)
+        for (const auto& handler : theHandlers)
         {
-          out << "<li>" << iter->first << "</li>" << std::endl;
+          out << "<li>" << handler.first << "</li>" << std::endl;
         }
         out << "</ol>" << std::endl;
       }

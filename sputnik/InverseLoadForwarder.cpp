@@ -1,5 +1,4 @@
 #include "InverseLoadForwarder.h"
-#include <boost/foreach.hpp>
 #include <spine/Exception.h>
 
 namespace SmartMet
@@ -18,17 +17,15 @@ void InverseLoadForwarder::redistribute()
     std::vector<float> probVec;
     probVec.reserve(itsBackendInfos.size());
 
-    BOOST_FOREACH (auto& info, itsBackendInfos)
+    for (const auto& info : itsBackendInfos)
     {
       probVec.push_back(1.0f / (1.0f + itsBalancingCoefficient * info.load));
     }
 
     float sum = std::accumulate(probVec.begin(), probVec.end(), 0.0f);
 
-    for (auto it = probVec.begin(); it != probVec.end(); ++it)
-    {
-      *it /= sum;
-    }
+    for (auto& prob : probVec)
+      prob /= sum;
 
     boost::random::discrete_distribution<> theDistribution(probVec);
     itsDistribution = theDistribution;

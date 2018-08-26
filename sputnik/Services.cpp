@@ -2,7 +2,6 @@
 #include "InverseLoadForwarder.h"
 #include "RandomForwarder.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
 #include <smartmet/macgyver/StringConversion.h>
@@ -71,7 +70,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
   {
     SmartMet::Spine::WriteLock lock(itsMutex);
 
-    BOOST_FOREACH (auto& theURIs, itsServicesByURI)
+    for (auto& theURIs : itsServicesByURI)
       for (auto it = (*theURIs.second.first).begin(); it != (*theURIs.second.first).end();)
       {
         if (((*it)->Backend()->Name() == theHostname && (*it)->Backend()->Port() == thePort) &&
@@ -100,7 +99,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
     // If there are no services left, something has gone wrong.
     // Better exit and restart.
 
-    BOOST_FOREACH (auto& theURIs, itsServicesByURI)
+    for (const auto& theURIs : itsServicesByURI)
     {
       if (!theURIs.second.first->empty())
         return true;
@@ -201,7 +200,7 @@ bool Services::latestSequence(int itsSequenceNumber)
     std::cout << "UPDATING TO SEQ " << itsSequenceNumber << std::endl;
 #endif
 
-    BOOST_FOREACH (auto& theURIs, itsServicesByURI)
+    for (const auto& theURIs : itsServicesByURI)
       for (auto it = (*theURIs.second.first).begin(); it != (*theURIs.second.first).end();)
       {
         if ((*it)->SequenceNumber() != itsSequenceNumber)
@@ -328,15 +327,15 @@ boost::shared_ptr<SmartMet::Spine::Table> Services::backends(const std::string& 
     // List all backends with matching URI
 
     std::size_t row = 0;
-    BOOST_FOREACH (const ServiceURIMap::value_type& uri, itsServicesByURI)
+    for (const auto& uri : itsServicesByURI)
     {
       if (uri.first == serviceuri)
       {
-        for (auto it = (*uri.second.first).begin(); it != (*uri.second.first).end(); ++it)
+        for (const auto& backend : *uri.second.first)
         {
-          ret->set(0, row, (*it)->Backend()->Name());
-          ret->set(1, row, (*it)->Backend()->IP());
-          ret->set(2, row, Fmi::to_string((*it)->Backend()->Port()));
+          ret->set(0, row, backend->Backend()->Name());
+          ret->set(1, row, backend->Backend()->IP());
+          ret->set(2, row, Fmi::to_string(backend->Backend()->Port()));
           ++row;
         }
       }
@@ -367,14 +366,14 @@ Services::BackendList Services::getBackendList(const std::string& service) const
     // List all backends with matching URI
 
     BackendList theList;
-    BOOST_FOREACH (const ServiceURIMap::value_type& uri, itsServicesByURI)
+    for (const auto& uri : itsServicesByURI)
     {
       if (uri.first == serviceuri)
       {
-        for (auto it = (*uri.second.first).begin(); it != (*uri.second.first).end(); ++it)
+        for (const auto& backend : *uri.second.first)
         {
           theList.push_back(boost::make_tuple(
-              (*it)->Backend()->Name(), (*it)->Backend()->IP(), (*it)->Backend()->Port()));
+              backend->Backend()->Name(), backend->Backend()->IP(), backend->Backend()->Port()));
         }
       }
     }
@@ -402,16 +401,16 @@ void Services::status(std::ostream& out) const
     // Read the Backend information list
 
     out << "<ul>" << std::endl;
-    BOOST_FOREACH (const ServiceURIMap::value_type& uri, itsServicesByURI)
+    for (const auto& uri : itsServicesByURI)
     {
       out << "<li>URI " << uri.first << "</li>" << std::endl;
 
       out << "<ol>" << std::endl;
-      for (auto it = (*uri.second.first).begin(); it != (*uri.second.first).end(); ++it)
+      for (const auto& backend : *uri.second.first)
       {
-        out << "<li>" << (*it)->Backend()->Name() << (*it)->URI() << " [" << (*it)->Backend()->IP()
-            << ":" << (*it)->Backend()->Port() << "]"
-            << " [Sequence " << (*it)->SequenceNumber() << "]"
+        out << "<li>" << backend->Backend()->Name() << backend->URI() << " ["
+            << backend->Backend()->IP() << ":" << backend->Backend()->Port() << "]"
+            << " [Sequence " << backend->SequenceNumber() << "]"
             << "</li>" << std::endl;
       }
       out << "</ol>" << std::endl;

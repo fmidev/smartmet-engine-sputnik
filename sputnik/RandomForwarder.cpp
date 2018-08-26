@@ -30,7 +30,7 @@ void RandomForwarder::redistribute()
     // 	if (!itsBackendInfos.empty())
     // 	  {
     // 		std::cout << "Redistributing backend probabilities: ";
-    // 		BOOST_FOREACH(auto & prob, probVec)
+    // 		for(const auto & prob : probVec)
     // 		  {
     // 			std::cout << prob << " ";
     // 		  }
