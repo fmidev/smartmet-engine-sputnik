@@ -30,19 +30,9 @@ bool BackendSentinel::getAlive()
     SmartMet::Spine::ReadLock lock(itsMutex);
 
     if (itsThrottle == 0)
-    {
-      // 0 value throttle means no throttling, always available
-      return true;
-    }
+      return true;  // 0 value throttle means no throttling, always available
 
-    if (itsCurrentThrottle > itsThrottle)
-    {
-      return false;
-    }
-    else
-    {
-      return true;
-    }
+    return (itsCurrentThrottle <= itsThrottle);
   }
   catch (...)
   {

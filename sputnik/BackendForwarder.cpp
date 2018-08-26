@@ -70,10 +70,8 @@ void BackendForwarder::removeBackend(const std::string& hostName, int port)
         itsBackendInfos.erase(it);
         break;
       }
-      else
-      {
-        ++it;
-      }
+
+      ++it;
     }
 
     this->redistribute();

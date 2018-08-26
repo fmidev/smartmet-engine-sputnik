@@ -124,14 +124,10 @@ bool Services::queryBackendAlive(const std::string& theHostName, int thePort)
     std::string sname = theHostName + ":" + std::to_string(thePort);
     auto iter = itsSentinels.find(sname);
     if (iter != itsSentinels.end())
-    {
       return iter->second->getAlive();
-    }
-    else
-    {
-      // Unknown backend, this should not happen
-      return false;
-    }
+
+    // Unknown backend, this should not happen
+    return false;
   }
   catch (...)
   {
