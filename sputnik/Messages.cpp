@@ -81,7 +81,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
     SmartMet::BroadcastMessage::Service* theService;
     auto theHandlers = itsReactor->getURIMap();
 
-    for (auto iter = theHandlers.begin(); iter != theHandlers.end(); ++iter)
+    for (const auto& handler : theHandlers)
     {
       theService = message.add_services();
       if (theService == nullptr)
@@ -90,7 +90,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
       }
       else
       {
-        theService->set_uri(iter->first);
+        theService->set_uri(handler.first);
         theService->set_lastupdate(0);
         theService->set_allowcache(false);
       }
