@@ -94,7 +94,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   std::string itsComment;             ///< Backend comment
   unsigned int itsThrottleLimit;      ///< Max number of unanswered connections allowed
 
-  SmartMet::Spine::Reactor* itsReactor;  ///< The reactor pointer for URI map retrieval
+  SmartMet::Spine::Reactor* itsReactor = nullptr;  ///< The reactor pointer for URI map retrieval
 
   boost::asio::io_service itsIoService;  ///< The IO Service for UDP handling
 
