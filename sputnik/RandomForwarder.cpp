@@ -21,10 +21,8 @@ void RandomForwarder::redistribute()
 
     float sum = std::accumulate(probVec.begin(), probVec.end(), 0.0f);
 
-    for (auto it = probVec.begin(); it != probVec.end(); ++it)
-    {
-      *it /= sum;
-    }
+    for (auto& prob : probVec)
+      prob /= sum;
 
     // #ifndef NDEBUG
     // 	if (!itsBackendInfos.empty())
