@@ -235,7 +235,7 @@ bool Services::latestSequence(int itsSequenceNumber)
   }
 }
 
-bool Services::addService(BackendServicePtr theBackendService,
+bool Services::addService(const BackendServicePtr& theBackendService,
                           const std::string& theFrontendURI,
                           float theLoad,
                           unsigned int theThrottle)

@@ -60,7 +60,7 @@ class Services
   BackendServicePtr getService(const std::string& theURI);
 
   // Service management methods
-  bool addService(BackendServicePtr theBackendService,
+  bool addService(const BackendServicePtr& theBackendService,
                   const std::string& theFrontEndURI,
                   float theLoad,
                   unsigned int theThrottle);
