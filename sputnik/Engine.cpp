@@ -28,8 +28,7 @@ namespace Engine
 namespace Sputnik
 {
 Engine::Engine(const char* theConfig)
-    : itsServices(),
-      itsMode(Unknown),
+    : itsMode(Unknown),
       itsFrontendSequence(0),
       itsReceivedResponses(0),
       itsSkippedCycles(0),
@@ -43,10 +42,7 @@ Engine::Engine(const char* theConfig)
       itsReactor(nullptr),
       itsIoService(),
       itsSocket(itsIoService, boost::asio::ip::udp::v4()),
-      itsRemoteEnd(),
-      itsBroadcastEnd(),
       itsReceiveBuffer(),
-      itsAsyncThread(),
       itsResponseDeadlineTimer(itsIoService)
 {
   try
