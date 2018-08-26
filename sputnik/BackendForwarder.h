@@ -7,15 +7,13 @@
  *
  */
 
-#include <spine/Thread.h>
-
 #include <boost/noncopyable.hpp>
 #include <boost/random/discrete_distribution.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/taus88.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
-
+#include <spine/Thread.h>
 #include <string>
 #include <vector>
 

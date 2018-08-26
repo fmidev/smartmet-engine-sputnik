@@ -1,16 +1,13 @@
 #include "Engine.h"
 #include "BroadcastMessage.pb.h"
 #include "Services.h"
-
-#include <spine/Exception.h>
-#include <spine/Reactor.h>
-
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/foreach.hpp>
 #include <boost/thread.hpp>
-
+#include <spine/Exception.h>
+#include <spine/Reactor.h>
 #include <iostream>
 
 #ifndef SPUTNIK_HEARTBEAT_INTERVAL

@@ -7,16 +7,12 @@
 #pragma once
 
 #include "Services.h"
-
 #include <boost/asio.hpp>
 #include <boost/function.hpp>
-
-#include <libconfig.h++>
-
 #include <spine/Reactor.h>
 #include <spine/SmartMetEngine.h>
-
 #include <iostream>
+#include <libconfig.h++>
 #include <string>
 
 namespace SmartMet

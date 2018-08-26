@@ -1,18 +1,15 @@
 #pragma once
 
 #include "BackendServer.h"
-
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <spine/Reactor.h>
+#include <spine/Thread.h>
 #include <iostream>
 #include <map>
 #include <stdexcept>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
-#include <boost/thread.hpp>
-#include <boost/tuple/tuple.hpp>
-
-#include <spine/Reactor.h>
-#include <spine/Thread.h>
 
 namespace SmartMet
 {

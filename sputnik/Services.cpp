@@ -1,15 +1,12 @@
 #include "Services.h"
 #include "InverseLoadForwarder.h"
 #include "RandomForwarder.h"
-
-#include <smartmet/spine/Table.h>
-#include <spine/Exception.h>
-
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
-
+#include <smartmet/spine/Table.h>
+#include <spine/Exception.h>
 #include <iostream>
 #include <list>
 #include <map>

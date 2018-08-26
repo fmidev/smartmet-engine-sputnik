@@ -1,10 +1,8 @@
 #include "BroadcastMessage.pb.h"
 #include "Engine.h"
 #include "Services.h"
-
 #include <spine/Exception.h>
 #include <spine/Reactor.h>
-
 #include <cstdlib>
 #include <iostream>
 #include <map>
