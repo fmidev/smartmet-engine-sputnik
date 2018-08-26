@@ -138,7 +138,7 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
     }
 
     // Check that the required messages are present
-    if (theMessage.has_host() == false || theMessage.services_size() == 0)
+    if (!theMessage.has_host() || theMessage.services_size() == 0)
     {
       // Packet didn't contain the required SERVICE_DISCOVERY_REPLY fields
       return;
