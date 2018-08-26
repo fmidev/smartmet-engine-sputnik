@@ -490,7 +490,7 @@ void Engine::status(std::ostream& out) const
 
       // Read the URI list
 
-      if (itsReactor != nullptr)
+      if (itsReactor == nullptr)
         out << "<div>List not available, Reactor not initialized</div>" << std::endl;
       else
       {
