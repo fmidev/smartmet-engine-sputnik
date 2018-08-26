@@ -444,8 +444,8 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
     }
 
     // Fire the thread to process async handlers
-    itsAsyncThread.reset(
-        new boost::thread(boost::bind(&boost::asio::io_service::run, &itsIoService)));
+    itsAsyncThread = boost::make_shared<boost::thread>(
+        boost::bind(&boost::asio::io_service::run, &itsIoService));
   }
   catch (...)
   {
