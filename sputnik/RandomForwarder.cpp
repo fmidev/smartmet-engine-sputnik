@@ -3,7 +3,7 @@
 
 namespace SmartMet
 {
-RandomForwarder::~RandomForwarder() {}
+RandomForwarder::~RandomForwarder() = default;
 
 RandomForwarder::RandomForwarder() : BackendForwarder(0.0) {}
 

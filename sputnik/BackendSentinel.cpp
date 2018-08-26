@@ -8,7 +8,7 @@ BackendSentinel::BackendSentinel(unsigned int theThrottle)
 {
 }
 
-BackendSentinel::~BackendSentinel() {}
+BackendSentinel::~BackendSentinel() = default;
 
 void BackendSentinel::setAlive()
 {

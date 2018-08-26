@@ -4,7 +4,8 @@
 
 namespace SmartMet
 {
-InverseLoadForwarder::~InverseLoadForwarder() {}
+InverseLoadForwarder::~InverseLoadForwarder() = default;
+
 InverseLoadForwarder::InverseLoadForwarder(float balancingCoefficient)
     : BackendForwarder(balancingCoefficient)
 {
