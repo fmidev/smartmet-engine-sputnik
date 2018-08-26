@@ -32,8 +32,7 @@ std::size_t BackendForwarder::getBackend()
   try
   {
     SmartMet::Spine::WriteLock lock(itsMutex);
-    std::size_t idx = boost::numeric_cast<std::size_t>(itsDistribution(itsGenerator));
-    return idx;
+    return boost::numeric_cast<std::size_t>(itsDistribution(itsGenerator));
   }
   catch (...)
   {
