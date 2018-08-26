@@ -69,6 +69,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Aug 26 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.26-1.fmi
 - Use Fmi::to_string instead of boost::lexical_cast
+- Silenced CodeChecker warnings
 
 * Wed Jul 25 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.7.25-1.fmi
 - Prefer nullptr over NULL
