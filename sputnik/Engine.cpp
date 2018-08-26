@@ -29,18 +29,6 @@ namespace Sputnik
 {
 Engine::Engine(const char* theConfig)
     : itsMode(Unknown),
-      itsFrontendSequence(0),
-      itsReceivedResponses(0),
-      itsSkippedCycles(0),
-      itsHostname("localhost"),
-      itsHttpAddress("127.0.0.1"),
-      itsHttpPort(80),
-      itsUdpListenerAddress("127.0.0.1"),
-      itsUdpListenerPort(COMM_UDP_PORT),
-      itsComment(""),
-      itsThrottleLimit(),
-      itsReactor(nullptr),
-      itsIoService(),
       itsSocket(itsIoService, boost::asio::ip::udp::v4()),
       itsReceiveBuffer(),
       itsResponseDeadlineTimer(itsIoService)
@@ -165,7 +153,7 @@ void Engine::frontendMode()
 
     // Set is as broadcast
     itsSocket.set_option(boost::asio::socket_base::broadcast(true), e);
-    if (e)
+    if (e.value() != boost::system::errc::success)
     {
       // Log error and exit
       throw SmartMet::Spine::Exception(
@@ -175,7 +163,7 @@ void Engine::frontendMode()
 
     itsSocket.bind(boost::asio::ip::udp::endpoint(), e);
     // Bind the socket to local address
-    if (e)
+    if (e.value() != boost::system::errc::success)
     {
       // Log error and exit
       throw SmartMet::Spine::Exception(BCP,

@@ -75,24 +75,24 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   BroadcastMode itsMode;  ///< Mode of this Broadcast engine
 
-  unsigned int itsFrontendSequence;  ///< The current frontend sequence.
+  unsigned int itsFrontendSequence = 0;  ///< The current frontend sequence.
 
-  unsigned int itsReceivedResponses;  ///< Number of received responses from the last heartbeat
+  unsigned int itsReceivedResponses = 0;  ///< Number of received responses from the last heartbeat
 
-  unsigned int itsSkippedCycles;  ///< Number of hearbeat cycles that have gone unanswered
+  unsigned int itsSkippedCycles = 0;  ///< Number of hearbeat cycles that have gone unanswered
 
   libconfig::Config config;  ///< Configuration object
 
   std::vector<std::string> itsBackendUdpListeners;  ///< List of backend UDP listeners
                                                     ///(ipAddress1:udpPort1, ipAddress2:udpPort2)
 
-  std::string itsHostname;            ///< Backend hostname
-  std::string itsHttpAddress;         ///< Backend HTTP address
-  unsigned int itsHttpPort;           ///< Backend HTTP port
-  std::string itsUdpListenerAddress;  ///< Backend UDP listener address
-  unsigned short itsUdpListenerPort;  ///< Backend UDP listener port
-  std::string itsComment;             ///< Backend comment
-  unsigned int itsThrottleLimit;      ///< Max number of unanswered connections allowed
+  std::string itsHostname = "localhost";              ///< Backend hostname
+  std::string itsHttpAddress = "127.0.0.1";           ///< Backend HTTP address
+  unsigned int itsHttpPort = 80;                      ///< Backend HTTP port
+  std::string itsUdpListenerAddress = "127.0.0.1";    ///< Backend UDP listener address
+  unsigned short itsUdpListenerPort = COMM_UDP_PORT;  ///< Backend UDP listener port
+  std::string itsComment = "";                        ///< Backend comment
+  unsigned int itsThrottleLimit = 0;  ///< Max number of unanswered connections allowed
 
   SmartMet::Spine::Reactor* itsReactor = nullptr;  ///< The reactor pointer for URI map retrieval
 
