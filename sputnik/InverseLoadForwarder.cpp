@@ -19,7 +19,13 @@ void InverseLoadForwarder::redistribute()
 
     for (const auto& info : itsBackendInfos)
     {
-      probVec.push_back(1.0f / (1.0f + itsBalancingCoefficient * info.load));
+      // Limit load to range 1...inf to avoid problems due to loads close to zero
+      auto load = std::max(1.0f, info.load);
+
+      probVec.push_back(1.0f / (1.0f + itsBalancingCoefficient * load));
+#ifdef MYDEBUG
+      std::cout << "Inverse prob: " << probVec.back() << " from load " << info.load << std::endl;
+#endif
     }
 
     float sum = std::accumulate(probVec.begin(), probVec.end(), 0.0f);

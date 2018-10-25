@@ -26,6 +26,7 @@ objdir = obj
 
 # Compiler options
 
+# DEFINES = -DUNIX -D_REENTRANT -DMYDEBUG
 DEFINES = -DUNIX -D_REENTRANT
 
 ifeq ($(CXX), clang++)

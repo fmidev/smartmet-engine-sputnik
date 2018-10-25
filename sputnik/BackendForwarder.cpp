@@ -44,6 +44,11 @@ void BackendForwarder::addBackend(const std::string& hostName, int port, float l
 {
   try
   {
+#ifdef MYDEBUG
+    std::cout << "BackendForwarder adding backend " << hostName << ":" << port << " with load "
+              << load << std::endl;
+#endif
+
     SmartMet::Spine::WriteLock lock(itsMutex);
 
     itsBackendInfos.emplace_back(hostName, port, load);
@@ -66,6 +71,10 @@ void BackendForwarder::removeBackend(const std::string& hostName, int port)
     {
       if (it->hostName == hostName && it->port == port)
       {
+#ifdef MYDEBUG
+        std::cout << "BackendForwarder removing backend " << hostName << ":" << port << std::endl;
+#endif
+
         // Remove just one backend with this name. There may be duplicates
         itsBackendInfos.erase(it);
         break;
