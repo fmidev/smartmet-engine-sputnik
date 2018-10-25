@@ -12,7 +12,6 @@
 #include <spine/Reactor.h>
 #include <spine/SmartMetEngine.h>
 #include <iostream>
-#include <libconfig.h++>
 #include <string>
 
 namespace SmartMet
@@ -81,8 +80,6 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   unsigned int itsSkippedCycles = 0;  ///< Number of hearbeat cycles that have gone unanswered
 
-  libconfig::Config config;  ///< Configuration object
-
   std::vector<std::string> itsBackendUdpListeners;  ///< List of backend UDP listeners
                                                     ///(ipAddress1:udpPort1, ipAddress2:udpPort2)
 
@@ -93,6 +90,9 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   unsigned short itsUdpListenerPort = COMM_UDP_PORT;  ///< Backend UDP listener port
   std::string itsComment = "";                        ///< Backend comment
   unsigned int itsThrottleLimit = 0;  ///< Max number of unanswered connections allowed
+
+  std::string itsForwardingMode = "random";  //< Forwarding mode
+  float itsBalanceFactor = 2.0f;             // Balancing factor
 
   SmartMet::Spine::Reactor* itsReactor = nullptr;  ///< The reactor pointer for URI map retrieval
 

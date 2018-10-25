@@ -43,6 +43,9 @@ Engine::Engine(const char* theConfig)
 
     conf.get_config_array("backendUdpListeners", itsBackendUdpListeners);
 
+    itsForwardingMode = conf.get_optional_config_param<std::string>("forwarding", "random");
+    itsBalanceFactor = conf.get_optional_config_param<float>("balance_factor", 2.0f);
+
     // Backend parameters
 
     itsHostname = conf.get_optional_config_param<std::string>("hostname", "localhost");
@@ -53,6 +56,8 @@ Engine::Engine(const char* theConfig)
     itsUdpListenerPort = conf.get_optional_config_param<int>("udpListenerPort", COMM_UDP_PORT);
     itsComment = conf.get_optional_config_param<std::string>(
         "comment", "No comments associated with this server");
+
+    itsThrottleLimit = conf.get_optional_config_param<int>("throttle", 0);
 
     // Setup the correct values for broadcast
 
@@ -101,17 +106,6 @@ void Engine::backendMode()
 {
   try
   {
-    unsigned int throttle;
-
-    if (config.lookupValue("throttle", throttle))
-    {
-      itsThrottleLimit = throttle;
-    }
-    else
-    {
-      itsThrottleLimit = 0;
-    }
-
     try
     {
       itsSocket.bind(itsBackendSocket);
@@ -135,19 +129,10 @@ void Engine::frontendMode()
 {
   try
   {
-    // Setup backend forwarding mode, only relevant to frontend configuration
-    const char* randOption = config.exists("forwarding") ? config.lookup("forwarding")
-                                                         : static_cast<const char*>("random");
+    std::cout << "Using Broadcast balancing configuration: balance factor => " << itsBalanceFactor
+              << ", mode => " << itsForwardingMode << std::endl;
 
-    std::string randMode(randOption);
-
-    // Get the balancing coefficient if any
-    float bcoeff = config.exists("balance_factor") ? config.lookup("balance_factor") : 2.0f;
-
-    std::cout << "Using Broadcast balancing configuration: balance factor => " << bcoeff
-              << ", mode => " << randMode << std::endl;
-
-    itsServices.setForwarding(randMode, bcoeff);
+    itsServices.setForwarding(itsForwardingMode, itsBalanceFactor);
 
     boost::system::error_code e;
 
@@ -512,8 +497,8 @@ void Engine::setBackendAlive(const std::string& theHostName,
   try
   {
 #ifdef MYDEBUG
-    std::cout << "Backend connection to " << theHostName << " finished with status " << theStatus
-              << std::endl;
+    std::cout << "Backend connection to " << theHostName << ":" << thePort
+              << " finished with status " << static_cast<int>(theStatus) << std::endl;
 #endif
     if (theStatus == SmartMet::Spine::HTTP::ContentStreamer::StreamerStatus::EXIT_OK)
     {
