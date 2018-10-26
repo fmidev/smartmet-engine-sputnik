@@ -339,7 +339,10 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
       SmartMet::BroadcastMessage message;
       message.ParseFromString(receiveBuffer);
 
-      // Call the Reply processing function
+      if (itsShutdownRequested)
+        return;
+
+    // Call the Reply processing function
       processRequest(message, responseBuffer);
 
       // Send response back to sender if responseBuffer is not empty

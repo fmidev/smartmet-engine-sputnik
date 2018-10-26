@@ -4,7 +4,7 @@
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
 Version: 18.10.26
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
 URL: https://github.com/fmidev/smartmet-engine-sputnik
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Fri Oct 26 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.10.26-2.fmi
+- Check the shutdown flag more often
+
 * Fri Oct 26 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.10.26-1.fmi
 - heartbeat.interval default value is 5 seconds, was previously hardcoded
 - heartbeat.timeout default value is 2 seconds, was previously hardcoded

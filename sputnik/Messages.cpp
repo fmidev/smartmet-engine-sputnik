@@ -17,6 +17,9 @@ namespace Sputnik
 // Frontend
 void Engine::sendDiscoveryRequest(std::string& theMessageBuffer, int theSequenceNumber)
 {
+  if(itsShutdownRequested)
+    return;
+  
   try
   {
     // Create a Service message
@@ -43,6 +46,9 @@ void Engine::sendDiscoveryRequest(std::string& theMessageBuffer, int theSequence
 // Backend
 void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNumber)
 {
+  if(itsShutdownRequested)
+    return;
+
   try
   {
     static unsigned corenum = boost::thread::hardware_concurrency();
@@ -79,6 +85,11 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
 
     // The Services
     SmartMet::BroadcastMessage::Service* theService;
+
+    // Better not call the reactor if shutdown is in progress
+    if(itsShutdownRequested)
+      return;
+
     auto theHandlers = itsReactor->getURIMap();
 
     for (const auto& handler : theHandlers)
@@ -107,7 +118,10 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
 // Backend
 void Engine::processRequest(SmartMet::BroadcastMessage& theMessage, std::string& theResponseBuffer)
 {
-  try
+    if(itsShutdownRequested)
+      return;
+
+    try
   {
     switch (theMessage.messagetype())
     {
@@ -128,7 +142,10 @@ void Engine::processRequest(SmartMet::BroadcastMessage& theMessage, std::string&
 // Frontend
 void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
 {
-  try
+    if(itsShutdownRequested)
+      return;
+
+    try
   {
     // Check that message type is correct
     if (theMessage.messagetype() != SmartMet::BroadcastMessage::SERVICE_DISCOVERY_REPLY)
