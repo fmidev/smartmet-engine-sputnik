@@ -91,6 +91,10 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   std::string itsComment = "";                        ///< Backend comment
   unsigned int itsThrottleLimit = 0;  ///< Max number of unanswered connections allowed
 
+  unsigned int itsHeartBeatInterval = 5;
+  unsigned int itsHeartBeatTimeout = 2;
+  unsigned int itsMaxSkippedCycles = 2;
+  
   std::string itsForwardingMode = "random";  //< Forwarding mode
   float itsBalanceFactor = 2.0f;             // Balancing factor
 

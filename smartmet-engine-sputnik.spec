@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 18.10.25
+Version: 18.10.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -67,6 +67,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Fri Oct 26 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.10.26-1.fmi
+- heartbeat.interval default value is 5 seconds, was previously hardcoded
+- heartbeat.timeout default value is 2 seconds, was previously hardcoded
+- heartbeat.max_skipped_cycles value is 2, was previously hardcoded
+
 * Thu Oct 25 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.10.25-1.fmi
 - Fixed forwarding, throttle_limit and balance_factor settings
 - Limit load in balancing to >= 1.0 to avoid peaks from very low loads (0.01)

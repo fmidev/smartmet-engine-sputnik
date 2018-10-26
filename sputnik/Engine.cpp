@@ -9,18 +9,6 @@
 #include <spine/Reactor.h>
 #include <iostream>
 
-#ifndef SPUTNIK_HEARTBEAT_INTERVAL
-#define SPUTNIK_HEARTBEAT_INTERVAL 5
-#endif
-
-#ifndef SPUTNIK_HEARTBEAT_TIMEOUT
-#define SPUTNIK_HEARTBEAT_TIMEOUT 2
-#endif
-
-#ifndef SPUTNIK_MAX_SKIPPED_CYCLES
-#define SPUTNIK_MAX_SKIPPED_CYCLES 2
-#endif
-
 namespace SmartMet
 {
 namespace Engine
@@ -46,6 +34,10 @@ Engine::Engine(const char* theConfig)
     itsForwardingMode = conf.get_optional_config_param<std::string>("forwarding", "random");
     itsBalanceFactor = conf.get_optional_config_param<float>("balance_factor", 2.0f);
 
+    itsHeartBeatInterval = conf.get_optional_config_param<int>("heartbeat.interval",5);
+    itsHeartBeatTimeout = conf.get_optional_config_param<int>("heartbeat.timeout", 2);
+    itsMaxSkippedCycles = conf.get_optional_config_param<int>("heartbeat.max_skipped_cycles",2);
+    
     // Backend parameters
 
     itsHostname = conf.get_optional_config_param<std::string>("hostname", "localhost");
@@ -189,7 +181,7 @@ void Engine::handleDeadlineTimer(const boost::system::error_code& err)
 
       ++itsSkippedCycles;
 
-      if (itsSkippedCycles > SPUTNIK_MAX_SKIPPED_CYCLES)
+      if (itsSkippedCycles > itsMaxSkippedCycles)
       {
         // Maximum skipped cycles exceeded, clean the service map
         itsServices.latestSequence(boost::numeric_cast<int>(itsFrontendSequence));
@@ -203,7 +195,7 @@ void Engine::handleDeadlineTimer(const boost::system::error_code& err)
     itsReceivedResponses = 0;
 
     // Sleep until the next heart beat
-    boost::this_thread::sleep(boost::posix_time::seconds(SPUTNIK_HEARTBEAT_INTERVAL));
+    boost::this_thread::sleep(boost::posix_time::seconds(itsHeartBeatInterval));
 
     if (itsShutdownRequested)
       return;
@@ -299,7 +291,7 @@ void Engine::startServiceDiscovery()
 
     // Reset the response deadline timer
     itsResponseDeadlineTimer.expires_from_now(
-        boost::posix_time::seconds(SPUTNIK_HEARTBEAT_TIMEOUT));
+        boost::posix_time::seconds(itsHeartBeatTimeout));
     itsResponseDeadlineTimer.async_wait(
         boost::bind(&Engine::handleDeadlineTimer, this, boost::asio::placeholders::error));
   }
