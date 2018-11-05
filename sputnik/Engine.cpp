@@ -34,10 +34,10 @@ Engine::Engine(const char* theConfig)
     itsForwardingMode = conf.get_optional_config_param<std::string>("forwarding", "random");
     itsBalanceFactor = conf.get_optional_config_param<float>("balance_factor", 2.0f);
 
-    itsHeartBeatInterval = conf.get_optional_config_param<int>("heartbeat.interval",5);
+    itsHeartBeatInterval = conf.get_optional_config_param<int>("heartbeat.interval", 5);
     itsHeartBeatTimeout = conf.get_optional_config_param<int>("heartbeat.timeout", 2);
-    itsMaxSkippedCycles = conf.get_optional_config_param<int>("heartbeat.max_skipped_cycles",2);
-    
+    itsMaxSkippedCycles = conf.get_optional_config_param<int>("heartbeat.max_skipped_cycles", 2);
+
     // Backend parameters
 
     itsHostname = conf.get_optional_config_param<std::string>("hostname", "localhost");
@@ -290,8 +290,7 @@ void Engine::startServiceDiscovery()
                                              boost::asio::placeholders::bytes_transferred));
 
     // Reset the response deadline timer
-    itsResponseDeadlineTimer.expires_from_now(
-        boost::posix_time::seconds(itsHeartBeatTimeout));
+    itsResponseDeadlineTimer.expires_from_now(boost::posix_time::seconds(itsHeartBeatTimeout));
     itsResponseDeadlineTimer.async_wait(
         boost::bind(&Engine::handleDeadlineTimer, this, boost::asio::placeholders::error));
   }
@@ -342,7 +341,7 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
       if (itsShutdownRequested)
         return;
 
-    // Call the Reply processing function
+      // Call the Reply processing function
       processRequest(message, responseBuffer);
 
       // Send response back to sender if responseBuffer is not empty
@@ -379,6 +378,8 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
   {
     // Save reactor instance permanently for callbacks
     itsReactor = theReactor;
+
+    itsServices.setReactor(*theReactor);
 
     // Save working mode and callback function permanently
     itsMode = theMode;

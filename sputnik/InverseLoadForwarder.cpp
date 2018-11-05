@@ -10,7 +10,7 @@ InverseLoadForwarder::InverseLoadForwarder(float balancingCoefficient)
 {
 }
 
-void InverseLoadForwarder::redistribute()
+void InverseLoadForwarder::redistribute(Spine::Reactor& /* theReactor */)
 {
   try
   {

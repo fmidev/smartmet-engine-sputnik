@@ -1,4 +1,5 @@
 #include "Services.h"
+#include "InverseConnectionsForwarder.h"
 #include "InverseLoadForwarder.h"
 #include "RandomForwarder.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -49,7 +50,7 @@ BackendServicePtr Services::getService(const std::string& theURI)
     //
     // NOTE: Uses backend load information
     auto backendRandPtr = pos->second.second;
-    std::size_t rndServerSlot = backendRandPtr->getBackend();
+    std::size_t rndServerSlot = backendRandPtr->getBackend(*itsReactor);
     auto theService = theBackendList->at(rndServerSlot);
 
 #ifdef MYDEBUG
@@ -82,7 +83,8 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
                     << (*it)->Backend()->Name() << " seq " << (*it)->SequenceNumber() << " URI "
                     << (*it)->URI() << std::endl;
 #endif
-          theURIs.second.second->removeBackend((*it)->Backend()->Name(), (*it)->Backend()->Port());
+          theURIs.second.second->removeBackend(
+              (*it)->Backend()->Name(), (*it)->Backend()->Port(), *itsReactor);
           it = (*theURIs.second.first).erase(it);
         }
         else
@@ -209,7 +211,8 @@ bool Services::latestSequence(int itsSequenceNumber)
 #endif
 
           // Remove this entry as it has unmatching sequence number
-          theURIs.second.second->removeBackend((*it)->Backend()->Name(), (*it)->Backend()->Port());
+          theURIs.second.second->removeBackend(
+              (*it)->Backend()->Name(), (*it)->Backend()->Port(), *itsReactor);
           it = (*theURIs.second.first).erase(it);
         }
         else
@@ -257,8 +260,10 @@ bool Services::addService(const BackendServicePtr& theBackendService,
     {
       // URI already known, take the URI's existing std::list
       pos->second.first->push_back(theBackendService);
-      pos->second.second->addBackend(
-          theBackendService->Backend()->Name(), theBackendService->Backend()->Port(), theLoad);
+      pos->second.second->addBackend(theBackendService->Backend()->Name(),
+                                     theBackendService->Backend()->Port(),
+                                     theLoad,
+                                     *itsReactor);
     }
     else
     {
@@ -271,9 +276,14 @@ bool Services::addService(const BackendServicePtr& theBackendService,
         theForwarder = BackendForwarderPtr(new InverseLoadForwarder(itsBalancingCoefficient));
       else if (itsFwdMode == ForwardingMode::Random)
         theForwarder = BackendForwarderPtr(new RandomForwarder);
+      else if (itsFwdMode == ForwardingMode::InverseConnections)
+        theForwarder =
+            BackendForwarderPtr(new InverseConnectionsForwarder(itsBalancingCoefficient));
 
-      theForwarder->addBackend(
-          theBackendService->Backend()->Name(), theBackendService->Backend()->Port(), theLoad);
+      theForwarder->addBackend(theBackendService->Backend()->Name(),
+                               theBackendService->Backend()->Port(),
+                               theLoad,
+                               *itsReactor);
 
       itsServicesByURI[theFrontendURI] = std::make_pair(newlist, theForwarder);
     }
@@ -426,6 +436,8 @@ void Services::setForwarding(const std::string& theMode, float balancingCoeffici
       itsFwdMode = ForwardingMode::InverseLoad;
     else if (theMode == "random")
       itsFwdMode = ForwardingMode::Random;
+    else if (theMode == "inverseconnections")
+      itsFwdMode = ForwardingMode::InverseConnections;
     else
       throw SmartMet::Spine::Exception(BCP, "Unknown backend forwarding mode: '" + theMode + "'");
 
@@ -435,6 +447,11 @@ void Services::setForwarding(const std::string& theMode, float balancingCoeffici
   {
     throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+void Services::setReactor(Spine::Reactor& theReactor)
+{
+  itsReactor = &theReactor;
 }
 
 }  // namespace SmartMet

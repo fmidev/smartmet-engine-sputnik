@@ -7,12 +7,14 @@
  *
  */
 
+#include "BackendInfo.h"
 #include <boost/noncopyable.hpp>
 #include <boost/random/discrete_distribution.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/taus88.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
+#include <spine/Reactor.h>
 #include <spine/Thread.h>
 #include <string>
 #include <vector>
@@ -24,27 +26,6 @@ namespace SmartMet
  * This defines the interface which Broadcast uses
  * to access the Forwarder.
  */
-
-/*! \brief This struct contains the backend information needed in forwarding and backend health
- * checking.
- *
- * This information is stored within the Forwarder and Sentinel objects and is used
- * to calculate the forwarding probabilities and backend removals.
- *
- */
-struct BackendInfo
-{
-  BackendInfo(const std::string& theHostName, int thePort, float theLoad)
-      : hostName(theHostName), port(thePort), load(theLoad)
-  {
-  }
-
-  std::string hostName;
-  int port;
-  float load;
-
-  mutable unsigned int throttle_counter;
-};
 
 class BackendForwarder : public boost::noncopyable
 {
@@ -64,14 +45,14 @@ class BackendForwarder : public boost::noncopyable
    * using the underlying balancing algorithm.
    */
 
-  std::size_t getBackend();
+  std::size_t getBackend(Spine::Reactor& theReactor);
 
   /*! \brief Set the internal backend list explicitly
    *
    * Currently unused.
    */
 
-  void setBackends(const std::vector<BackendInfo>& backends);
+  void setBackends(const std::vector<BackendInfo>& backends, Spine::Reactor& theReactor);
 
   /*! \brief Add backend to the underlying backend list
    *
@@ -79,7 +60,7 @@ class BackendForwarder : public boost::noncopyable
    * of a new backend.
    */
 
-  void addBackend(const std::string& hostName, int port, float load);
+  void addBackend(const std::string& hostName, int port, float load, Spine::Reactor& theReactor);
 
   /*! \brief Remove backend from the underlying backend list
    *
@@ -87,7 +68,7 @@ class BackendForwarder : public boost::noncopyable
    * backend list.
    */
 
-  void removeBackend(const std::string& hostName, int port);
+  void removeBackend(const std::string& hostName, int port, Spine::Reactor& theReactor);
 
   /*! \brief Destructor
    *
@@ -103,7 +84,16 @@ class BackendForwarder : public boost::noncopyable
    * Forwader implementations.
    */
 
-  virtual void redistribute() = 0;
+  virtual void redistribute(Spine::Reactor& theReactor) = 0;
+
+  /*! \brief Redistributes the internal forwarding probabilities
+   *
+   * This is called to update internal coefficients whenever
+   * a backend is needed. By default this does nothing, as only
+   * some load balancers update their state every time.
+   */
+
+  virtual void rebalance(Spine::Reactor& theReactor){};
 
   boost::taus88 itsGenerator;  /// The randomizer object for RNG.
 

@@ -21,13 +21,14 @@ namespace Spine
 class Table;
 }
 
-typedef boost::shared_ptr<BackendService> BackendServicePtr;
-typedef boost::shared_ptr<BackendServer> BackendServerPtr;
+using BackendServicePtr = boost::shared_ptr<BackendService>;
+using BackendServerPtr = boost::shared_ptr<BackendServer>;
 
 class Services
 {
  private:
   mutable SmartMet::Spine::MutexType itsMutex;
+  Spine::Reactor* itsReactor = nullptr;
 
  public:
   typedef std::vector<BackendServicePtr> BackendServiceList;
@@ -40,7 +41,8 @@ class Services
   enum ForwardingMode
   {
     Random,
-    InverseLoad
+    InverseLoad,
+    InverseConnections
   };
 
   typedef std::list<boost::tuple<std::string, std::string, int> > BackendList;
@@ -66,6 +68,7 @@ class Services
                   unsigned int theThrottle);
 
   bool removeBackend(const std::string& theHostname, int thePort, const std::string& theURI = "");
+
   bool latestSequence(int itsSequenceNumber);
 
   void setForwarding(const std::string& theMode, float balancingCoefficient);
@@ -77,13 +80,15 @@ class Services
   void setBackendAlive(const std::string& theHostName, int thePort);
 
   // Constructors
-  // Services();
+  Services() = default;
 
   // Destructor
   ~Services() {}
   void status(std::ostream& out) const;
   boost::shared_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
   BackendList getBackendList(const std::string& service = "") const;
+
+  void setReactor(Spine::Reactor& theReactor);
 };
 
 }  // namespace SmartMet

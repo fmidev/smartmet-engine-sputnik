@@ -42,9 +42,6 @@ const unsigned short COMM_UDP_PORT = 31337;  /// UDP Port that all the communica
  */
 class Engine : public SmartMet::Spine::SmartMetEngine
 {
- public:
-  Services itsServices;  /// Services object includes the list known services.
-
  private:
   /** \brief Constructor
    *
@@ -94,11 +91,13 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   unsigned int itsHeartBeatInterval = 5;
   unsigned int itsHeartBeatTimeout = 2;
   unsigned int itsMaxSkippedCycles = 2;
-  
+
   std::string itsForwardingMode = "random";  //< Forwarding mode
   float itsBalanceFactor = 2.0f;             // Balancing factor
 
-  SmartMet::Spine::Reactor* itsReactor = nullptr;  ///< The reactor pointer for URI map retrieval
+  Spine::Reactor* itsReactor = nullptr;  ///< The reactor pointer for URI map retrieval
+
+  Services itsServices;  /// Services object includes the list known services.
 
   boost::asio::io_service itsIoService;  ///< The IO Service for UDP handling
 
@@ -141,7 +140,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
    * @param theMode The mode of this Broadcast instance.
    * @param theReactor Pointer to the Reactor.
    */
-  void launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor);
+  void launch(BroadcastMode theMode, Spine::Reactor* theReactor);
 
   /** \brief Method to start listening for frontend broadcasts
    *
@@ -206,6 +205,9 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   Services::BackendList getBackendList(const std::string& service = "") const;
 
   std::string URI() const;
+
+  const Services& getServices() const { return itsServices; }
+  Services& getServices() { return itsServices; }
 };
 
 }  // namespace Sputnik

@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 18.10.26
-Release: 2%{?dist}.fmi
+Version: 18.11.5
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
 URL: https://github.com/fmidev/smartmet-engine-sputnik
@@ -14,14 +14,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
-BuildRequires: smartmet-library-spine-devel >= 18.8.20
+BuildRequires: smartmet-library-spine-devel >= 18.11.5
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 18.8.20
+BuildRequires: smartmet-library-macgyver-devel >= 18.9.29
 Requires: protobuf
-Requires: smartmet-server >= 18.8.22
-Requires: smartmet-library-spine >= 18.8.20
-Requires: smartmet-library-macgyver >= 18.8.20
+Requires: smartmet-server >= 18.11.5
+Requires: smartmet-library-spine >= 18.11.5
+Requires: smartmet-library-macgyver >= 18.9.29
 Requires: boost-date-time
 Requires: boost-system
 Requires: boost-thread
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Mon Nov  5 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.5-1.fmi
+- Added load balancing based on the number of active connections
+
 * Fri Oct 26 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.10.26-2.fmi
 - Check the shutdown flag more often
 

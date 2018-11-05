@@ -27,7 +27,7 @@ class InverseLoadForwarder : public BackendForwarder
   virtual ~InverseLoadForwarder();
 
  private:
-  void redistribute();
+  void redistribute(Spine::Reactor& theReactor);
 };
 
 }  // namespace SmartMet

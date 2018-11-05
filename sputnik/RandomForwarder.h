@@ -21,7 +21,7 @@ class RandomForwarder : public BackendForwarder
   virtual ~RandomForwarder();
 
  private:
-  void redistribute();
+  void redistribute(Spine::Reactor& theReactor);
 };
 
 typedef boost::shared_ptr<BackendForwarder> BackendForwarderPtr;

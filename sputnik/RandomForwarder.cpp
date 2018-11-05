@@ -7,7 +7,7 @@ RandomForwarder::~RandomForwarder() = default;
 
 RandomForwarder::RandomForwarder() : BackendForwarder(0.0) {}
 
-void RandomForwarder::redistribute()
+void RandomForwarder::redistribute(Spine::Reactor& /* theReactor */)
 {
   try
   {

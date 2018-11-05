@@ -11,7 +11,8 @@ BackendForwarder::BackendForwarder(float balancingCoefficient)
 
 BackendForwarder::~BackendForwarder() = default;
 
-void BackendForwarder::setBackends(const std::vector<BackendInfo>& backends)
+void BackendForwarder::setBackends(const std::vector<BackendInfo>& backends,
+                                   Spine::Reactor& theReactor)
 {
   try
   {
@@ -19,7 +20,7 @@ void BackendForwarder::setBackends(const std::vector<BackendInfo>& backends)
 
     itsBackendInfos = backends;
 
-    this->redistribute();
+    this->redistribute(theReactor);
   }
   catch (...)
   {
@@ -27,11 +28,12 @@ void BackendForwarder::setBackends(const std::vector<BackendInfo>& backends)
   }
 }
 
-std::size_t BackendForwarder::getBackend()
+std::size_t BackendForwarder::getBackend(Spine::Reactor& theReactor)
 {
   try
   {
     SmartMet::Spine::WriteLock lock(itsMutex);
+    rebalance(theReactor);
     return boost::numeric_cast<std::size_t>(itsDistribution(itsGenerator));
   }
   catch (...)
@@ -40,7 +42,10 @@ std::size_t BackendForwarder::getBackend()
   }
 }
 
-void BackendForwarder::addBackend(const std::string& hostName, int port, float load)
+void BackendForwarder::addBackend(const std::string& hostName,
+                                  int port,
+                                  float load,
+                                  Spine::Reactor& theReactor)
 {
   try
   {
@@ -53,7 +58,7 @@ void BackendForwarder::addBackend(const std::string& hostName, int port, float l
 
     itsBackendInfos.emplace_back(hostName, port, load);
 
-    this->redistribute();
+    this->redistribute(theReactor);
   }
   catch (...)
   {
@@ -61,7 +66,9 @@ void BackendForwarder::addBackend(const std::string& hostName, int port, float l
   }
 }
 
-void BackendForwarder::removeBackend(const std::string& hostName, int port)
+void BackendForwarder::removeBackend(const std::string& hostName,
+                                     int port,
+                                     Spine::Reactor& theReactor)
 {
   try
   {
@@ -83,7 +90,7 @@ void BackendForwarder::removeBackend(const std::string& hostName, int port)
       ++it;
     }
 
-    this->redistribute();
+    this->redistribute(theReactor);
   }
   catch (...)
   {
