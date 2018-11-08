@@ -5,6 +5,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/thread.hpp>
+#include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/Reactor.h>
 #include <iostream>
@@ -324,9 +325,18 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
     if (itsShutdownRequested)
       return;
 
-    if (!e)
+    if (e)
     {
-// No error, proceed
+      // Some error occurred in receive
+      std::cerr << "Broadcast UDP receive encountered an error: " << e.message() << std::endl;
+    }
+    else if (isPaused())
+    {
+      // std::cout << Spine::log_time_str() << " Sputnik paused, not responding" << std::endl;
+    }
+    else
+    {
+      // No error, proceed
 #ifdef MYDEBUG
       std::cout << "Broadcast received data from " << itsRemoteEnd.address().to_string() << ":"
                 << itsRemoteEnd.port() << std::endl;
@@ -358,11 +368,7 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
         }
       }
     }
-    else
-    {
-      // Some error occurred in receive
-      std::cerr << "Broadcast UDP receive encountered an error: " << e.message() << std::endl;
-    }
+
     // Go back to listen the socket
     startListening();
   }
@@ -567,6 +573,78 @@ std::string Engine::URI() const
   {
     throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Set an indefinite pause (unless further instructed)
+ */
+// ----------------------------------------------------------------------
+
+void Engine::setPause()
+{
+  std::cout << Spine::log_time_str() << " *** Sputnik paused" << std::endl;
+  Spine::WriteLock lock(itsPauseMutex);
+  itsPaused = true;
+  itsPauseDeadLine = boost::none;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Pause until given deadline (unless further instructed)
+ */
+// ----------------------------------------------------------------------
+
+void Engine::setPauseUntil(const boost::posix_time::ptime& theDeadLine)
+{
+  std::cout << Spine::log_time_str() << " *** Sputnik paused until "
+            << Fmi::to_iso_string(theDeadLine) << std::endl;
+  Spine::WriteLock lock(itsPauseMutex);
+  itsPaused = true;
+  itsPauseDeadLine = theDeadLine;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Continue running immediately (unless paused again)
+ */
+// ----------------------------------------------------------------------
+
+void Engine::setContinue()
+{
+  std::cout << Spine::log_time_str() << " *** Sputnik instructed to continue" << std::endl;
+  Spine::WriteLock lock(itsPauseMutex);
+  itsPaused = false;
+  itsPauseDeadLine = boost::none;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return true if Sputnik is paused
+ */
+// ----------------------------------------------------------------------
+
+bool Engine::isPaused() const
+{
+  Spine::UpgradeReadLock readlock(itsPauseMutex);
+  if (!itsPaused)
+    return false;
+
+  if (!itsPauseDeadLine)
+    return true;
+
+  auto now = boost::posix_time::microsec_clock::universal_time();
+
+  if (now < itsPauseDeadLine)
+    return true;
+
+  // deadline expired, continue
+  std::cout << Spine::log_time_str() << " *** Sputnik deadline expired, continuing" << std::endl;
+  Spine::UpgradeWriteLock writelock(readlock);
+  itsPaused = false;
+  itsPauseDeadLine = boost::none;
+
+  return false;
 }
 
 }  // namespace Sputnik

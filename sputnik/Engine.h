@@ -11,6 +11,7 @@
 #include <boost/function.hpp>
 #include <spine/Reactor.h>
 #include <spine/SmartMetEngine.h>
+#include <spine/Thread.h>
 #include <iostream>
 #include <string>
 
@@ -116,6 +117,12 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   boost::asio::deadline_timer itsResponseDeadlineTimer;  ///< Timer to handle the deadline of
                                                          /// backend responses
 
+  // Sputnik may be paused for a while via an external request
+
+  mutable Spine::MutexType itsPauseMutex;
+  mutable bool itsPaused{false};
+  mutable boost::optional<boost::posix_time::ptime> itsPauseDeadLine{};
+  
  protected:
   virtual void init();
   void shutdown();
@@ -208,6 +215,12 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   const Services& getServices() const { return itsServices; }
   Services& getServices() { return itsServices; }
+
+  bool isPaused() const;
+  void setPause();
+  void setPauseUntil(const boost::posix_time::ptime& theDeadLine);
+  void setContinue();
+  
 };
 
 }  // namespace Sputnik
