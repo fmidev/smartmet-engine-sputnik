@@ -109,7 +109,11 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
 
     std::cout << boost::posix_time::second_clock::local_time()
               << " No services left, performing a restart" << std::endl;
-    exit(123);
+    // Using exit might generate a coredump, and we want a fast restart
+    kill(getpid(), SIGKILL);
+
+    // a dummy return to avoid compiler warnings
+    return true;
   }
   catch (...)
   {
