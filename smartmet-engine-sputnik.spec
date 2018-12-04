@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 18.11.9
+Version: 18.12.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -14,14 +14,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
-BuildRequires: smartmet-library-spine-devel >= 18.11.9
+BuildRequires: smartmet-library-spine-devel >= 18.12.4
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 18.9.29
+BuildRequires: smartmet-library-macgyver-devel >= 18.11.24
 Requires: protobuf
 Requires: smartmet-server >= 18.11.8
-Requires: smartmet-library-spine >= 18.11.9
-Requires: smartmet-library-macgyver >= 18.9.29
+Requires: smartmet-library-spine >= 18.12.4
+Requires: smartmet-library-macgyver >= 18.11.24
 Requires: boost-date-time
 Requires: boost-system
 Requires: boost-thread
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Tue Dec  4 2018 Pertti Kinnia <pertti.kinnia@fmi.fi> - 18.12.4-1.fmi
+- Repackaged since Spine::Table size changed
+
 * Fri Nov  9 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.9-1.fmi
 - Use SIGKILL instead of exit for restart to prevent expensive core dumps
 
