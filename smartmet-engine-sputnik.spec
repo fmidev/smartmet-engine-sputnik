@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 18.12.4
+Version: 19.9.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -14,14 +14,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
-BuildRequires: smartmet-library-spine-devel >= 18.12.4
+BuildRequires: smartmet-library-spine-devel >= 19.9.26
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 18.11.24
+BuildRequires: smartmet-library-macgyver-devel >= 19.9.26
 Requires: protobuf
-Requires: smartmet-server >= 18.11.8
-Requires: smartmet-library-spine >= 18.12.4
-Requires: smartmet-library-macgyver >= 18.11.24
+Requires: smartmet-server >= 19.9.26
+Requires: smartmet-library-spine >= 19.9.26
+Requires: smartmet-library-macgyver >= 19.9.26
 Requires: boost-date-time
 Requires: boost-system
 Requires: boost-thread
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Thu Sep 26 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.9.26-1.fmi
+- Added support for ASAN & TSAN builds
+
 * Tue Dec  4 2018 Pertti Kinnia <pertti.kinnia@fmi.fi> - 18.12.4-1.fmi
 - Repackaged since Spine::Table size changed
 
