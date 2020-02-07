@@ -1,4 +1,4 @@
-SUBNAME = sputnik
+eSUBNAME = sputnik
 SPEC = smartmet-engine-$(SUBNAME)
 INCDIR = smartmet/engines/$(SUBNAME)
 
@@ -166,7 +166,7 @@ objdir:
 
 rpm: clean protoc $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
-	tar -czvf $(SPEC).tar.gz --transform "s,^,$(SPEC)/," *
+	tar -czvf $(SPEC).tar.gz --exclude test --exclude-vcs --transform "s,^,$(SPEC)/," *
 	rpmbuild -ta $(SPEC).tar.gz
 	rm -f $(SPEC).tar.gz
 
