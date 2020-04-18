@@ -1,4 +1,4 @@
-eSUBNAME = sputnik
+SUBNAME = sputnik
 SPEC = smartmet-engine-$(SUBNAME)
 INCDIR = smartmet/engines/$(SUBNAME)
 
@@ -32,6 +32,13 @@ DEFINES = -DUNIX -D_REENTRANT
 -include $(HOME)/.smartmet.mk
 GCC_DIAG_COLOR ?= always
 
+# Boost 1.69
+
+ifneq "$(wildcard /usr/include/boost169)" ""
+  INCLUDES += -I/usr/include/boost169
+  LIBS += -L/usr/lib64/boost169
+endif
+
 ifeq ($(CXX), clang++)
 
  FLAGS = \
@@ -47,27 +54,25 @@ ifeq ($(CXX), clang++)
 	-Wno-unused-macros \
 	-Wno-sign-conversion
 
- INCLUDES = \
+ INCLUDES += \
 	-isystem $(includedir) \
 	-I$(includedir)/smartmet
 
 else
 
- FLAGS = -std=c++11 -fPIC -MD -Wall -W -Wno-unused-parameter -fno-omit-frame-pointer -fdiagnostics-color=$(GCC_DIAG_COLOR) -Wnon-virtual-dtor
+ FLAGS = -std=c++11 -fPIC -MD -Wall -W -Wno-unused-parameter -fno-omit-frame-pointer -fdiagnostics-color=$(GCC_DIAG_COLOR)
 
  FLAGS_DEBUG = \
         -Wcast-align \
         -Winline \
         -Wno-multichar \
         -Wno-pmf-conversions \
-        -Woverloaded-virtual  \
         -Wpointer-arith \
         -Wcast-qual \
-        -Wredundant-decls \
         -Wwrite-strings \
         -Wsign-promo
 
- INCLUDES = \
+ INCLUDES += \
 	-I$(includedir) \
 	-I$(includedir)/smartmet
 
@@ -92,7 +97,7 @@ else
   override CFLAGS += $(CFLAGS_RELEASE)
 endif
 
-LIBS = -L$(libdir) \
+LIBS += -L$(libdir) \
 	-lsmartmet-spine \
 	-lsmartmet-macgyver \
 	-lboost_thread \

@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 19.9.26
+Version: 20.4.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -13,18 +13,18 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
-BuildRequires: boost-devel
-BuildRequires: smartmet-library-spine-devel >= 19.9.26
+BuildRequires: boost169-devel
+BuildRequires: smartmet-library-spine-devel >= 20.4.18
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 19.9.26
+BuildRequires: smartmet-library-macgyver-devel >= 20.4.18
 Requires: protobuf
-Requires: smartmet-server >= 19.9.26
-Requires: smartmet-library-spine >= 19.9.26
-Requires: smartmet-library-macgyver >= 19.9.26
-Requires: boost-date-time
-Requires: boost-system
-Requires: boost-thread
+Requires: smartmet-server >= 20.4.18
+Requires: smartmet-library-spine >= 20.4.18
+Requires: smartmet-library-macgyver >= 20.4.18
+Requires: boost169-date-time
+Requires: boost169-system
+Requires: boost169-thread
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-sputnik < 16.11.1
 Obsoletes: smartmet-brainstorm-sputnik-debuginfo < 16.11.1
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Sat Apr 18 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.18-1.fmi
+- Upgraded to Boost 1.69
+
 * Thu Sep 26 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.9.26-1.fmi
 - Added support for ASAN & TSAN builds
 
