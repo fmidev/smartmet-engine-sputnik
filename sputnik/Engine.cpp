@@ -334,6 +334,11 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
     {
       // std::cout << Spine::log_time_str() << " Sputnik paused, not responding" << std::endl;
     }
+    else if (itsReactor->isLoadHigh())
+    {
+      std::cout << Spine::log_time_str() << " Sputnik will not respond to frontend, high load"
+                << std::endl;
+    }
     else
     {
       // No error, proceed
