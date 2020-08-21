@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 20.8.10
+Version: 20.8.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -14,14 +14,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: smartmet-library-spine-devel >= 20.4.18
+BuildRequires: smartmet-library-spine-devel >= 20.8.21
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 20.4.18
+BuildRequires: smartmet-library-macgyver-devel >= 20.8.21
 Requires: protobuf
-Requires: smartmet-server >= 20.4.18
-Requires: smartmet-library-spine >= 20.4.18
-Requires: smartmet-library-macgyver >= 20.4.18
+Requires: smartmet-server >= 20.8.21
+Requires: smartmet-library-spine >= 20.8.21
+Requires: smartmet-library-macgyver >= 20.8.21
 Requires: boost169-date-time
 Requires: boost169-system
 Requires: boost169-thread
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Fri Aug 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.21-1.fmi
+- Upgrade to fmt 6.2
+
 * Mon Aug 10 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.10-1.fmi
 - Sputnik will no longer respond to frontends if the load is high
 
