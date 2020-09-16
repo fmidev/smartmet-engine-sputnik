@@ -35,7 +35,7 @@ GCC_DIAG_COLOR ?= always
 # Boost 1.69
 
 ifneq "$(wildcard /usr/include/boost169)" ""
-  INCLUDES += -I/usr/include/boost169
+  INCLUDES += -isystem /usr/include/boost169
   LIBS += -L/usr/lib64/boost169
 endif
 
@@ -43,7 +43,6 @@ ifeq ($(CXX), clang++)
 
  FLAGS = \
 	-std=c++11 -fPIC -MD \
-	-Weverything \
 	-Wno-c++98-compat \
 	-Wno-padded \
 	-Wno-weak-vtables \
@@ -55,7 +54,6 @@ ifeq ($(CXX), clang++)
 	-Wno-sign-conversion
 
  INCLUDES += \
-	-isystem $(includedir) \
 	-I$(includedir)/smartmet
 
 else
@@ -73,7 +71,6 @@ else
         -Wsign-promo
 
  INCLUDES += \
-	-I$(includedir) \
 	-I$(includedir)/smartmet
 
 endif
