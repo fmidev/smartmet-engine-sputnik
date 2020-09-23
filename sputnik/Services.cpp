@@ -7,7 +7,7 @@
 #include <boost/make_shared.hpp>
 #include <smartmet/macgyver/StringConversion.h>
 #include <smartmet/spine/Table.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <iostream>
 #include <list>
 #include <map>
@@ -61,7 +61,7 @@ BackendServicePtr Services::getService(const std::string& theURI)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -117,7 +117,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -137,7 +137,7 @@ bool Services::queryBackendAlive(const std::string& theHostName, int thePort)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -160,7 +160,7 @@ void Services::setBackendAlive(const std::string& theHostName, int thePort)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -184,7 +184,7 @@ void Services::signalBackendConnection(const std::string& theHostName, int thePo
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -234,7 +234,7 @@ bool Services::latestSequence(int itsSequenceNumber)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -314,7 +314,7 @@ bool Services::addService(const BackendServicePtr& theBackendService,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -355,7 +355,7 @@ boost::shared_ptr<SmartMet::Spine::Table> Services::backends(const std::string& 
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -392,7 +392,7 @@ Services::BackendList Services::getBackendList(const std::string& service) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -428,7 +428,7 @@ void Services::status(std::ostream& out) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -443,13 +443,13 @@ void Services::setForwarding(const std::string& theMode, float balancingCoeffici
     else if (theMode == "inverseconnections")
       itsFwdMode = ForwardingMode::InverseConnections;
     else
-      throw SmartMet::Spine::Exception(BCP, "Unknown backend forwarding mode: '" + theMode + "'");
+      throw Fmi::Exception(BCP, "Unknown backend forwarding mode: '" + theMode + "'");
 
     itsBalancingCoefficient = balancingCoefficient;
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

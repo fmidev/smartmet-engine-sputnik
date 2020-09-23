@@ -1,7 +1,7 @@
 #include "BroadcastMessage.pb.h"
 #include "Engine.h"
 #include "Services.h"
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Reactor.h>
 #include <cstdlib>
 #include <iostream>
@@ -39,7 +39,7 @@ void Engine::sendDiscoveryRequest(std::string& theMessageBuffer, int theSequence
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -111,7 +111,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -135,7 +135,7 @@ void Engine::processRequest(SmartMet::BroadcastMessage& theMessage, std::string&
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -208,7 +208,7 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -6,7 +6,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/thread.hpp>
 #include <spine/Convenience.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Reactor.h>
 #include <iostream>
 
@@ -63,7 +63,7 @@ Engine::Engine(const char* theConfig)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Constructor failed!");
+    throw Fmi::Exception::Trace(BCP, "Constructor failed!");
   }
 }
 
@@ -84,7 +84,7 @@ void Engine::shutdown()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Constructor failed!");
+    throw Fmi::Exception::Trace(BCP, "Constructor failed!");
   }
 }
 
@@ -105,7 +105,7 @@ void Engine::backendMode()
     }
     catch (const boost::system::system_error& err)
     {
-      throw SmartMet::Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Error: Broadcast Backend can't bind datagram socket: " + std::string(err.what()));
     }
 
@@ -114,7 +114,7 @@ void Engine::backendMode()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -134,7 +134,7 @@ void Engine::frontendMode()
     if (e.value() != boost::system::errc::success)
     {
       // Log error and exit
-      throw SmartMet::Spine::Exception(
+      throw Fmi::Exception(
           BCP,
           "Error: Broadcast Frontend was unable to set UDP/IP broadcast option: " + e.message());
     }
@@ -144,7 +144,7 @@ void Engine::frontendMode()
     if (e.value() != boost::system::errc::success)
     {
       // Log error and exit
-      throw SmartMet::Spine::Exception(BCP,
+      throw Fmi::Exception(BCP,
                                        "Error: Frontend can't bind local address: " + e.message());
     }
 
@@ -152,7 +152,7 @@ void Engine::frontendMode()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -205,7 +205,7 @@ void Engine::handleDeadlineTimer(const boost::system::error_code& err)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -245,7 +245,7 @@ void Engine::handleFrontendRead(const boost::system::error_code& e, std::size_t 
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -297,7 +297,7 @@ void Engine::startServiceDiscovery()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -314,7 +314,7 @@ void Engine::startListening()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -379,7 +379,7 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -409,7 +409,7 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
                 "sputnik_backend_hearbeat_hook",
                 boost::bind(&Engine::setBackendAlive, this, _1, _2, _3)))
         {
-          throw SmartMet::Spine::Exception(BCP, "Broadcast failed to add backend heartbeat hook");
+          throw Fmi::Exception(BCP, "Broadcast failed to add backend heartbeat hook");
         }
         break;
       case Unknown:
@@ -422,7 +422,7 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -493,7 +493,7 @@ void Engine::status(std::ostream& out) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -520,7 +520,7 @@ void Engine::setBackendAlive(const std::string& theHostName,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -538,7 +538,7 @@ boost::shared_ptr<SmartMet::Spine::Table> Engine::backends(const std::string& se
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -556,7 +556,7 @@ Services::BackendList Engine::getBackendList(const std::string& service) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -576,7 +576,7 @@ std::string Engine::URI() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

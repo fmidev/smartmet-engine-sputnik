@@ -1,5 +1,5 @@
 #include "InverseLoadForwarder.h"
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -38,7 +38,7 @@ void InverseLoadForwarder::redistribute(Spine::Reactor& /* theReactor */)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
