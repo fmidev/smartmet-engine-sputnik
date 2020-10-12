@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 20.8.23
+Version: 20.10.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -14,14 +14,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: smartmet-library-spine-devel >= 20.9.23
+BuildRequires: smartmet-library-spine-devel >= 20.10.9
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 20.9.18
+BuildRequires: smartmet-library-macgyver-devel >= 20.10.9
 Requires: protobuf
-Requires: smartmet-server >= 20.9.23
-Requires: smartmet-library-spine >= 20.9.23
-Requires: smartmet-library-macgyver >= 20.9.18
+Requires: smartmet-server >= 20.10.12
+Requires: smartmet-library-spine >= 20.10.9
+Requires: smartmet-library-macgyver >= 20.10.9
 Requires: boost169-date-time
 Requires: boost169-system
 Requires: boost169-thread
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Mon Oct 12 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.12-1.fmi
+- Prefer lambdas over boost::bind
+
 * Wed Sep 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.23-1.fmi
 - Use Fmi::Exception instead of Spine::Exception
 

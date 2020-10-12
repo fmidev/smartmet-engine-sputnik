@@ -1,7 +1,6 @@
 #include "Engine.h"
 #include "BroadcastMessage.pb.h"
 #include "Services.h"
-#include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/thread.hpp>
@@ -145,7 +144,7 @@ void Engine::frontendMode()
     {
       // Log error and exit
       throw Fmi::Exception(BCP,
-                                       "Error: Frontend can't bind local address: " + e.message());
+                           "Error: Frontend can't bind local address: " + e.message());
     }
 
     startServiceDiscovery();
@@ -238,10 +237,11 @@ void Engine::handleFrontendRead(const boost::system::error_code& e, std::size_t 
     // Start a new receive event
     itsSocket.async_receive_from(boost::asio::buffer(itsReceiveBuffer),
                                  itsRemoteEnd,
-                                 boost::bind(&Engine::handleFrontendRead,
-                                             this,
-                                             boost::asio::placeholders::error,
-                                             boost::asio::placeholders::bytes_transferred));
+                                 [this]
+                                 (const boost::system::error_code& err, std::size_t bytes_transferred)
+                                 {
+                                   this->handleFrontendRead(err, bytes_transferred);
+                                 });
   }
   catch (...)
   {
@@ -285,15 +285,16 @@ void Engine::startServiceDiscovery()
 
     itsSocket.async_receive_from(boost::asio::buffer(itsReceiveBuffer),
                                  itsRemoteEnd,
-                                 boost::bind(&Engine::handleFrontendRead,
-                                             this,
-                                             boost::asio::placeholders::error,
-                                             boost::asio::placeholders::bytes_transferred));
+                                 [this]
+                                 (const boost::system::error_code & err, std::size_t bytes_transferred)
+                                 {
+                                   this->handleFrontendRead(err, bytes_transferred);
+                                 });
 
     // Reset the response deadline timer
     itsResponseDeadlineTimer.expires_from_now(boost::posix_time::seconds(itsHeartBeatTimeout));
     itsResponseDeadlineTimer.async_wait(
-        boost::bind(&Engine::handleDeadlineTimer, this, boost::asio::placeholders::error));
+        [this](const boost::system::error_code& err){ this->handleDeadlineTimer(err); });
   }
   catch (...)
   {
@@ -307,10 +308,11 @@ void Engine::startListening()
   {
     itsSocket.async_receive_from(boost::asio::buffer(itsReceiveBuffer),
                                  itsRemoteEnd,
-                                 boost::bind(&Engine::handleBackendRead,
-                                             this,
-                                             boost::asio::placeholders::error,
-                                             boost::asio::placeholders::bytes_transferred));
+                                 [this]
+                                 (const boost::system::error_code& err, std::size_t bytes_transferred)
+                                 {
+                                   this->handleBackendRead(err, bytes_transferred);
+                                 });
   }
   catch (...)
   {
@@ -418,7 +420,7 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
 
     // Fire the thread to process async handlers
     itsAsyncThread = boost::make_shared<boost::thread>(
-        boost::bind(&boost::asio::io_service::run, &itsIoService));
+        [this](){ this->itsIoService.run(); });
   }
   catch (...)
   {
