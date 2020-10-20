@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 20.10.12
+Version: 20.10.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -14,13 +14,13 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: smartmet-library-spine-devel >= 20.10.9
+BuildRequires: smartmet-library-spine-devel >= 20.10.20
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
 BuildRequires: smartmet-library-macgyver-devel >= 20.10.9
 Requires: protobuf
 Requires: smartmet-server >= 20.10.12
-Requires: smartmet-library-spine >= 20.10.9
+Requires: smartmet-library-spine >= 20.10.20
 Requires: smartmet-library-macgyver >= 20.10.9
 Requires: boost169-date-time
 Requires: boost169-system
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Tue Oct 20 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.20-1.fmi
+- Rebuild due to libconfig upgrade to version 1.7.2
+
 * Mon Oct 12 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.12-1.fmi
 - Prefer lambdas over boost::bind
 
