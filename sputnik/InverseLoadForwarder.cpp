@@ -20,9 +20,9 @@ void InverseLoadForwarder::redistribute(Spine::Reactor& /* theReactor */)
     for (const auto& info : itsBackendInfos)
     {
       // Limit load to range 1...inf to avoid problems due to loads close to zero
-      auto load = std::max(1.0f, info.load);
+      auto load = std::max(1.0F, info.load);
 
-      probVec.push_back(1.0f / (1.0f + itsBalancingCoefficient * load));
+      probVec.push_back(1.0F / (1.0F + itsBalancingCoefficient * load));
 #ifdef MYDEBUG
       std::cout << "Inverse prob: " << probVec.back() << " from load " << info.load << std::endl;
 #endif

@@ -23,13 +23,13 @@ void InverseConnectionsForwarder::redistribute(Spine::Reactor& theReactor)
     {
       int count = connections[info.hostName][info.port];  // zero if not found
 
-      probVec.push_back(1.0f / (1.0f + itsBalancingCoefficient * count));
+      probVec.push_back(1.0F / (1.0F + itsBalancingCoefficient * count));
 #ifdef MYDEBUG
       std::cout << "Inverse prob: " << probVec.back() << " from conns " << count << std::endl;
 #endif
     }
 
-    float sum = std::accumulate(probVec.begin(), probVec.end(), 0.0f);
+    float sum = std::accumulate(probVec.begin(), probVec.end(), 0.0F);
 
     for (auto& prob : probVec)
       prob /= sum;

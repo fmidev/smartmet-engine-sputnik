@@ -71,7 +71,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
     }
 
     // Get the system load average
-    double currentLoad;
+    double currentLoad = 0;
     getloadavg(&currentLoad, 1);
 
     // Report the per-core load average
@@ -84,7 +84,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
     host->set_throttle(boost::numeric_cast<int32_t>(itsThrottleLimit));
 
     // The Services
-    SmartMet::BroadcastMessage::Service* theService;
+    SmartMet::BroadcastMessage::Service* theService = nullptr;
 
     // Better not call the reactor if shutdown is in progress
     if (itsShutdownRequested)

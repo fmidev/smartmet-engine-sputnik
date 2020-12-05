@@ -4,8 +4,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/thread.hpp>
-#include <spine/Convenience.h>
 #include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 #include <spine/Reactor.h>
 #include <iostream>
 
@@ -32,7 +32,7 @@ Engine::Engine(const char* theConfig)
     conf.get_config_array("backendUdpListeners", itsBackendUdpListeners);
 
     itsForwardingMode = conf.get_optional_config_param<std::string>("forwarding", "random");
-    itsBalanceFactor = conf.get_optional_config_param<float>("balance_factor", 2.0f);
+    itsBalanceFactor = conf.get_optional_config_param<float>("balance_factor", 2.0F);
 
     itsHeartBeatInterval = conf.get_optional_config_param<int>("heartbeat.interval", 5);
     itsHeartBeatTimeout = conf.get_optional_config_param<int>("heartbeat.timeout", 2);
@@ -143,8 +143,7 @@ void Engine::frontendMode()
     if (e.value() != boost::system::errc::success)
     {
       // Log error and exit
-      throw Fmi::Exception(BCP,
-                           "Error: Frontend can't bind local address: " + e.message());
+      throw Fmi::Exception(BCP, "Error: Frontend can't bind local address: " + e.message());
     }
 
     startServiceDiscovery();
@@ -235,13 +234,12 @@ void Engine::handleFrontendRead(const boost::system::error_code& e, std::size_t 
     }
 
     // Start a new receive event
-    itsSocket.async_receive_from(boost::asio::buffer(itsReceiveBuffer),
-                                 itsRemoteEnd,
-                                 [this]
-                                 (const boost::system::error_code& err, std::size_t bytes_transferred)
-                                 {
-                                   this->handleFrontendRead(err, bytes_transferred);
-                                 });
+    itsSocket.async_receive_from(
+        boost::asio::buffer(itsReceiveBuffer),
+        itsRemoteEnd,
+        [this](const boost::system::error_code& err, std::size_t bytes_transferred) {
+          this->handleFrontendRead(err, bytes_transferred);
+        });
   }
   catch (...)
   {
@@ -283,18 +281,17 @@ void Engine::startServiceDiscovery()
       std::cerr << "Error: Broadcast failed to send discovery request: " << err.what() << std::endl;
     }
 
-    itsSocket.async_receive_from(boost::asio::buffer(itsReceiveBuffer),
-                                 itsRemoteEnd,
-                                 [this]
-                                 (const boost::system::error_code & err, std::size_t bytes_transferred)
-                                 {
-                                   this->handleFrontendRead(err, bytes_transferred);
-                                 });
+    itsSocket.async_receive_from(
+        boost::asio::buffer(itsReceiveBuffer),
+        itsRemoteEnd,
+        [this](const boost::system::error_code& err, std::size_t bytes_transferred) {
+          this->handleFrontendRead(err, bytes_transferred);
+        });
 
     // Reset the response deadline timer
     itsResponseDeadlineTimer.expires_from_now(boost::posix_time::seconds(itsHeartBeatTimeout));
     itsResponseDeadlineTimer.async_wait(
-        [this](const boost::system::error_code& err){ this->handleDeadlineTimer(err); });
+        [this](const boost::system::error_code& err) { this->handleDeadlineTimer(err); });
   }
   catch (...)
   {
@@ -306,13 +303,12 @@ void Engine::startListening()
 {
   try
   {
-    itsSocket.async_receive_from(boost::asio::buffer(itsReceiveBuffer),
-                                 itsRemoteEnd,
-                                 [this]
-                                 (const boost::system::error_code& err, std::size_t bytes_transferred)
-                                 {
-                                   this->handleBackendRead(err, bytes_transferred);
-                                 });
+    itsSocket.async_receive_from(
+        boost::asio::buffer(itsReceiveBuffer),
+        itsRemoteEnd,
+        [this](const boost::system::error_code& err, std::size_t bytes_transferred) {
+          this->handleBackendRead(err, bytes_transferred);
+        });
   }
   catch (...)
   {
@@ -419,8 +415,7 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
     }
 
     // Fire the thread to process async handlers
-    itsAsyncThread = boost::make_shared<boost::thread>(
-        [this](){ this->itsIoService.run(); });
+    itsAsyncThread = boost::make_shared<boost::thread>([this]() { this->itsIoService.run(); });
   }
   catch (...)
   {

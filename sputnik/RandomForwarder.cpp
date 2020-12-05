@@ -19,7 +19,7 @@ void RandomForwarder::redistribute(Spine::Reactor& /* theReactor */)
       probVec.push_back(1);
     }
 
-    float sum = std::accumulate(probVec.begin(), probVec.end(), 0.0f);
+    float sum = std::accumulate(probVec.begin(), probVec.end(), 0.0F);
 
     for (auto& prob : probVec)
       prob /= sum;
