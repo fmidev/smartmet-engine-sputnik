@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 20.10.20
+Version: 20.12.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -14,14 +14,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: smartmet-library-spine-devel >= 20.10.20
+BuildRequires: smartmet-library-spine-devel >= 20.12.4
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.9
+BuildRequires: smartmet-library-macgyver-devel >= 20.11.24
 Requires: protobuf
-Requires: smartmet-server >= 20.10.12
-Requires: smartmet-library-spine >= 20.10.20
-Requires: smartmet-library-macgyver >= 20.10.9
+Requires: smartmet-server >= 20.10.28
+Requires: smartmet-library-spine >= 20.12.4
+Requires: smartmet-library-macgyver >= 20.11.24
 Requires: boost169-date-time
 Requires: boost169-system
 Requires: boost169-thread
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Mon Dec  7 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.7-1.fmi
+- Minor fixes to silence CodeChecker warnings
+
 * Tue Oct 20 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.20-1.fmi
 - Rebuild due to libconfig upgrade to version 1.7.2
 
