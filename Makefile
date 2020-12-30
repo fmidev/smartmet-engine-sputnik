@@ -174,7 +174,7 @@ rpm: clean protoc $(SPEC).spec
 
 .SUFFIXES: $(SUFFIXES) .cpp
 
-obj/%.o: %.cpp
+obj/%.o: %.cpp protoc
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
 protoc: $(COMPILED_PB_SRCS)
