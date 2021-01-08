@@ -2,99 +2,14 @@ SUBNAME = sputnik
 SPEC = smartmet-engine-$(SUBNAME)
 INCDIR = smartmet/engines/$(SUBNAME)
 
-# Installation directories
+REQUIRES =
 
-processor := $(shell uname -p)
+include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
-ifeq ($(origin PREFIX), undefined)
-  PREFIX = /usr
-else
-  PREFIX = $(PREFIX)
-endif
-
-ifeq ($(processor), x86_64)
-  libdir = $(PREFIX)/lib64
-else
-  libdir = $(PREFIX)/lib
-endif
-
-bindir = $(PREFIX)/bin
-includedir = $(PREFIX)/include
-datadir = $(PREFIX)/share
-enginedir = $(datadir)/smartmet/engines
-objdir = obj
-
-# Compiler options
-
-# DEFINES = -DUNIX -D_REENTRANT -DMYDEBUG
 DEFINES = -DUNIX -D_REENTRANT
 
--include $(HOME)/.smartmet.mk
-GCC_DIAG_COLOR ?= always
-
-# Boost 1.69
-
-ifneq "$(wildcard /usr/include/boost169)" ""
-  INCLUDES += -isystem /usr/include/boost169
-  LIBS += -L/usr/lib64/boost169
-endif
-
-ifeq ($(CXX), clang++)
-
- FLAGS = \
-	-std=c++11 -fPIC -MD \
-	-Wno-c++98-compat \
-	-Wno-padded \
-	-Wno-weak-vtables \
-	-Wno-missing-prototypes \
-	-Wno-missing-variable-declarations \
-	-Wno-shorten-64-to-32 \
-	-Wno-global-constructors \
-	-Wno-unused-macros \
-	-Wno-sign-conversion
-
- INCLUDES += \
-	-I$(includedir)/smartmet
-
-else
-
- FLAGS = -std=c++11 -fPIC -MD -Wall -W -Wno-unused-parameter -fno-omit-frame-pointer -fdiagnostics-color=$(GCC_DIAG_COLOR)
-
- FLAGS_DEBUG = \
-        -Wcast-align \
-        -Winline \
-        -Wno-multichar \
-        -Wno-pmf-conversions \
-        -Wpointer-arith \
-        -Wcast-qual \
-        -Wwrite-strings \
-        -Wsign-promo
-
- INCLUDES += \
-	-I$(includedir)/smartmet
-
-endif
-
-ifeq ($(TSAN), yes)
-  FLAGS += -fsanitize=thread
-endif
-ifeq ($(ASAN), yes)
-  FLAGS += -fsanitize=address -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize-address-use-after-scope
-endif
-
-
-# Compile options in detault, debug and profile modes
-
-CFLAGS_RELEASE = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O2 -g
-CFLAGS_DEBUG   = $(DEFINES) $(FLAGS) $(FLAGS_DEBUG)   -Werror  -O0 -g
-
-ifneq (,$(findstring debug,$(MAKECMDGOALS)))
-  override CFLAGS += $(CFLAGS_DEBUG)
-else
-  override CFLAGS += $(CFLAGS_RELEASE)
-endif
-
 LIBS += -L$(libdir) \
+	$(REQUIRED_LIBS) \
 	-lsmartmet-spine \
 	-lsmartmet-macgyver \
 	-lboost_thread \
@@ -108,18 +23,13 @@ LIBS += -L$(libdir) \
 
 LIBFILE = $(SUBNAME).so
 
-# How to install
-
-INSTALL_PROG = install -p -m 775
-INSTALL_DATA = install -p -m 664
-
 # Compilation directories
 
 vpath %.cpp $(SUBNAME)
 vpath %.h $(SUBNAME)
+vpath %.o $(objdir)
 
 # The files to be compiled
-
 PB_SRCS = $(wildcard *.proto)
 COMPILED_PB_SRCS = $(patsubst %.proto, $(SUBNAME)/%.pb.cpp, $(PB_SRCS))
 COMPILED_PB_HDRS = $(patsubst %.proto, $(SUBNAME)/%.pb.h, $(PB_SRCS))
@@ -128,9 +38,7 @@ SRCS = $(filter-out %.pb.cpp, $(wildcard $(SUBNAME)/*.cpp)) $(COMPILED_PB_SRCS)
 HDRS = $(filter-out %.pb.h, $(wildcard $(SUBNAME)/*.h)) $(COMPILED_PB_HDRS)
 OBJS = $(patsubst %.cpp, obj/%.o, $(notdir $(SRCS)))
 
-INCLUDES := -I$(SUBNAME) $(INCLUDES)
-
-.PHONY: test rpm
+.PHONY: rpm
 
 # The rules
 
@@ -140,15 +48,20 @@ release: all
 profile: all
 
 $(LIBFILE): $(SRCS) $(OBJS)
-	$(CC) $(LDFLAGS) -shared -rdynamic -o $(LIBFILE) $(OBJS) $(LIBS)
+	$(CXX) $(LDFLAGS) -shared -rdynamic -o $(LIBFILE) $(OBJS) $(LIBS)
+	@echo Checking $(LIBFILE) for unresolved references
+	@if ldd -r $(LIBFILE) 2>&1 | c++filt | grep ^undefined\ symbol ; \
+		then rm -v $(LIBFILE); \
+		exit 1; \
+	fi
 
 clean:
-	rm -f $(LIBFILE) *~ $(SUBNAME)/*~
-	rm -rf obj
+	rm -f $(LIBFILE) $(OBJS) *~ $(SUBNAME)/*~
 	rm -f $(SUBNAME)/BroadcastMessage.pb.cpp $(SUBNAME)/BroadcastMessage.pb.h
+	rm -rf obj
 
 format:
-	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp
+	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp examples/*.cpp
 
 install:
 	@mkdir -p $(includedir)/$(INCDIR)
@@ -159,9 +72,6 @@ install:
 	done
 	@mkdir -p $(enginedir)
 	$(INSTALL_PROG) $(LIBFILE) $(enginedir)/$(LIBFILE)
-
-test:
-	cd test && make test
 
 objdir:
 	@mkdir -p $(objdir)
@@ -174,16 +84,18 @@ rpm: clean protoc $(SPEC).spec
 
 .SUFFIXES: $(SUFFIXES) .cpp
 
-obj/%.o: %.cpp protoc
+obj/%.o: %.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
 protoc: $(COMPILED_PB_SRCS)
 
-sputnik/%.pb.cpp sputnik/%.pb.h : %.proto
-	mkdir -p tmp
+sputnik/%.pb.cpp: %.proto; mkdir -p tmp
 	protoc --cpp_out=tmp BroadcastMessage.proto
 	mv tmp/BroadcastMessage.pb.h $(SUBNAME)/
 	mv tmp/BroadcastMessage.pb.cc $(SUBNAME)/BroadcastMessage.pb.cpp
-	rm -rf tmp
+	rm -rf tmp 
+
+test:
+	@test "$$CI" = "true" && true || false
 
 -include $(wildcard obj/*.d)
