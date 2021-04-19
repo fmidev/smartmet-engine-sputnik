@@ -1,13 +1,14 @@
 #include "Services.h"
 #include "InverseConnectionsForwarder.h"
 #include "InverseLoadForwarder.h"
+#include "LeastConnectionsForwarder.h"
 #include "RandomForwarder.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
+#include <macgyver/Exception.h>
 #include <smartmet/macgyver/StringConversion.h>
 #include <smartmet/spine/Table.h>
-#include <macgyver/Exception.h>
 #include <iostream>
 #include <list>
 #include <map>
@@ -280,6 +281,8 @@ bool Services::addService(const BackendServicePtr& theBackendService,
         theForwarder = BackendForwarderPtr(new InverseLoadForwarder(itsBalancingCoefficient));
       else if (itsFwdMode == ForwardingMode::Random)
         theForwarder = BackendForwarderPtr(new RandomForwarder);
+      else if (itsFwdMode == ForwardingMode::LeastConnections)
+        theForwarder = BackendForwarderPtr(new LeastConnectionsForwarder);
       else if (itsFwdMode == ForwardingMode::InverseConnections)
         theForwarder =
             BackendForwarderPtr(new InverseConnectionsForwarder(itsBalancingCoefficient));
@@ -442,6 +445,8 @@ void Services::setForwarding(const std::string& theMode, float balancingCoeffici
       itsFwdMode = ForwardingMode::Random;
     else if (theMode == "inverseconnections")
       itsFwdMode = ForwardingMode::InverseConnections;
+    else if (theMode == "leastconnections")
+      itsFwdMode = ForwardingMode::LeastConnections;
     else
       throw Fmi::Exception(BCP, "Unknown backend forwarding mode: '" + theMode + "'");
 

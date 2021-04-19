@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 21.1.14
+Version: 21.4.19
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -14,14 +14,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: smartmet-library-spine-devel >= 21.1.14
+BuildRequires: smartmet-library-spine-devel >= 21.4.16
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.14
+BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
 Requires: protobuf
 Requires: smartmet-server >= 21.1.14
-Requires: smartmet-library-spine >= 21.1.14
-Requires: smartmet-library-macgyver >= 21.1.14
+Requires: smartmet-library-spine >= 21.4.16
+Requires: smartmet-library-macgyver >= 21.2.25
 Requires: boost169-date-time
 Requires: boost169-system
 Requires: boost169-thread
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Mon Apr 19 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.4.19-1.fmi
+- Added "leastconnections" load balancing
+
 * Thu Jan 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.14-1.fmi
 - Repackaged smartmet to resolve debuginfo issues
 
