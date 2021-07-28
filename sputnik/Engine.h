@@ -94,7 +94,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   unsigned int itsMaxSkippedCycles = 2;
 
   std::string itsForwardingMode = "random";  //< Forwarding mode
-  float itsBalanceFactor = 2.0f;             // Balancing factor
+  float itsBalanceFactor = 2.0F;             // Balancing factor
 
   Spine::Reactor* itsReactor = nullptr;  ///< The reactor pointer for URI map retrieval
 
