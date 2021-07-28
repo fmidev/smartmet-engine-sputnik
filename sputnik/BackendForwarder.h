@@ -106,6 +106,6 @@ class BackendForwarder : public boost::noncopyable
   float itsBalancingCoefficient;  /// The balancing coefficient for distribution generation.
 };
 
-typedef boost::shared_ptr<BackendForwarder> BackendForwarderPtr;
+using BackendForwarderPtr = boost::shared_ptr<BackendForwarder>;
 
 }  // namespace SmartMet

@@ -31,12 +31,11 @@ class Services
   Spine::Reactor* itsReactor = nullptr;
 
  public:
-  typedef std::vector<BackendServicePtr> BackendServiceList;
-  typedef boost::shared_ptr<BackendServiceList> BackendServiceListPtr;
-  typedef std::map<std::string, std::pair<BackendServiceListPtr, BackendForwarderPtr> >
-      ServiceURIMap;
-
-  typedef std::map<std::string, boost::shared_ptr<BackendSentinel> > SentinelMap;
+  using BackendServiceList = std::vector<BackendServicePtr>;
+  using BackendServiceListPtr = boost::shared_ptr<BackendServiceList>;
+  using SentinelMap = std::map<std::string, boost::shared_ptr<BackendSentinel> >;
+  using ServiceURIMap =
+      std::map<std::string, std::pair<BackendServiceListPtr, BackendForwarderPtr> >;
 
   enum ForwardingMode
   {
