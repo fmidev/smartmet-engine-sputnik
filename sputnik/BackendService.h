@@ -25,14 +25,14 @@ class BackendService
 
  public:
   // Methods to read Service entry parameters
-  inline boost::shared_ptr<BackendServer> Backend() { return itsBackendServer; }
-  inline std::string& URI() { return itsURI; }
-  inline int LastUpdate() { return itsLastUpdate; }
-  inline bool AllowCache() { return itsAllowCache; }
-  inline int SequenceNumber() { return itsSequenceNumber; }
+  boost::shared_ptr<BackendServer> Backend() { return itsBackendServer; }
+  std::string& URI() { return itsURI; }
+  int LastUpdate() { return itsLastUpdate; }
+  bool AllowCache() { return itsAllowCache; }
+  int SequenceNumber() { return itsSequenceNumber; }
   // Method to set some Service entry parameters
-  inline void setLastUpdate(int theLastUpdate) { itsLastUpdate = theLastUpdate; }
-  inline void setAllowCache(bool theAllowCache) { itsAllowCache = theAllowCache; }
+  void setLastUpdate(int theLastUpdate) { itsLastUpdate = theLastUpdate; }
+  void setAllowCache(bool theAllowCache) { itsAllowCache = theAllowCache; }
   // Constructors
   BackendService(boost::shared_ptr<BackendServer> theBackendServer,
                  std::string theURI,
@@ -48,7 +48,7 @@ class BackendService
   }
 
   // Destructor
-  ~BackendService() {}
+  ~BackendService() = default;
 };
 
 }  // namespace SmartMet

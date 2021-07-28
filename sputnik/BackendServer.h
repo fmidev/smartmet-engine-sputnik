@@ -25,13 +25,13 @@ class BackendServer
   unsigned int itsThrottle;
 
  public:
-  // Methos to read Service entry parameters
-  inline std::string& Name() { return itsName; }
-  inline std::string& IP() { return itsIP; }
-  inline std::string& Comment() { return itsComment; }
-  inline int Port() { return itsPort; }
-  inline float Load() { return itsLoad; }
-  inline unsigned int Throttle() { return itsThrottle; }
+  // Methods to read Service entry parameters
+  std::string& Name() { return itsName; }
+  std::string& IP() { return itsIP; }
+  std::string& Comment() { return itsComment; }
+  int Port() { return itsPort; }
+  float Load() { return itsLoad; }
+  unsigned int Throttle() { return itsThrottle; }
   // Constructor
   BackendServer(std::string theName,
                 std::string theIP,
@@ -50,7 +50,7 @@ class BackendServer
   }
 
   // Destructor
-  ~BackendServer() {}
+  ~BackendServer() = default;
 };
 
 }  // namespace SmartMet

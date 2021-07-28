@@ -84,7 +84,7 @@ class Services
   Services() = default;
 
   // Destructor
-  ~Services() {}
+  ~Services() = default;
   void status(std::ostream& out) const;
   boost::shared_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
   BackendList getBackendList(const std::string& service = "") const;
