@@ -122,17 +122,17 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   mutable Spine::MutexType itsPauseMutex;
   mutable bool itsPaused{false};
   mutable boost::optional<boost::posix_time::ptime> itsPauseDeadLine{};
-  
+
  protected:
-  virtual void init();
-  void shutdown();
+  void init() override;
+  void shutdown() override;
 
  public:
   /** \brief Destructor
    *
    */
 
-  ~Engine();
+  ~Engine() override;
 
   /** \brief Constructor
    *
@@ -220,7 +220,6 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   void setPause();
   void setPauseUntil(const boost::posix_time::ptime& theDeadLine);
   void setContinue();
-  
 };
 
 }  // namespace Sputnik

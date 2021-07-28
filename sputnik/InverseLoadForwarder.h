@@ -24,10 +24,10 @@ class InverseLoadForwarder : public BackendForwarder
  public:
   InverseLoadForwarder(float balancingCoefficient);
 
-  virtual ~InverseLoadForwarder();
+  ~InverseLoadForwarder() override;
 
  private:
-  void redistribute(Spine::Reactor& theReactor);
+  void redistribute(Spine::Reactor& theReactor) override;
 };
 
 }  // namespace SmartMet

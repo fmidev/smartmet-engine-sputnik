@@ -17,10 +17,10 @@ class LeastConnectionsForwarder : public BackendForwarder
  public:
   LeastConnectionsForwarder();
 
-  virtual ~LeastConnectionsForwarder();
+  ~LeastConnectionsForwarder() override;
 
  private:
-  void redistribute(Spine::Reactor& theReactor);
+  void redistribute(Spine::Reactor& theReactor) override;
   void rebalance(Spine::Reactor& theReactor);
 };
 

@@ -18,10 +18,10 @@ class InverseConnectionsForwarder : public BackendForwarder
  public:
   InverseConnectionsForwarder(float balancingCoefficient);
 
-  virtual ~InverseConnectionsForwarder();
+  ~InverseConnectionsForwarder() override;
 
  private:
-  void redistribute(Spine::Reactor& theReactor);
+  void redistribute(Spine::Reactor& theReactor) override;
   void rebalance(Spine::Reactor& theReactor);
 };
 

@@ -18,10 +18,10 @@ class RandomForwarder : public BackendForwarder
  public:
   RandomForwarder();
 
-  virtual ~RandomForwarder();
+  ~RandomForwarder() override;
 
  private:
-  void redistribute(Spine::Reactor& theReactor);
+  void redistribute(Spine::Reactor& theReactor) override;
 };
 
 typedef boost::shared_ptr<BackendForwarder> BackendForwarderPtr;
