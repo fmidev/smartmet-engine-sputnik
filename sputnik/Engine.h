@@ -86,7 +86,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   unsigned int itsHttpPort = 80;                      ///< Backend HTTP port
   std::string itsUdpListenerAddress = "127.0.0.1";    ///< Backend UDP listener address
   unsigned short itsUdpListenerPort = COMM_UDP_PORT;  ///< Backend UDP listener port
-  std::string itsComment = "";                        ///< Backend comment
+  std::string itsComment;                             ///< Backend comment
   unsigned int itsThrottleLimit = 0;  ///< Max number of unanswered connections allowed
 
   unsigned int itsHeartBeatInterval = 5;
