@@ -17,7 +17,7 @@ namespace Sputnik
 // Frontend
 void Engine::sendDiscoveryRequest(std::string& theMessageBuffer, int theSequenceNumber)
 {
-  if (itsShutdownRequested)
+  if (Spine::Reactor::isShuttingDown())
     return;
 
   try
@@ -46,7 +46,7 @@ void Engine::sendDiscoveryRequest(std::string& theMessageBuffer, int theSequence
 // Backend
 void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNumber)
 {
-  if (itsShutdownRequested)
+  if (Spine::Reactor::isShuttingDown())
     return;
 
   try
@@ -87,7 +87,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
     SmartMet::BroadcastMessage::Service* theService = nullptr;
 
     // Better not call the reactor if shutdown is in progress
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     auto theHandlers = itsReactor->getURIMap();
@@ -118,7 +118,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
 // Backend
 void Engine::processRequest(SmartMet::BroadcastMessage& theMessage, std::string& theResponseBuffer)
 {
-  if (itsShutdownRequested)
+  if (Spine::Reactor::isShuttingDown())
     return;
 
   try
@@ -142,7 +142,7 @@ void Engine::processRequest(SmartMet::BroadcastMessage& theMessage, std::string&
 // Frontend
 void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
 {
-  if (itsShutdownRequested)
+  if (Spine::Reactor::isShuttingDown())
     return;
 
   try

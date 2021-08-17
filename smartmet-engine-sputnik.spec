@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 21.7.28
+Version: 21.8.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -14,14 +14,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: smartmet-library-spine-devel >= 21.7.28
+BuildRequires: smartmet-library-spine-devel >= 21.8.17
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 21.7.28
+BuildRequires: smartmet-library-macgyver-devel >= 21.8.5
 Requires: protobuf
 Requires: smartmet-server >= 21.6.3
-Requires: smartmet-library-spine >= 21.7.28
-Requires: smartmet-library-macgyver >= 21.7.28
+Requires: smartmet-library-spine >= 21.8.17
+Requires: smartmet-library-macgyver >= 21.8.5
 Requires: boost169-date-time
 Requires: boost169-system
 Requires: boost169-thread
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Tue Aug 17 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.17-1.fmi
+- Use the new shutdown API
+
 * Wed Jul 28 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.7.28-1.fmi
 - Silenced compiler warnings
 

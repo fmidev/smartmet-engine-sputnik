@@ -196,7 +196,7 @@ void Engine::handleDeadlineTimer(const boost::system::error_code& err)
     // Sleep until the next heart beat
     boost::this_thread::sleep(boost::posix_time::seconds(itsHeartBeatInterval));
 
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     startServiceDiscovery();
@@ -237,9 +237,8 @@ void Engine::handleFrontendRead(const boost::system::error_code& e, std::size_t 
     itsSocket.async_receive_from(
         boost::asio::buffer(itsReceiveBuffer),
         itsRemoteEnd,
-        [this](const boost::system::error_code& err, std::size_t bytes_transferred) {
-          this->handleFrontendRead(err, bytes_transferred);
-        });
+        [this](const boost::system::error_code& err, std::size_t bytes_transferred)
+        { this->handleFrontendRead(err, bytes_transferred); });
   }
   catch (...)
   {
@@ -284,14 +283,13 @@ void Engine::startServiceDiscovery()
     itsSocket.async_receive_from(
         boost::asio::buffer(itsReceiveBuffer),
         itsRemoteEnd,
-        [this](const boost::system::error_code& err, std::size_t bytes_transferred) {
-          this->handleFrontendRead(err, bytes_transferred);
-        });
+        [this](const boost::system::error_code& err, std::size_t bytes_transferred)
+        { this->handleFrontendRead(err, bytes_transferred); });
 
     // Reset the response deadline timer
     itsResponseDeadlineTimer.expires_from_now(boost::posix_time::seconds(itsHeartBeatTimeout));
-    itsResponseDeadlineTimer.async_wait(
-        [this](const boost::system::error_code& err) { this->handleDeadlineTimer(err); });
+    itsResponseDeadlineTimer.async_wait([this](const boost::system::error_code& err)
+                                        { this->handleDeadlineTimer(err); });
   }
   catch (...)
   {
@@ -306,9 +304,8 @@ void Engine::startListening()
     itsSocket.async_receive_from(
         boost::asio::buffer(itsReceiveBuffer),
         itsRemoteEnd,
-        [this](const boost::system::error_code& err, std::size_t bytes_transferred) {
-          this->handleBackendRead(err, bytes_transferred);
-        });
+        [this](const boost::system::error_code& err, std::size_t bytes_transferred)
+        { this->handleBackendRead(err, bytes_transferred); });
   }
   catch (...)
   {
@@ -320,7 +317,7 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
 {
   try
   {
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     if (e)
@@ -351,7 +348,7 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
       SmartMet::BroadcastMessage message;
       message.ParseFromString(receiveBuffer);
 
-      if (itsShutdownRequested)
+      if (Spine::Reactor::isShuttingDown())
         return;
 
       // Call the Reply processing function
