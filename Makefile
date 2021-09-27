@@ -2,7 +2,7 @@ SUBNAME = sputnik
 SPEC = smartmet-engine-$(SUBNAME)
 INCDIR = smartmet/engines/$(SUBNAME)
 
-REQUIRES =
+REQUIRES = configpp
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
