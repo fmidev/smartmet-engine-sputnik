@@ -380,6 +380,8 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
 
 void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
 {
+  using namespace boost::placeholders;
+
   try
   {
     // Save reactor instance permanently for callbacks
