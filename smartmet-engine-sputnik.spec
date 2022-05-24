@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 21.9.27
+Version: 22.5.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -14,14 +14,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: smartmet-library-spine-devel >= 21.8.30
+BuildRequires: smartmet-library-spine-devel >= 22.5.24
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 21.8.30
+BuildRequires: smartmet-library-macgyver-devel >= 22.5.24
 Requires: protobuf
-Requires: smartmet-server >= 21.6.3
-Requires: smartmet-library-spine >= 21.8.30
-Requires: smartmet-library-macgyver >= 21.8.30
+Requires: smartmet-server >= 22.5.16
+Requires: smartmet-library-spine >= 22.5.24
+Requires: smartmet-library-macgyver >= 22.5.24
 Requires: boost169-date-time
 Requires: boost169-system
 Requires: boost169-thread
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Tue May 24 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.24-1.fmi
+- Repackaged due to NFmiArea ABI changes
+
 * Mon Sep 27 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.9.27-1.fmi
 - Repackage due to dependency change (libgonfig++)
 
