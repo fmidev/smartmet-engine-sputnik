@@ -104,6 +104,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
         theService->set_uri(handler.first);
         theService->set_lastupdate(0);
         theService->set_allowcache(false);
+        theService->set_is_prefix(itsReactor->isURIPrefix(handler.first));
       }
     }
 
@@ -178,6 +179,7 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
     for (int i = 0; i < theMessage.services_size(); i++)
     {
       const auto& service = theMessage.services(i);
+      const bool is_prefix = service.has_is_prefix() && service.is_prefix();
       BackendServicePtr theService(new BackendService(theServer,
                                                       service.uri(),
                                                       service.lastupdate(),
@@ -188,7 +190,8 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
       itsServices.addService(theService,
                              service.uri(),
                              host.load(),
-                             boost::numeric_cast<unsigned int>(host.throttle()));
+                             boost::numeric_cast<unsigned int>(host.throttle()),
+                             is_prefix);
 
       // Generate a unique URI to allow using only this particular host.
       std::string itsDirectURI;
@@ -200,7 +203,8 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
       itsServices.addService(theService,
                              itsDirectURI,
                              host.load(),
-                             boost::numeric_cast<unsigned int>(host.throttle()));
+                             boost::numeric_cast<unsigned int>(host.throttle()),
+                             is_prefix);
     }
 
     // We have received a valid response, increment the counter
