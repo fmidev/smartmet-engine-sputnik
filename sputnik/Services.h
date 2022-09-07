@@ -4,6 +4,7 @@
 #include "BackendSentinel.h"
 #include "BackendServer.h"
 #include "BackendService.h"
+#include "URIPrefixMap.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -50,6 +51,9 @@ class Services
   // Map contain lists of BackendService lists associated with URI
   ServiceURIMap itsServicesByURI;
 
+  // Map contain mapping of URI prefixes to backends
+  URIPrefixMap itsPrefixMap;
+
   mutable SmartMet::Spine::MutexType itsSentinelMutex;  // This guards the sentinel map
 
   SentinelMap itsSentinels;
@@ -65,7 +69,8 @@ class Services
   bool addService(const BackendServicePtr& theBackendService,
                   const std::string& theFrontEndURI,
                   float theLoad,
-                  unsigned int theThrottle);
+                  unsigned int theThrottle,
+                  bool is_prefix);
 
   bool removeBackend(const std::string& theHostname, int thePort, const std::string& theURI = "");
 

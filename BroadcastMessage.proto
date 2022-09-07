@@ -40,7 +40,7 @@ message BroadcastMessage
   required string uri = 1;	// URI of the service
   required int32 lastupdate = 2;// Unix timestamp for the last data update
   required bool allowcache = 4;	// Whether caching of this service is allowed
-
+  optional bool is_prefix = 5;  // Whether provided uri is prefix (begins with provided value)
  }
  repeated Service services = 8;
 

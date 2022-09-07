@@ -24,12 +24,13 @@ BackendServicePtr Services::getService(const std::string& theURI)
     SmartMet::Spine::ReadLock lock(itsMutex);
 
     // Check that URI map for server list
-    auto pos = itsServicesByURI.find(theURI);
+    const std::string uri_prefix = itsPrefixMap(theURI);
+    auto pos = itsServicesByURI.find(uri_prefix);
     if (pos == itsServicesByURI.end())
     {
       // Nothing for this URI found on the list. Return with error.
       std::cout << boost::posix_time::second_clock::local_time() << " Nothing known about URI "
-                << theURI << std::endl;
+                << uri_prefix << std::endl;
 
       return BackendServicePtr();
     }
@@ -75,6 +76,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
     for (auto& theURIs : itsServicesByURI)
       for (auto it = (*theURIs.second.first).begin(); it != (*theURIs.second.first).end();)
       {
+        itsPrefixMap.removeBackend(theURI, *it);
         if (((*it)->Backend()->Name() == theHostname && (*it)->Backend()->Port() == thePort) &&
             (theURI.empty() || theURI == (*it)->URI()))
         {
@@ -242,7 +244,8 @@ bool Services::latestSequence(int itsSequenceNumber)
 bool Services::addService(const BackendServicePtr& theBackendService,
                           const std::string& theFrontendURI,
                           float theLoad,
-                          unsigned int theThrottle)
+                          unsigned int theThrottle,
+                          bool is_prefix)
 {
   try
   {
@@ -259,6 +262,10 @@ bool Services::addService(const BackendServicePtr& theBackendService,
 #endif
 
     SmartMet::Spine::WriteLock lock(itsMutex);
+
+    if (is_prefix) {
+        itsPrefixMap.addPrefix(theFrontendURI, theBackendService);
+    }
 
     const auto pos = itsServicesByURI.find(theFrontendURI);
     if (pos != itsServicesByURI.end())
@@ -335,7 +342,7 @@ boost::shared_ptr<SmartMet::Spine::Table> Services::backends(const std::string& 
 
     boost::shared_ptr<SmartMet::Spine::Table> ret(new SmartMet::Spine::Table());
 
-    std::string serviceuri = "/" + service;
+    std::string serviceuri = "/" + itsPrefixMap(service);
 
     // List all backends with matching URI
 
@@ -374,7 +381,7 @@ Services::BackendList Services::getBackendList(const std::string& service) const
   {
     SmartMet::Spine::ReadLock lock(itsMutex);
 
-    std::string serviceuri = "/" + service;
+    std::string serviceuri = "/" + itsPrefixMap(service);
 
     // List all backends with matching URI
 
