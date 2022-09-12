@@ -55,7 +55,6 @@ void URIPrefixMap::removeBackend(const BackendServicePtr& backendService)
 
 std::string URIPrefixMap::operator () (const std::string& uri) const
 {
-    std::cout << "URI=" << uri << std::endl;
     std::unique_lock<std::mutex> lock(mutex);
     for (const auto& curr : prefixMap) {
         if (ba::starts_with(uri, curr.first)) {
