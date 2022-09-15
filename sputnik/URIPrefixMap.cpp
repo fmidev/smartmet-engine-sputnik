@@ -11,7 +11,7 @@ void URIPrefixMap::addPrefix(const std::string& prefix, const BackendServicePtr&
 {
     const auto backend_ptr = backendService->Backend();
     const std::string host_port = backend_ptr->Name() + ":" + std::to_string(backend_ptr->Port());
-#if 1 or defined(MYDEBUG)
+#if defined(MYDEBUG)
     std::cout << boost::posix_time::second_clock::local_time() << " Add prefix '" << prefix
               << " for '" << host_port << std::endl;
 #endif
@@ -23,7 +23,7 @@ void URIPrefixMap::removeBackend(const std::string& prefix, const BackendService
 {
     const auto backend_ptr = backendService->Backend();
     const std::string host_port = backend_ptr->Name() + ":" + std::to_string(backend_ptr->Port());
-#if 1 or defined(MYDEBUG)
+#if defined(MYDEBUG)
     std::cout << boost::posix_time::second_clock::local_time() << " Remove prefix '" << prefix
               << " from '" << host_port << std::endl;
 #endif
