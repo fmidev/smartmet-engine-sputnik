@@ -1,4 +1,5 @@
 #include "BackendForwarder.h"
+#include <algorithm>
 #include <macgyver/Exception.h>
 
 namespace SmartMet
@@ -74,21 +75,16 @@ void BackendForwarder::removeBackend(const std::string& hostName,
   {
     SmartMet::Spine::WriteLock lock(itsMutex);
 
-    for (auto it = itsBackendInfos.begin(); it != itsBackendInfos.end();)
-    {
-      if (it->hostName == hostName && it->port == port)
-      {
-#ifdef MYDEBUG
-        std::cout << "BackendForwarder removing backend " << hostName << ":" << port << std::endl;
-#endif
-
-        // Remove just one backend with this name. There may be duplicates
-        itsBackendInfos.erase(it);
-        break;
-      }
-
-      ++it;
-    }
+    itsBackendInfos.erase(
+      std::remove_copy_if(
+        itsBackendInfos.begin(),
+        itsBackendInfos.end(),
+        itsBackendInfos.begin(),
+        [&hostName, port](const BackendInfo& info) -> bool
+	{
+	  return info.hostName == hostName && info.port == port;
+	}),
+      itsBackendInfos.end());
 
     this->redistribute(theReactor);
   }
