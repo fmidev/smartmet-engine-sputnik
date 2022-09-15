@@ -23,12 +23,12 @@ void URIPrefixMap::removeBackend(const std::string& prefix, const BackendService
 {
     const auto backend_ptr = backendService->Backend();
     const std::string host_port = backend_ptr->Name() + ":" + std::to_string(backend_ptr->Port());
-    decltype(prefixMap)::iterator curr = prefixMap.find(prefix);
 #if 1 or defined(MYDEBUG)
     std::cout << boost::posix_time::second_clock::local_time() << " Remove prefix '" << prefix
               << " from '" << host_port << std::endl;
 #endif
     std::unique_lock<std::mutex> lock(mutex);
+    decltype(prefixMap)::iterator curr = prefixMap.find(prefix);
     if (curr != prefixMap.end()) {
         curr->second.erase(host_port);
     }
