@@ -49,9 +49,9 @@ void URIPrefixMap::removeBackend(const std::string& prefix, const BackendService
             std::cout << "URIPrefixMap::removeBackend: prefix=" << prefix
                       << " id=" << id << " : failed to remove (not found)" << std::endl;
         }
-    }
-    if (curr->second.empty()) {
-        prefixMap.erase(curr);
+        if (curr->second.empty()) {
+            prefixMap.erase(curr);
+        }
     }
 }
 
