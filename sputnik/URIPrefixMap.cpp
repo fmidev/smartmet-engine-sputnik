@@ -60,7 +60,7 @@ std::string URIPrefixMap::operator () (const std::string& uri) const
     std::unique_lock<std::mutex> lock(mutex);
     for (const auto& curr : prefixMap) {
         if (ba::starts_with(uri, curr.first)) {
-#if 1 or defined(MYDEBUG)
+#if defined(MYDEBUG)
             std::cout << boost::posix_time::second_clock::local_time() << "Translated URI '" << uri
                       << "' to prefix '" << curr.first << std::endl;
 #endif
