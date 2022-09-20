@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 22.9.15
+Version: 22.9.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Tue Sep 20 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.9.20-1.fmi
+- Fix URI prefix support
+
 * Thu Sep 15 2022 Andris Pavenis <andris.pavenis@fmi.fi> 22.9.15-1.fmi
 - Fix crash in Services::removeBackend
 
