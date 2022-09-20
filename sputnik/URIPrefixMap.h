@@ -18,7 +18,6 @@ namespace SmartMet
 
     void addPrefix(const std::string& prefix, const BackendServicePtr& backendService);
     void removeBackend(const std::string& prefix, const BackendServicePtr& backend);
-    void removeBackend(const BackendServicePtr& backend);
 
     std::string operator () (const std::string& uri) const;
 

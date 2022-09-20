@@ -37,22 +37,6 @@ void URIPrefixMap::removeBackend(const std::string& prefix, const BackendService
     }
 }
 
-void URIPrefixMap::removeBackend(const BackendServicePtr& backendService)
-{
-    const auto backend_ptr = backendService->Backend();
-    const std::string host_port = backend_ptr->Name() + ":" + std::to_string(backend_ptr->Port());
-    decltype(prefixMap)::iterator curr, next;
-    std::unique_lock<std::mutex> lock(mutex);
-    for (curr = prefixMap.begin(); curr != prefixMap.end(); curr = next) {
-        next = curr;
-        ++next;
-        curr->second.erase(host_port);
-        if (curr->second.empty()) {
-            prefixMap.erase(curr);
-        }
-    }
-}
-
 std::string URIPrefixMap::operator () (const std::string& uri) const
 {
     std::unique_lock<std::mutex> lock(mutex);
