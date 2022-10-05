@@ -63,7 +63,7 @@ class Services
   float itsBalancingCoefficient;
 
   // Service accessing methods
-  BackendServicePtr getService(const std::string& theURI);
+  BackendServicePtr getService(const Spine::HTTP::Request& theRequest);
 
   // Service management methods
   bool addService(const BackendServicePtr& theBackendService,

@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 22.9.20
+Version: 22.10.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -21,14 +21,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 22.6.16
+BuildRequires: smartmet-library-spine-devel >= 22.9.5
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 22.6.16
+BuildRequires: smartmet-library-macgyver-devel >= 22.8.23
 Requires: protobuf
-Requires: smartmet-server >= 22.5.16
-Requires: smartmet-library-spine >= 22.6.16
-Requires: smartmet-library-macgyver >= 22.6.16
+Requires: smartmet-server >= 22.8.19
+Requires: smartmet-library-spine >= 22.9.5
+Requires: smartmet-library-macgyver >= 22.8.23
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Wed Oct  5 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.10.5-1.fmi
+- Add client IP to error reports on strange URI requests
+
 * Tue Sep 20 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.9.20-1.fmi
 - Fix URI prefix support
 

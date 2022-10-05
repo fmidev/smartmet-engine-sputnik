@@ -17,19 +17,22 @@
 
 namespace SmartMet
 {
-BackendServicePtr Services::getService(const std::string& theURI)
+BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
 {
   try
   {
+    const auto uri = theRequest.getResource();
+
     SmartMet::Spine::ReadLock lock(itsMutex);
 
     // Check that URI map for server list
-    const std::string uri_prefix = itsPrefixMap(theURI);
+    const std::string uri_prefix = itsPrefixMap(uri);
     auto pos = itsServicesByURI.find(uri_prefix);
     if (pos == itsServicesByURI.end())
     {
       // Nothing for this URI found on the list. Return with error.
-      std::cout << boost::posix_time::second_clock::local_time() << " Nothing known about URI "
+      std::cout << boost::posix_time::second_clock::local_time()
+                << " Nothing known about URI requested by " << theRequest.getClientIP() << " : "
                 << uri_prefix << std::endl;
 
       return BackendServicePtr();
@@ -43,7 +46,7 @@ BackendServicePtr Services::getService(const std::string& theURI)
     {
       // Nothing for this URI found. Return with error.
       std::cout << boost::posix_time::second_clock::local_time()
-                << " Backend server list empty for URI " << theURI << std::endl;
+                << " Backend server list empty for URI " << uri << std::endl;
 
       return BackendServicePtr();
     }
@@ -263,8 +266,9 @@ bool Services::addService(const BackendServicePtr& theBackendService,
 
     SmartMet::Spine::WriteLock lock(itsMutex);
 
-    if (is_prefix) {
-        itsPrefixMap.addPrefix(theFrontendURI, theBackendService);
+    if (is_prefix)
+    {
+      itsPrefixMap.addPrefix(theFrontendURI, theBackendService);
     }
 
     const auto pos = itsServicesByURI.find(theFrontendURI);
