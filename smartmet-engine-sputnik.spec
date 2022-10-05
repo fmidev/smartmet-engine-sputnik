@@ -4,7 +4,7 @@
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
 Version: 22.10.5
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
 URL: https://github.com/fmidev/smartmet-engine-sputnik
@@ -26,7 +26,7 @@ BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
 BuildRequires: smartmet-library-macgyver-devel >= 22.8.23
 Requires: protobuf
-Requires: smartmet-server >= 22.8.19
+Requires: smartmet-server >= 22.10.5
 Requires: smartmet-library-spine >= 22.9.5
 Requires: smartmet-library-macgyver >= 22.8.23
 Requires: %{smartmet_boost}-date-time
@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Wed Oct  5 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.10.5-2.fmi
+- Do not use boost::noncopyable
+
 * Wed Oct  5 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.10.5-1.fmi
 - Add client IP to error reports on strange URI requests
 

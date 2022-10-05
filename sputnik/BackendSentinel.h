@@ -1,14 +1,16 @@
 
 #pragma once
 
-#include <boost/noncopyable.hpp>
 #include <spine/Thread.h>
 
 namespace SmartMet
 {
-class BackendSentinel : virtual boost::noncopyable
+class BackendSentinel
 {
  public:
+  BackendSentinel() = delete;
+  BackendSentinel(const BackendSentinel& other) = delete;
+  BackendSentinel& operator=(const BackendSentinel& other) = delete;
   BackendSentinel(unsigned int theThrottle);
 
   ~BackendSentinel();

@@ -8,7 +8,6 @@
  */
 
 #include "BackendInfo.h"
-#include <boost/noncopyable.hpp>
 #include <boost/random/discrete_distribution.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/taus88.hpp>
@@ -27,9 +26,13 @@ namespace SmartMet
  * to access the Forwarder.
  */
 
-class BackendForwarder : public boost::noncopyable
+class BackendForwarder
 {
  public:
+  BackendForwarder() = delete;
+  BackendForwarder(const BackendForwarder& other) = delete;
+  BackendForwarder& operator=(const BackendForwarder& other) = delete;
+
   /*! \brief Constructor
    *
    * Construct the Forwarder.
