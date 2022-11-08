@@ -184,14 +184,14 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
                                                       service.uri(),
                                                       service.lastupdate(),
                                                       service.allowcache(),
-                                                      theMessage.seqnum()));
+                                                      theMessage.seqnum(),
+                                                      is_prefix));
 
       // Add this BackendService to the list of Services
       itsServices.addService(theService,
                              service.uri(),
                              host.load(),
-                             boost::numeric_cast<unsigned int>(host.throttle()),
-                             is_prefix);
+                             boost::numeric_cast<unsigned int>(host.throttle()));
 
       // Generate a unique URI to allow using only this particular host.
       std::string itsDirectURI;
@@ -203,8 +203,7 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
       itsServices.addService(theService,
                              itsDirectURI,
                              host.load(),
-                             boost::numeric_cast<unsigned int>(host.throttle()),
-                             is_prefix);
+                             boost::numeric_cast<unsigned int>(host.throttle()));
     }
 
     // We have received a valid response, increment the counter

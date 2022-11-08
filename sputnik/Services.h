@@ -69,8 +69,7 @@ class Services
   bool addService(const BackendServicePtr& theBackendService,
                   const std::string& theFrontEndURI,
                   float theLoad,
-                  unsigned int theThrottle,
-                  bool is_prefix);
+                  unsigned int theThrottle);
 
   bool removeBackend(const std::string& theHostname, int thePort, const std::string& theURI = "");
 

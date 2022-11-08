@@ -247,8 +247,7 @@ bool Services::latestSequence(int itsSequenceNumber)
 bool Services::addService(const BackendServicePtr& theBackendService,
                           const std::string& theFrontendURI,
                           float theLoad,
-                          unsigned int theThrottle,
-                          bool is_prefix)
+                          unsigned int theThrottle)
 {
   try
   {
@@ -266,7 +265,7 @@ bool Services::addService(const BackendServicePtr& theBackendService,
 
     SmartMet::Spine::WriteLock lock(itsMutex);
 
-    if (is_prefix)
+    if (theBackendService->DefinesPrefix())
     {
       itsPrefixMap.addPrefix(theFrontendURI, theBackendService);
     }

@@ -22,6 +22,7 @@ class BackendService
   int itsLastUpdate;
   bool itsAllowCache;
   int itsSequenceNumber;
+  bool definesPrefix;
 
  public:
   // Methods to read Service entry parameters
@@ -30,6 +31,7 @@ class BackendService
   int LastUpdate() { return itsLastUpdate; }
   bool AllowCache() { return itsAllowCache; }
   int SequenceNumber() { return itsSequenceNumber; }
+  bool DefinesPrefix() { return definesPrefix; }
   // Method to set some Service entry parameters
   void setLastUpdate(int theLastUpdate) { itsLastUpdate = theLastUpdate; }
   void setAllowCache(bool theAllowCache) { itsAllowCache = theAllowCache; }
@@ -38,12 +40,14 @@ class BackendService
                  std::string theURI,
                  int theLastUpdate,
                  bool theAllowCache,
-                 int theSequenceNumber)
+                 int theSequenceNumber,
+                 int definesPrefix)
       : itsBackendServer(theBackendServer),
         itsURI(theURI),
         itsLastUpdate(theLastUpdate),
         itsAllowCache(theAllowCache),
-        itsSequenceNumber(theSequenceNumber)
+        itsSequenceNumber(theSequenceNumber),
+        definesPrefix(definesPrefix)
   {
   }
 
