@@ -8,6 +8,7 @@
 #include <spine/Convenience.h>
 #include <spine/Reactor.h>
 #include <iostream>
+#include <memory>
 
 namespace SmartMet
 {
@@ -414,7 +415,7 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
     }
 
     // Fire the thread to process async handlers
-    itsAsyncThread = boost::make_shared<boost::thread>([this]() { this->itsIoService.run(); });
+    itsAsyncThread = std::make_shared<boost::thread>([this]() { this->itsIoService.run(); });
   }
   catch (...)
   {
@@ -526,7 +527,7 @@ void Engine::setBackendAlive(const std::string& theHostName,
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<SmartMet::Spine::Table> Engine::backends(const std::string& service) const
+std::shared_ptr<SmartMet::Spine::Table> Engine::backends(const std::string& service) const
 {
   try
   {

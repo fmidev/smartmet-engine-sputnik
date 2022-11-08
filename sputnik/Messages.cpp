@@ -180,12 +180,13 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
     {
       const auto& service = theMessage.services(i);
       const bool is_prefix = service.has_is_prefix() && service.is_prefix();
-      BackendServicePtr theService(new BackendService(theServer,
-                                                      service.uri(),
-                                                      service.lastupdate(),
-                                                      service.allowcache(),
-                                                      theMessage.seqnum(),
-                                                      is_prefix));
+      BackendServicePtr theService =
+          std::make_shared<BackendService>(theServer,
+                                           service.uri(),
+                                           service.lastupdate(),
+                                           service.allowcache(),
+                                           theMessage.seqnum(),
+                                           is_prefix);
 
       // Add this BackendService to the list of Services
       itsServices.addService(theService,

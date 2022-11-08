@@ -314,13 +314,13 @@ bool Services::addService(const BackendServicePtr& theBackendService,
     auto it = itsSentinels.find(sname);
     if (it == itsSentinels.end())
     {
-      itsSentinels.insert(std::make_pair(sname, boost::make_shared<BackendSentinel>(theThrottle)));
+      itsSentinels.insert(std::make_pair(sname, std::make_shared<BackendSentinel>(theThrottle)));
     }
     else
     {
       // Make a new sentinel, updating the throttle value
       itsSentinels.erase(it);
-      itsSentinels.insert(std::make_pair(sname, boost::make_shared<BackendSentinel>(theThrottle)));
+      itsSentinels.insert(std::make_pair(sname, std::make_shared<BackendSentinel>(theThrottle)));
     }
 
     return true;
@@ -337,13 +337,14 @@ bool Services::addService(const BackendServicePtr& theBackendService,
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<SmartMet::Spine::Table> Services::backends(const std::string& service) const
+std::shared_ptr<SmartMet::Spine::Table> Services::backends(const std::string& service) const
 {
   try
   {
     SmartMet::Spine::ReadLock lock(itsMutex);
 
-    boost::shared_ptr<SmartMet::Spine::Table> ret(new SmartMet::Spine::Table());
+    std::shared_ptr<SmartMet::Spine::Table> ret =
+        std::make_shared<SmartMet::Spine::Table>();
 
     std::string serviceuri = "/" + itsPrefixMap(service);
 

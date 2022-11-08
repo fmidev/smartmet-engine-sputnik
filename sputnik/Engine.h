@@ -13,6 +13,7 @@
 #include <spine/SmartMetEngine.h>
 #include <spine/Thread.h>
 #include <iostream>
+#include <memory>
 #include <string>
 
 namespace SmartMet
@@ -112,7 +113,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   boost::array<char, 8192> itsReceiveBuffer;  ///< Buffer for incoming UDP messages
 
-  boost::shared_ptr<boost::thread> itsAsyncThread;  ///< Async thread for the IO Service.
+  std::shared_ptr<boost::thread> itsAsyncThread;  ///< Async thread for the IO Service.
 
   boost::asio::deadline_timer itsResponseDeadlineTimer;  ///< Timer to handle the deadline of
                                                          /// backend responses
@@ -208,7 +209,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
                        SmartMet::Spine::HTTP::ContentStreamer::StreamerStatus theStatus);
 
   void status(std::ostream& out) const;
-  boost::shared_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
+  std::shared_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
   Services::BackendList getBackendList(const std::string& service = "") const;
 
   std::string URI() const;

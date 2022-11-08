@@ -8,7 +8,7 @@
 
 namespace SmartMet
 {
-  using BackendServicePtr = boost::shared_ptr<BackendService>;
+  using BackendServicePtr = std::shared_ptr<BackendService>;
 
   class URIPrefixMap
   {

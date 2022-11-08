@@ -1,13 +1,13 @@
 #pragma once
 
 #include "BackendServer.h"
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <spine/Reactor.h>
 #include <spine/Thread.h>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <vector>
 
@@ -17,7 +17,7 @@ class BackendService
 {
  private:
   // Private data members
-  const boost::shared_ptr<BackendServer> itsBackendServer;
+  const std::shared_ptr<BackendServer> itsBackendServer;
   std::string itsURI;
   int itsLastUpdate;
   bool itsAllowCache;
@@ -26,7 +26,7 @@ class BackendService
 
  public:
   // Methods to read Service entry parameters
-  boost::shared_ptr<BackendServer> Backend() { return itsBackendServer; }
+  std::shared_ptr<BackendServer> Backend() { return itsBackendServer; }
   std::string& URI() { return itsURI; }
   int LastUpdate() { return itsLastUpdate; }
   bool AllowCache() { return itsAllowCache; }
@@ -36,7 +36,7 @@ class BackendService
   void setLastUpdate(int theLastUpdate) { itsLastUpdate = theLastUpdate; }
   void setAllowCache(bool theAllowCache) { itsAllowCache = theAllowCache; }
   // Constructors
-  BackendService(boost::shared_ptr<BackendServer> theBackendServer,
+  BackendService(std::shared_ptr<BackendServer> theBackendServer,
                  std::string theURI,
                  int theLastUpdate,
                  bool theAllowCache,

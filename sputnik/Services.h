@@ -5,13 +5,13 @@
 #include "BackendServer.h"
 #include "BackendService.h"
 #include "URIPrefixMap.h"
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <spine/Reactor.h>
 #include <spine/Thread.h>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <vector>
 
@@ -22,8 +22,8 @@ namespace Spine
 class Table;
 }
 
-using BackendServicePtr = boost::shared_ptr<BackendService>;
-using BackendServerPtr = boost::shared_ptr<BackendServer>;
+using BackendServicePtr = std::shared_ptr<BackendService>;
+using BackendServerPtr = std::shared_ptr<BackendServer>;
 
 class Services
 {
@@ -33,8 +33,8 @@ class Services
 
  public:
   using BackendServiceList = std::vector<BackendServicePtr>;
-  using BackendServiceListPtr = boost::shared_ptr<BackendServiceList>;
-  using SentinelMap = std::map<std::string, boost::shared_ptr<BackendSentinel> >;
+  using BackendServiceListPtr = std::shared_ptr<BackendServiceList>;
+  using SentinelMap = std::map<std::string, std::shared_ptr<BackendSentinel> >;
   using ServiceURIMap =
       std::map<std::string, std::pair<BackendServiceListPtr, BackendForwarderPtr> >;
 
@@ -89,7 +89,7 @@ class Services
   // Destructor
   ~Services() = default;
   void status(std::ostream& out) const;
-  boost::shared_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
+  std::shared_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
   BackendList getBackendList(const std::string& service = "") const;
 
   void setReactor(Spine::Reactor& theReactor);
