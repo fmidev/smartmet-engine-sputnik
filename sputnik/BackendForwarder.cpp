@@ -1,6 +1,6 @@
 #include "BackendForwarder.h"
-#include <algorithm>
 #include <macgyver/Exception.h>
+#include <algorithm>
 
 namespace SmartMet
 {
@@ -75,16 +75,19 @@ void BackendForwarder::removeBackend(const std::string& hostName,
   {
     SmartMet::Spine::WriteLock lock(itsMutex);
 
-    itsBackendInfos.erase(
-      std::remove_copy_if(
-        itsBackendInfos.begin(),
-        itsBackendInfos.end(),
-        itsBackendInfos.begin(),
-        [&hostName, port](const BackendInfo& info) -> bool
-	{
-	  return info.hostName == hostName && info.port == port;
-	}),
-      itsBackendInfos.end());
+    // Seems to me this code works incorrectly. It should remove the host from the previous
+    // cycle only. If the host was not present then, the code will remove the host from
+    // the current cycle. Hence the host will activate only after two cycles. - Mika
+
+    for (auto it = itsBackendInfos.begin(); it != itsBackendInfos.end(); ++it)
+    {
+      if (it->hostName == hostName && it->port == port)
+      {
+        // Remove just one backend with this name. There may be duplicates
+        itsBackendInfos.erase(it);
+        break;
+      }
+    }
 
     this->redistribute(theReactor);
   }
