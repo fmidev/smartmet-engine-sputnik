@@ -43,7 +43,8 @@ class Services
     Random,
     InverseLoad,
     InverseConnections,
-    LeastConnections
+    LeastConnections,
+    DoubleRandom
   };
 
   typedef std::list<boost::tuple<std::string, std::string, int> > BackendList;

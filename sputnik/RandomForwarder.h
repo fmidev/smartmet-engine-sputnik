@@ -20,8 +20,7 @@ class RandomForwarder : public BackendForwarder
 
   ~RandomForwarder() override;
 
- private:
-  void redistribute(Spine::Reactor& theReactor) override;
+  std::size_t getBackend(Spine::Reactor& theReactor) override;
 };
 
 using BackendForwarderPtr = boost::shared_ptr<BackendForwarder>;

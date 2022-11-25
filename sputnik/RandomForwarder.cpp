@@ -7,37 +7,16 @@ RandomForwarder::~RandomForwarder() = default;
 
 RandomForwarder::RandomForwarder() : BackendForwarder(0.0) {}
 
-void RandomForwarder::redistribute(Spine::Reactor& /* theReactor */)
+std::size_t RandomForwarder::getBackend(Spine::Reactor& theReactor)
 {
   try
   {
-    std::vector<float> probVec;
-    probVec.reserve(itsBackendInfos.size());
-
-    for (unsigned i = 0; i < itsBackendInfos.size(); ++i)
-    {
-      probVec.push_back(1);
-    }
-
-    float sum = std::accumulate(probVec.begin(), probVec.end(), 0.0F);
-
-    for (auto& prob : probVec)
-      prob /= sum;
-
-    // #ifndef NDEBUG
-    // 	if (!itsBackendInfos.empty())
-    // 	  {
-    // 		std::cout << "Redistributing backend probabilities: ";
-    // 		for(const auto & prob : probVec)
-    // 		  {
-    // 			std::cout << prob << " ";
-    // 		  }
-    // 		std::cout << std::endl << std::endl;
-    // 	  }
-    // #endif
-
-    boost::random::discrete_distribution<> theDistribution(probVec);
-    itsDistribution = theDistribution;
+    SmartMet::Spine::WriteLock lock(itsMutex);
+    if (itsBackendInfos.empty())
+      throw Fmi::Exception(BCP, "No backends available!");
+    auto maxnum = static_cast<int>(itsBackendInfos.size() - 1);
+    boost::random::uniform_int_distribution<> dist{0, maxnum};
+    return boost::numeric_cast<std::size_t>(dist(itsGenerator));
   }
   catch (...)
   {

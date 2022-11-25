@@ -1,4 +1,5 @@
 #include "Services.h"
+#include "DoubleRandomForwarder.h"
 #include "InverseConnectionsForwarder.h"
 #include "InverseLoadForwarder.h"
 #include "LeastConnectionsForwarder.h"
@@ -287,15 +288,25 @@ bool Services::addService(const BackendServicePtr& theBackendService,
       newlist->push_back(theBackendService);
 
       BackendForwarderPtr theForwarder;
-      if (itsFwdMode == ForwardingMode::InverseLoad)
-        theForwarder = BackendForwarderPtr(new InverseLoadForwarder(itsBalancingCoefficient));
-      else if (itsFwdMode == ForwardingMode::Random)
-        theForwarder = BackendForwarderPtr(new RandomForwarder);
-      else if (itsFwdMode == ForwardingMode::LeastConnections)
-        theForwarder = BackendForwarderPtr(new LeastConnectionsForwarder);
-      else if (itsFwdMode == ForwardingMode::InverseConnections)
-        theForwarder =
-            BackendForwarderPtr(new InverseConnectionsForwarder(itsBalancingCoefficient));
+      switch (itsFwdMode)
+      {
+        case ForwardingMode::InverseLoad:
+          theForwarder = BackendForwarderPtr(new InverseLoadForwarder(itsBalancingCoefficient));
+          break;
+        case ForwardingMode::Random:
+          theForwarder = BackendForwarderPtr(new RandomForwarder);
+          break;
+        case ForwardingMode::DoubleRandom:
+          theForwarder = BackendForwarderPtr(new DoubleRandomForwarder);
+          break;
+        case ForwardingMode::LeastConnections:
+          theForwarder = BackendForwarderPtr(new LeastConnectionsForwarder);
+          break;
+        case ForwardingMode::InverseConnections:
+          theForwarder =
+              BackendForwarderPtr(new InverseConnectionsForwarder(itsBalancingCoefficient));
+          break;
+      }
 
       theForwarder->addBackend(theBackendService->Backend()->Name(),
                                theBackendService->Backend()->Port(),
@@ -343,8 +354,7 @@ std::shared_ptr<SmartMet::Spine::Table> Services::backends(const std::string& se
   {
     SmartMet::Spine::ReadLock lock(itsMutex);
 
-    std::shared_ptr<SmartMet::Spine::Table> ret =
-        std::make_shared<SmartMet::Spine::Table>();
+    std::shared_ptr<SmartMet::Spine::Table> ret = std::make_shared<SmartMet::Spine::Table>();
 
     std::string serviceuri = "/" + itsPrefixMap(service);
 
@@ -454,6 +464,8 @@ void Services::setForwarding(const std::string& theMode, float balancingCoeffici
       itsFwdMode = ForwardingMode::InverseLoad;
     else if (theMode == "random")
       itsFwdMode = ForwardingMode::Random;
+    else if (theMode == "doublerandom")
+      itsFwdMode = ForwardingMode::DoubleRandom;
     else if (theMode == "inverseconnections")
       itsFwdMode = ForwardingMode::InverseConnections;
     else if (theMode == "leastconnections")

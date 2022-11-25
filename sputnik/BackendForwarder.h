@@ -48,7 +48,7 @@ class BackendForwarder
    * using the underlying balancing algorithm.
    */
 
-  std::size_t getBackend(Spine::Reactor& theReactor);
+  virtual std::size_t getBackend(Spine::Reactor& theReactor);
 
   /*! \brief Set the internal backend list explicitly
    *
@@ -83,11 +83,9 @@ class BackendForwarder
   /*! \brief Redistributes the internal forwarding probabilities
    *
    * This is called whenever the interal backend list changes.
-   * This method must be overrided in the actual
-   * Forwader implementations.
    */
 
-  virtual void redistribute(Spine::Reactor& theReactor) = 0;
+  virtual void redistribute(Spine::Reactor& theReactor){};
 
   /*! \brief Redistributes the internal forwarding probabilities
    *
