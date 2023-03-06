@@ -19,9 +19,14 @@ class LeastConnectionsForwarder : public BackendForwarder
 
   ~LeastConnectionsForwarder() override;
 
+  LeastConnectionsForwarder(const LeastConnectionsForwarder& other) = delete;
+  LeastConnectionsForwarder& operator=(const LeastConnectionsForwarder& other) = delete;
+  LeastConnectionsForwarder(LeastConnectionsForwarder&& other) = delete;
+  LeastConnectionsForwarder& operator=(LeastConnectionsForwarder&& other) = delete;
+
  private:
   void redistribute(Spine::Reactor& theReactor) override;
-  void rebalance(Spine::Reactor& theReactor);
+  void rebalance(Spine::Reactor& theReactor) override;
 };
 
 }  // namespace SmartMet

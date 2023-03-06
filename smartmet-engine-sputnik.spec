@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 22.11.25
+Version: 23.3.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -21,14 +21,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 22.11.24
+BuildRequires: smartmet-library-spine-devel >= 23.2.27
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
+BuildRequires: smartmet-library-macgyver-devel >= 23.3.3
 Requires: protobuf
-Requires: smartmet-server >= 22.11.7
-Requires: smartmet-library-spine >= 22.11.24
-Requires: smartmet-library-macgyver >= 22.10.20
+Requires: smartmet-server >= 23.2.1
+Requires: smartmet-library-spine >= 23.2.27
+Requires: smartmet-library-macgyver >= 23.3.3
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Mon Mar  6 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.3.6-1.fmi
+- Silenced CodeChecker warnings
+
 * Fri Nov 25 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.25-1.fmi
 - Simplified RandomForwarder code
 - Added DoubleRandomForwarder

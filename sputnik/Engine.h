@@ -49,7 +49,6 @@ class Engine : public SmartMet::Spine::SmartMetEngine
    *
    * Constructs the engine. Sets up the broadcasting endpoint.
    */
-  Engine();
 
   /** \brief Sets up Broadcast for backend mode operation
    *
@@ -129,6 +128,13 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   void shutdown() override;
 
  public:
+  Engine() = delete;
+
+  Engine(const Engine& other) = delete;
+  Engine& operator=(const Engine& other) = delete;
+  Engine(Engine&& other) = delete;
+  Engine& operator=(Engine&& other) = delete;
+
   /** \brief Destructor
    *
    */

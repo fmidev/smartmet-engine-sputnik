@@ -8,12 +8,14 @@ namespace SmartMet
 class BackendSentinel
 {
  public:
+  ~BackendSentinel();
+  BackendSentinel(unsigned int theThrottle);
+
   BackendSentinel() = delete;
   BackendSentinel(const BackendSentinel& other) = delete;
   BackendSentinel& operator=(const BackendSentinel& other) = delete;
-  BackendSentinel(unsigned int theThrottle);
-
-  ~BackendSentinel();
+  BackendSentinel(BackendSentinel&& other) = delete;
+  BackendSentinel& operator=(BackendSentinel&& other) = delete;
 
   /*! \brief Acknowledge the backend is responding an throttling can be reset
    *

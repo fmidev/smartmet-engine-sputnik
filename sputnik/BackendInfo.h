@@ -13,8 +13,8 @@ namespace SmartMet
  */
 struct BackendInfo
 {
-  BackendInfo(const std::string& theHostName, int thePort, float theLoad)
-      : hostName(theHostName), port(thePort), load(theLoad)
+  BackendInfo(std::string theHostName, int thePort, float theLoad)
+      : hostName(std::move(theHostName)), port(thePort), load(theLoad)
   {
   }
 

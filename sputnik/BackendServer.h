@@ -29,28 +29,33 @@ class BackendServer
   std::string& Name() { return itsName; }
   std::string& IP() { return itsIP; }
   std::string& Comment() { return itsComment; }
-  int Port() { return itsPort; }
-  float Load() { return itsLoad; }
-  unsigned int Throttle() { return itsThrottle; }
-  // Constructor
+  int Port() const { return itsPort; }
+  float Load() const { return itsLoad; }
+  unsigned int Throttle() const { return itsThrottle; }
+
+  ~BackendServer() = default;
+
   BackendServer(std::string theName,
                 std::string theIP,
                 int thePort,
                 std::string theComment,
                 float theLoad,
                 unsigned int theThrottle)
-      : itsName(theName),
-        itsIP(theIP),
+      : itsName(std::move(theName)),
+        itsIP(std::move(theIP)),
         itsPort(thePort),
-        itsComment(theComment),
+        itsComment(std::move(theComment)),
         itsLoad(theLoad),
         itsThrottle(theThrottle)
 
   {
   }
 
-  // Destructor
-  ~BackendServer() = default;
+  BackendServer() = delete;
+  BackendServer(const BackendServer& other) = delete;
+  BackendServer& operator=(const BackendServer& other) = delete;
+  BackendServer(BackendServer&& other) = delete;
+  BackendServer& operator=(BackendServer&& other) = delete;
 };
 
 }  // namespace SmartMet

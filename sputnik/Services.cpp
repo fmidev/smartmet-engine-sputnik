@@ -36,7 +36,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
                 << " Nothing known about URI requested by " << theRequest.getClientIP() << " : "
                 << uri_prefix << std::endl;
 
-      return BackendServicePtr();
+      return {};
     }
 
     // Verify that the list of Services is not empty
@@ -49,7 +49,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
       std::cout << boost::posix_time::second_clock::local_time()
                 << " Backend server list empty for URI " << uri << std::endl;
 
-      return BackendServicePtr();
+      return {};
     }
 
     // Select the BackendServer for forwarding

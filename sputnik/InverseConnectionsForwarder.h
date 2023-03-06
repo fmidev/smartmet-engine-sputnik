@@ -20,9 +20,15 @@ class InverseConnectionsForwarder : public BackendForwarder
 
   ~InverseConnectionsForwarder() override;
 
+  InverseConnectionsForwarder() = delete;
+  InverseConnectionsForwarder(const InverseConnectionsForwarder& other) = delete;
+  InverseConnectionsForwarder& operator=(const InverseConnectionsForwarder& other) = delete;
+  InverseConnectionsForwarder(InverseConnectionsForwarder&& other) = delete;
+  InverseConnectionsForwarder& operator=(InverseConnectionsForwarder&& other) = delete;
+
  private:
   void redistribute(Spine::Reactor& theReactor) override;
-  void rebalance(Spine::Reactor& theReactor);
+  void rebalance(Spine::Reactor& theReactor) override;
 };
 
 }  // namespace SmartMet

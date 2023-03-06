@@ -34,9 +34,9 @@ class Services
  public:
   using BackendServiceList = std::vector<BackendServicePtr>;
   using BackendServiceListPtr = std::shared_ptr<BackendServiceList>;
-  using SentinelMap = std::map<std::string, std::shared_ptr<BackendSentinel> >;
+  using SentinelMap = std::map<std::string, std::shared_ptr<BackendSentinel>>;
   using ServiceURIMap =
-      std::map<std::string, std::pair<BackendServiceListPtr, BackendForwarderPtr> >;
+      std::map<std::string, std::pair<BackendServiceListPtr, BackendForwarderPtr>>;
 
   enum ForwardingMode
   {
@@ -47,7 +47,7 @@ class Services
     DoubleRandom
   };
 
-  typedef std::list<boost::tuple<std::string, std::string, int> > BackendList;
+  using BackendList = std::list<boost::tuple<std::string, std::string, int>>;
 
   // Map contain lists of BackendService lists associated with URI
   ServiceURIMap itsServicesByURI;
@@ -84,11 +84,14 @@ class Services
 
   void setBackendAlive(const std::string& theHostName, int thePort);
 
-  // Constructors
+  ~Services() = default;
   Services() = default;
 
-  // Destructor
-  ~Services() = default;
+  Services(const Services& other) = delete;
+  Services& operator=(const Services& other) = delete;
+  Services(Services&& other) = delete;
+  Services& operator=(Services&& other) = delete;
+
   void status(std::ostream& out) const;
   std::shared_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
   BackendList getBackendList(const std::string& service = "") const;

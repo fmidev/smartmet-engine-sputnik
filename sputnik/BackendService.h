@@ -27,14 +27,15 @@ class BackendService
  public:
   // Methods to read Service entry parameters
   std::shared_ptr<BackendServer> Backend() { return itsBackendServer; }
-  std::string& URI() { return itsURI; }
-  int LastUpdate() { return itsLastUpdate; }
-  bool AllowCache() { return itsAllowCache; }
-  int SequenceNumber() { return itsSequenceNumber; }
-  bool DefinesPrefix() { return definesPrefix; }
+  const std::string& URI() const { return itsURI; }
+  int LastUpdate() const { return itsLastUpdate; }
+  bool AllowCache() const { return itsAllowCache; }
+  int SequenceNumber() const { return itsSequenceNumber; }
+  bool DefinesPrefix() const { return definesPrefix; }
   // Method to set some Service entry parameters
   void setLastUpdate(int theLastUpdate) { itsLastUpdate = theLastUpdate; }
   void setAllowCache(bool theAllowCache) { itsAllowCache = theAllowCache; }
+
   // Constructors
   BackendService(std::shared_ptr<BackendServer> theBackendServer,
                  std::string theURI,
@@ -42,8 +43,8 @@ class BackendService
                  bool theAllowCache,
                  int theSequenceNumber,
                  int definesPrefix)
-      : itsBackendServer(theBackendServer),
-        itsURI(theURI),
+      : itsBackendServer(std::move(theBackendServer)),
+        itsURI(std::move(theURI)),
         itsLastUpdate(theLastUpdate),
         itsAllowCache(theAllowCache),
         itsSequenceNumber(theSequenceNumber),
@@ -51,8 +52,13 @@ class BackendService
   {
   }
 
-  // Destructor
   ~BackendService() = default;
+
+  BackendService() = delete;
+  BackendService(const BackendService& other) = delete;
+  BackendService& operator=(const BackendService& other) = delete;
+  BackendService(BackendService&& other) = delete;
+  BackendService& operator=(BackendService&& other) = delete;
 };
 
 }  // namespace SmartMet

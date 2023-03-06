@@ -32,6 +32,8 @@ class BackendForwarder
   BackendForwarder() = delete;
   BackendForwarder(const BackendForwarder& other) = delete;
   BackendForwarder& operator=(const BackendForwarder& other) = delete;
+  BackendForwarder(BackendForwarder&& other) = delete;
+  BackendForwarder& operator=(BackendForwarder&& other) = delete;
 
   /*! \brief Constructor
    *

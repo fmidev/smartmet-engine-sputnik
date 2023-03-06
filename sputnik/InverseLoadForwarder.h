@@ -26,6 +26,12 @@ class InverseLoadForwarder : public BackendForwarder
 
   ~InverseLoadForwarder() override;
 
+  InverseLoadForwarder() = delete;
+  InverseLoadForwarder(const InverseLoadForwarder& other) = delete;
+  InverseLoadForwarder& operator=(const InverseLoadForwarder& other) = delete;
+  InverseLoadForwarder(InverseLoadForwarder&& other) = delete;
+  InverseLoadForwarder& operator=(InverseLoadForwarder&& other) = delete;
+
  private:
   void redistribute(Spine::Reactor& theReactor) override;
 };

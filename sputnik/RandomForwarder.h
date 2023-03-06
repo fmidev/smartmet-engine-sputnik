@@ -17,8 +17,12 @@ class RandomForwarder : public BackendForwarder
 {
  public:
   RandomForwarder();
-
   ~RandomForwarder() override;
+
+  RandomForwarder(const RandomForwarder& other) = delete;
+  RandomForwarder& operator=(const RandomForwarder& other) = delete;
+  RandomForwarder(RandomForwarder&& other) = delete;
+  RandomForwarder& operator=(RandomForwarder&& other) = delete;
 
   std::size_t getBackend(Spine::Reactor& theReactor) override;
 };

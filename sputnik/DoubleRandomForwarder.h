@@ -20,6 +20,11 @@ class DoubleRandomForwarder : public BackendForwarder
 
   ~DoubleRandomForwarder() override;
 
+  DoubleRandomForwarder(const DoubleRandomForwarder& other) = delete;
+  DoubleRandomForwarder& operator=(const DoubleRandomForwarder& other) = delete;
+  DoubleRandomForwarder(DoubleRandomForwarder&& other) = delete;
+  DoubleRandomForwarder& operator=(DoubleRandomForwarder&& other) = delete;
+
   std::size_t getBackend(Spine::Reactor& theReactor) override;
 };
 
