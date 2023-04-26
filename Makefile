@@ -88,6 +88,8 @@ rpm: clean protoc $(SPEC).spec
 obj/%.o: %.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF $(patsubst obj/%.o, obj/%.d, $@) -MT $@ -o $@ $<
 
+obj/Engine.o obj/Messages.o : protoc
+
 protoc: $(COMPILED_PB_SRCS)
 
 sputnik/%.pb.cpp: %.proto; mkdir -p tmp
