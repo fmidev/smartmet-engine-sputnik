@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 23.3.6
+Version: 23.7.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -21,14 +21,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 23.2.27
+BuildRequires: smartmet-library-spine-devel >= 23.6.21
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 23.3.3
+BuildRequires: smartmet-library-macgyver-devel >= 23.6.15
 Requires: protobuf
-Requires: smartmet-server >= 23.2.1
-Requires: smartmet-library-spine >= 23.2.27
-Requires: smartmet-library-macgyver >= 23.3.3
+Requires: smartmet-server >= 23.5.19
+Requires: smartmet-library-spine >= 23.6.21
+Requires: smartmet-library-macgyver >= 23.6.15
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Mon Jul 10 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.7.10-1.fmi
+- Silenced compiler warnings
+
 * Mon Mar  6 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.3.6-1.fmi
 - Silenced CodeChecker warnings
 
