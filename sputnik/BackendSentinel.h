@@ -9,7 +9,7 @@ class BackendSentinel
 {
  public:
   ~BackendSentinel();
-  BackendSentinel(unsigned int theThrottle);
+  explicit BackendSentinel(unsigned int theThrottle);
 
   BackendSentinel() = delete;
   BackendSentinel(const BackendSentinel& other) = delete;

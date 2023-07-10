@@ -405,7 +405,10 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
         // Add hook for response based backend hearbeat
         if (!theReactor->addBackendConnectionFinishedHook(
                 "sputnik_backend_hearbeat_hook",
-                boost::bind(&Engine::setBackendAlive, this, _1, _2, _3)))
+                [this](const std::string& theHostName,
+                       int thePort,
+                       SmartMet::Spine::HTTP::ContentStreamer::StreamerStatus theStatus)
+                { setBackendAlive(theHostName, thePort, theStatus); }))
         {
           throw Fmi::Exception(BCP, "Broadcast failed to add backend heartbeat hook");
         }

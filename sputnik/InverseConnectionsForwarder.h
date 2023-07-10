@@ -16,7 +16,7 @@ namespace SmartMet
 class InverseConnectionsForwarder : public BackendForwarder
 {
  public:
-  InverseConnectionsForwarder(float balancingCoefficient);
+  explicit InverseConnectionsForwarder(float balancingCoefficient);
 
   ~InverseConnectionsForwarder() override;
 

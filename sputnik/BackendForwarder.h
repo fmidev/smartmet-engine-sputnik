@@ -42,7 +42,7 @@ class BackendForwarder
    * used in probability calculations.
    */
 
-  BackendForwarder(float balancingCoefficient);
+  explicit BackendForwarder(float balancingCoefficient);
 
   /*! \brief Get the backend index from the Forwarder.
    *

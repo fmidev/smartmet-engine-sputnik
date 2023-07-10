@@ -59,9 +59,9 @@ class Services
 
   SentinelMap itsSentinels;
 
-  ForwardingMode itsFwdMode;
+  ForwardingMode itsFwdMode = ForwardingMode::InverseConnections;
 
-  float itsBalancingCoefficient;
+  float itsBalancingCoefficient = 2.0F;
 
   // Service accessing methods
   BackendServicePtr getService(const Spine::HTTP::Request& theRequest);

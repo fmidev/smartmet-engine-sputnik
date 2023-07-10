@@ -22,7 +22,7 @@ namespace SmartMet
 class InverseLoadForwarder : public BackendForwarder
 {
  public:
-  InverseLoadForwarder(float balancingCoefficient);
+  explicit InverseLoadForwarder(float balancingCoefficient);
 
   ~InverseLoadForwarder() override;
 
