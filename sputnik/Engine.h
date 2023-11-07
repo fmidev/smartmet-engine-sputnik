@@ -121,7 +121,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   mutable Spine::MutexType itsPauseMutex;
   mutable bool itsPaused{false};
-  mutable boost::optional<boost::posix_time::ptime> itsPauseDeadLine{};
+  mutable boost::optional<Fmi::DateTime> itsPauseDeadLine{};
 
  protected:
   void init() override;
@@ -225,7 +225,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   bool isPaused() const;
   void setPause();
-  void setPauseUntil(const boost::posix_time::ptime& theDeadLine);
+  void setPauseUntil(const Fmi::DateTime& theDeadLine);
   void setContinue();
 };
 

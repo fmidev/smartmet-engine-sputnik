@@ -69,7 +69,7 @@ std::string URIPrefixMap::operator()(const std::string& uri) const
     if (ba::starts_with(uri, curr.first))
     {
 #if defined(MYDEBUG)
-      std::cout << boost::posix_time::second_clock::local_time() << "Translated URI '" << uri
+      std::cout << Fmi::SecondClock::local_time() << "Translated URI '" << uri
                 << "' to prefix '" << curr.first << std::endl;
 #endif
       return curr.first;

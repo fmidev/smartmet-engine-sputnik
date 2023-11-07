@@ -4,7 +4,7 @@
 #include "InverseLoadForwarder.h"
 #include "LeastConnectionsForwarder.h"
 #include "RandomForwarder.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <macgyver/DateTime.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
 #include <macgyver/Exception.h>
@@ -32,7 +32,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     if (pos == itsServicesByURI.end())
     {
       // Nothing for this URI found on the list. Return with error.
-      std::cout << boost::posix_time::second_clock::local_time()
+      std::cout << Fmi::SecondClock::local_time()
                 << " Nothing known about URI requested by " << theRequest.getClientIP() << " : "
                 << uri_prefix << std::endl;
 
@@ -46,7 +46,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     if (theBackendList->empty())
     {
       // Nothing for this URI found. Return with error.
-      std::cout << boost::posix_time::second_clock::local_time()
+      std::cout << Fmi::SecondClock::local_time()
                 << " Backend server list empty for URI " << uri << std::endl;
 
       return {};
@@ -86,7 +86,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
         {
 // Temporarily retire the server from the service.
 #ifdef MYDEBUG
-          std::cout << boost::posix_time::second_clock::local_time() << " Removing backend "
+          std::cout << Fmi::SecondClock::local_time() << " Removing backend "
                     << (*it)->Backend()->Name() << " seq " << (*it)->SequenceNumber() << " URI "
                     << (*it)->URI() << std::endl;
 #endif
@@ -97,7 +97,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
         else
         {
 #ifdef MYDEBUG
-          std::cout << boost::posix_time::second_clock::local_time() << " Keeping backend "
+          std::cout << Fmi::SecondClock::local_time() << " Keeping backend "
                     << (*it)->Backend()->Name() << " seq " << (*it)->SequenceNumber() << " URI "
                     << (*it)->URI() << std::endl;
 #endif
@@ -114,7 +114,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
         return true;
     }
 
-    std::cout << boost::posix_time::second_clock::local_time()
+    std::cout << Fmi::SecondClock::local_time()
               << " No services left, performing a restart" << std::endl;
     // Using exit might generate a coredump, and we want a fast restart
     kill(getpid(), SIGKILL);
@@ -159,7 +159,7 @@ void Services::setBackendAlive(const std::string& theHostName, int thePort)
     if (iter != itsSentinels.end())
     {
 #ifdef MYDEBUG
-      std::cout << boost::posix_time::second_clock::local_time() << " Setting backend " << sname
+      std::cout << Fmi::SecondClock::local_time() << " Setting backend " << sname
                 << " alive" << std::endl;
 #endif
       iter->second->setAlive();
@@ -184,7 +184,7 @@ void Services::signalBackendConnection(const std::string& theHostName, int thePo
       iter->second->signalSentConnection();
 #ifdef MYDEBUG
       unsigned int count = iter->second->getCurrentThrottle();
-      std::cout << boost::posix_time::second_clock::local_time() << " Incremented backend " << sname
+      std::cout << Fmi::SecondClock::local_time() << " Incremented backend " << sname
                 << " connections to " << count << std::endl;
 #endif
     }
@@ -216,7 +216,7 @@ bool Services::latestSequence(int itsSequenceNumber)
         {
 // Temporarily retire the server from the service.
 #ifdef MYDEBUG
-          std::cout << boost::posix_time::second_clock::local_time() << "Removing sequence "
+          std::cout << Fmi::SecondClock::local_time() << "Removing sequence "
                     << (*it)->SequenceNumber() << " backend " << (*it)->Backend()->Name() << " URI "
                     << (*it)->URI() << std::endl;
 #endif
@@ -229,7 +229,7 @@ bool Services::latestSequence(int itsSequenceNumber)
         else
         {
 #ifdef MYDEBUG
-          std::cout << boost::posix_time::second_clock::local_time() << "  sequence "
+          std::cout << Fmi::SecondClock::local_time() << "  sequence "
                     << (*it)->SequenceNumber() << " backend " << (*it)->Backend()->Name() << " URI "
                     << (*it)->URI() << std::endl;
 #endif
@@ -259,7 +259,7 @@ bool Services::addService(const BackendServicePtr& theBackendService,
       // Check if URI is already known
 
 #ifdef MYDEBUG
-    std::cout << boost::posix_time::second_clock::local_time() << " Adding service "
+    std::cout << Fmi::SecondClock::local_time() << " Adding service "
               << theBackendService->Backend()->Name() << " seq "
               << theBackendService->SequenceNumber() << " URI " << theFrontendURI << std::endl;
 #endif

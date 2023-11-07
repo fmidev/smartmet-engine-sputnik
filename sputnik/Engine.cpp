@@ -2,6 +2,7 @@
 #include "BroadcastMessage.pb.h"
 #include "Services.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <macgyver/DateTime.h>
 #include <boost/filesystem/operations.hpp>
 #include <boost/thread.hpp>
 #include <macgyver/Exception.h>
@@ -511,7 +512,7 @@ void Engine::setBackendAlive(const std::string& theHostName,
     {
       if (!itsServices.queryBackendAlive(theHostName, thePort))
       {
-        std::cout << boost::posix_time::second_clock::local_time() << "Backend " << theHostName
+        std::cout << Fmi::SecondClock::local_time() << "Backend " << theHostName
                   << ":" << thePort << " set alive" << std::endl;
       }
 
@@ -600,7 +601,7 @@ void Engine::setPause()
  */
 // ----------------------------------------------------------------------
 
-void Engine::setPauseUntil(const boost::posix_time::ptime& theDeadLine)
+void Engine::setPauseUntil(const Fmi::DateTime& theDeadLine)
 {
   std::cout << Spine::log_time_str() << " *** Sputnik paused until "
             << Fmi::to_iso_string(theDeadLine) << std::endl;
@@ -638,7 +639,7 @@ bool Engine::isPaused() const
   if (!itsPauseDeadLine)
     return true;
 
-  auto now = boost::posix_time::microsec_clock::universal_time();
+  auto now = Fmi::MicrosecClock::universal_time();
 
   if (now < itsPauseDeadLine)
     return true;
