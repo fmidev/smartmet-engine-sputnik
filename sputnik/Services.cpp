@@ -10,6 +10,7 @@
 #include <macgyver/Exception.h>
 #include <smartmet/macgyver/StringConversion.h>
 #include <smartmet/spine/Table.h>
+#include <csignal>
 #include <iostream>
 #include <list>
 #include <map>
