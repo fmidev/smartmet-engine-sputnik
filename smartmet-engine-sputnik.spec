@@ -26,9 +26,9 @@ BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
 BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
 Requires: protobuf
-Requires: smartmet-server >= 24.2.22
-Requires: smartmet-library-spine >= 24.2.8
-Requires: smartmet-library-macgyver >= 24.1.17
+Requires: smartmet-server >= 24.5.6
+Requires: smartmet-library-spine >= 24.5.6
+Requires: smartmet-library-macgyver >= 24.5.6
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
