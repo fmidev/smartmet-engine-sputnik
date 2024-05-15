@@ -13,7 +13,6 @@ LIBS += -L$(libdir) \
 	-lsmartmet-spine \
 	-lsmartmet-macgyver \
 	-lboost_thread \
-	-lboost_date_time \
 	-lboost_system \
 	-lpthread \
 	-lconfig++ \
