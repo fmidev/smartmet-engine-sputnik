@@ -196,7 +196,7 @@ void Engine::handleDeadlineTimer(const boost::system::error_code& err)
     itsReceivedResponses = 0;
 
     // Sleep until the next heart beat
-    boost::this_thread::sleep(boost::posix_time::seconds(itsHeartBeatInterval));
+    boost::this_thread::sleep_for(boost::chrono::seconds(itsHeartBeatInterval));
 
     if (Spine::Reactor::isShuttingDown())
       return;
@@ -289,7 +289,7 @@ void Engine::startServiceDiscovery()
         { this->handleFrontendRead(err, bytes_transferred); });
 
     // Reset the response deadline timer
-    itsResponseDeadlineTimer.expires_from_now(boost::posix_time::seconds(itsHeartBeatTimeout));
+    itsResponseDeadlineTimer.expires_from_now(std::chrono::seconds(itsHeartBeatTimeout));
     itsResponseDeadlineTimer.async_wait([this](const boost::system::error_code& err)
                                         { this->handleDeadlineTimer(err); });
   }
