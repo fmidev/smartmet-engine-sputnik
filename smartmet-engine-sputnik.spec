@@ -29,7 +29,6 @@ Requires: protobuf
 Requires: smartmet-server >= 24.5.6
 Requires: smartmet-library-spine >= 24.5.6
 Requires: smartmet-library-macgyver >= 24.5.6
-Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
 Provides: %{SPECNAME}
