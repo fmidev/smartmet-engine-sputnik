@@ -114,7 +114,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   std::shared_ptr<boost::thread> itsAsyncThread;  ///< Async thread for the IO Service.
 
-  boost::asio::basic_waitable_timer<std::chrono::system_clock> itsResponseDeadlineTimer;  ///< Timer to handle the deadline of
+  boost::asio::basic_waitable_timer<std::chrono::steady_clock> itsResponseDeadlineTimer;  ///< Timer to handle the deadline of
                                                          /// backend responses
 
   // Sputnik may be paused for a while via an external request
