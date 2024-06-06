@@ -1,12 +1,13 @@
 #include "Services.h"
 #include "DoubleRandomForwarder.h"
+#include "ExponentialConnectionsForwarder.h"
 #include "InverseConnectionsForwarder.h"
 #include "InverseLoadForwarder.h"
 #include "LeastConnectionsForwarder.h"
 #include "RandomForwarder.h"
-#include <macgyver/DateTime.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <smartmet/macgyver/StringConversion.h>
 #include <smartmet/spine/Table.h>
@@ -33,9 +34,8 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     if (pos == itsServicesByURI.end())
     {
       // Nothing for this URI found on the list. Return with error.
-      std::cout << Fmi::SecondClock::local_time()
-                << " Nothing known about URI requested by " << theRequest.getClientIP() << " : "
-                << uri_prefix << std::endl;
+      std::cout << Fmi::SecondClock::local_time() << " Nothing known about URI requested by "
+                << theRequest.getClientIP() << " : " << uri_prefix << std::endl;
 
       return {};
     }
@@ -47,8 +47,8 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     if (theBackendList->empty())
     {
       // Nothing for this URI found. Return with error.
-      std::cout << Fmi::SecondClock::local_time()
-                << " Backend server list empty for URI " << uri << std::endl;
+      std::cout << Fmi::SecondClock::local_time() << " Backend server list empty for URI " << uri
+                << std::endl;
 
       return {};
     }
@@ -115,8 +115,8 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
         return true;
     }
 
-    std::cout << Fmi::SecondClock::local_time()
-              << " No services left, performing a restart" << std::endl;
+    std::cout << Fmi::SecondClock::local_time() << " No services left, performing a restart"
+              << std::endl;
     // Using exit might generate a coredump, and we want a fast restart
     kill(getpid(), SIGKILL);
 
@@ -160,8 +160,8 @@ void Services::setBackendAlive(const std::string& theHostName, int thePort)
     if (iter != itsSentinels.end())
     {
 #ifdef MYDEBUG
-      std::cout << Fmi::SecondClock::local_time() << " Setting backend " << sname
-                << " alive" << std::endl;
+      std::cout << Fmi::SecondClock::local_time() << " Setting backend " << sname << " alive"
+                << std::endl;
 #endif
       iter->second->setAlive();
     }
@@ -230,9 +230,9 @@ bool Services::latestSequence(int itsSequenceNumber)
         else
         {
 #ifdef MYDEBUG
-          std::cout << Fmi::SecondClock::local_time() << "  sequence "
-                    << (*it)->SequenceNumber() << " backend " << (*it)->Backend()->Name() << " URI "
-                    << (*it)->URI() << std::endl;
+          std::cout << Fmi::SecondClock::local_time() << "  sequence " << (*it)->SequenceNumber()
+                    << " backend " << (*it)->Backend()->Name() << " URI " << (*it)->URI()
+                    << std::endl;
 #endif
           ++it;
         }
@@ -306,6 +306,10 @@ bool Services::addService(const BackendServicePtr& theBackendService,
         case ForwardingMode::InverseConnections:
           theForwarder =
               BackendForwarderPtr(new InverseConnectionsForwarder(itsBalancingCoefficient));
+          break;
+        case ForwardingMode::ExponentialConnections:
+          theForwarder =
+              BackendForwarderPtr(new ExponentialConnectionsForwarder(itsBalancingCoefficient));
           break;
       }
 
@@ -469,6 +473,8 @@ void Services::setForwarding(const std::string& theMode, float balancingCoeffici
       itsFwdMode = ForwardingMode::DoubleRandom;
     else if (theMode == "inverseconnections")
       itsFwdMode = ForwardingMode::InverseConnections;
+    else if (theMode == "exponentialconnections")
+      itsFwdMode = ForwardingMode::ExponentialConnections;
     else if (theMode == "leastconnections")
       itsFwdMode = ForwardingMode::LeastConnections;
     else
