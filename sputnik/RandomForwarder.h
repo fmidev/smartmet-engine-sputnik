@@ -27,6 +27,6 @@ class RandomForwarder : public BackendForwarder
   std::size_t getBackend(Spine::Reactor& theReactor) override;
 };
 
-using BackendForwarderPtr = boost::shared_ptr<BackendForwarder>;
+using BackendForwarderPtr = std::shared_ptr<BackendForwarder>;
 
 }  // namespace SmartMet

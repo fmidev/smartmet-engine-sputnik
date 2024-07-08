@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BackendSentinel.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/thread.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <spine/Reactor.h>

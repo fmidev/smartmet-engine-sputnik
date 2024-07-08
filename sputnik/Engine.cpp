@@ -591,7 +591,7 @@ void Engine::setPause()
   std::cout << Spine::log_time_str() << " *** Sputnik paused" << std::endl;
   Spine::WriteLock lock(itsPauseMutex);
   itsPaused = true;
-  itsPauseDeadLine = boost::none;
+  itsPauseDeadLine = std::nullopt;
 }
 
 // ----------------------------------------------------------------------
@@ -620,7 +620,7 @@ void Engine::setContinue()
   std::cout << Spine::log_time_str() << " *** Sputnik instructed to continue" << std::endl;
   Spine::WriteLock lock(itsPauseMutex);
   itsPaused = false;
-  itsPauseDeadLine = boost::none;
+  itsPauseDeadLine = std::nullopt;
 }
 
 // ----------------------------------------------------------------------
@@ -647,7 +647,7 @@ bool Engine::isPaused() const
   std::cout << Spine::log_time_str() << " *** Sputnik deadline expired, continuing" << std::endl;
   Spine::UpgradeWriteLock writelock(readlock);
   itsPaused = false;
-  itsPauseDeadLine = boost::none;
+  itsPauseDeadLine = std::nullopt;
 
   return false;
 }

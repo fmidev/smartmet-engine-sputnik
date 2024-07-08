@@ -11,7 +11,7 @@
 #include <boost/random/discrete_distribution.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/taus88.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/thread.hpp>
 #include <spine/Reactor.h>
 #include <spine/Thread.h>
@@ -109,6 +109,6 @@ class BackendForwarder
   float itsBalancingCoefficient;  /// The balancing coefficient for distribution generation.
 };
 
-using BackendForwarderPtr = boost::shared_ptr<BackendForwarder>;
+using BackendForwarderPtr = std::shared_ptr<BackendForwarder>;
 
 }  // namespace SmartMet
