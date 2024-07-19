@@ -22,17 +22,20 @@ void URIPrefixMap::addPrefix(const std::string& prefix, const BackendServicePtr&
 {
   const std::string id = backend_service_id(prefix, backendService);
   std::unique_lock<std::mutex> lock(mutex);
-  if (prefixMap[prefix].insert(id).second)
-  {
+  const bool added = prefixMap[prefix].insert(id).second;
 #if defined(MYDEBUG)
+  if (added)
+  {
     std::cout << "URIPrefixMap::addPrefix: prefix=" << prefix << " id=" << id << std::endl;
-#endif
   }
   else
   {
-    std::cout << "URIPrefixMap::addPrefix: prefix=" << prefix << " failed to remove id " << id
+    std::cout << "URIPrefixMap::addPrefix: prefix=" << prefix << " failed to add id (already present)" << id
               << std::endl;
   }
+#else
+  (void)added;   // Silence warning when MYDEBUG is not defined
+#endif
 }
 
 void URIPrefixMap::removeBackend(const std::string& prefix, const BackendServicePtr& backendService)
@@ -42,21 +45,24 @@ void URIPrefixMap::removeBackend(const std::string& prefix, const BackendService
   auto curr = prefixMap.find(prefix);
   if (curr != prefixMap.end())
   {
-    if (curr->second.erase(id))
+    const bool removed = curr->second.erase(id);
+    if (removed)
     {
 #if defined(MYDEBUG)
       std::cout << "URIPrefixMap::removeBackend: prefix=" << prefix << " id=" << id << " : removed"
                 << std::endl;
 #endif
+      if (curr->second.empty())
+      {
+        prefixMap.erase(curr);
+      }
     }
     else
     {
+#if defined(MYDEBUG)
       std::cout << "URIPrefixMap::removeBackend: prefix=" << prefix << " id=" << id
                 << " : failed to remove (not found)" << std::endl;
-    }
-    if (curr->second.empty())
-    {
-      prefixMap.erase(curr);
+#endif
     }
   }
 }
