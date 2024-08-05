@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 24.6.6
+Version: 24.7.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -21,14 +21,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 24.2.8
+BuildRequires: smartmet-library-spine-devel >= 24.7.12
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
+BuildRequires: smartmet-library-macgyver-devel >= 24.7.12
 Requires: protobuf
-Requires: smartmet-server >= 24.5.6
-Requires: smartmet-library-spine >= 24.5.6
-Requires: smartmet-library-macgyver >= 24.5.6
+Requires: smartmet-server >= 24.7.12
+Requires: smartmet-library-spine >= 24.7.12
+Requires: smartmet-library-macgyver >= 24.7.12
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
 Provides: %{SPECNAME}
@@ -73,6 +73,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Wed Jul 24 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.7.24-1.fmi
+- Use std::array instead of boost::array
+
+* Fri Jul 19 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.7.19-1.fmi
+- Leave logging in URIPrefixMap for debugging only (MYDEBUG defined)
+
+* Fri Jul 12 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.7.12-1.fmi
+- Replace many boost library types with C++ standard library ones
+
 * Thu Jun  6 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.6.6-1.fmi
 - Added ExponentialConnectionsForwarder
 

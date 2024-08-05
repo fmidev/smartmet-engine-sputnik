@@ -110,7 +110,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   boost::asio::ip::udp::endpoint itsBroadcastEnd;  ///< The broadcast endpoint to which broadcasts
   /// are sent.
 
-  boost::array<char, 8192> itsReceiveBuffer;  ///< Buffer for incoming UDP messages
+  std::array<char, 8192> itsReceiveBuffer;  ///< Buffer for incoming UDP messages
 
   std::shared_ptr<boost::thread> itsAsyncThread;  ///< Async thread for the IO Service.
 
@@ -121,7 +121,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   mutable Spine::MutexType itsPauseMutex;
   mutable bool itsPaused{false};
-  mutable boost::optional<Fmi::DateTime> itsPauseDeadLine{};
+  mutable std::optional<Fmi::DateTime> itsPauseDeadLine{};
 
  protected:
   void init() override;

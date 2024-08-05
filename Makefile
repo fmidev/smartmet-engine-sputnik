@@ -8,7 +8,7 @@ include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
 DEFINES = -DUNIX -D_REENTRANT
 
-LIBS += -L$(libdir) \
+LIBS += $(PREFIX_LDFLAGS) \
 	$(REQUIRED_LIBS) \
 	-lsmartmet-spine \
 	-lsmartmet-macgyver \
@@ -56,7 +56,7 @@ $(LIBFILE): $(SRCS) $(OBJS)
 	fi
 
 clean:
-	rm -f $(LIBFILE) $(OBJS) *~ $(SUBNAME)/*~
+	rm -f $(LIBFILE) *~ $(SUBNAME)/*~
 	rm -f $(SUBNAME)/BroadcastMessage.pb.cpp $(SUBNAME)/BroadcastMessage.pb.h
 	rm -rf obj
 
