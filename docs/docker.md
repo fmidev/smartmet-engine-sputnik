@@ -44,6 +44,8 @@ backendUdpListeners = ["192.168.122.255:31337","192.168.122.135:31338","192.168.
 
 #####################  BACKEND PARAMETERS ######################
 
+pause = false;
+
 hostname = "localhost";
 httpAddress = "192.168.122.135";
 httpPort = 8090;
@@ -59,6 +61,8 @@ backendUdpListeners = ["192.168.122.255:31337","192.168.122.135:31338","192.168.
 3. Use Nano or some other editor to modify **backend** parameters with your own values:
 
 ```
+pause = false;
+
 hostname = "localhost";
 httpAddress = "192.168.122.135";
 httpPort = 8090;
