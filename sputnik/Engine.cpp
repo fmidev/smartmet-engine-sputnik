@@ -1,9 +1,9 @@
 #include "Engine.h"
 #include "BroadcastMessage.pb.h"
 #include "Services.h"
-#include <macgyver/DateTime.h>
 #include <boost/filesystem/operations.hpp>
 #include <boost/thread.hpp>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 #include <spine/Reactor.h>
@@ -40,6 +40,8 @@ Engine::Engine(const char* theConfig)
     itsMaxSkippedCycles = conf.get_optional_config_param<int>("heartbeat.max_skipped_cycles", 2);
 
     // Backend parameters
+
+    itsPaused = conf.get_optional_config_param<bool>("pause", false);
 
     itsHostname = conf.get_optional_config_param<std::string>("hostname", "localhost");
     itsHttpAddress = conf.get_optional_config_param<std::string>("httpAddress", "127.0.0.1");
@@ -511,8 +513,8 @@ void Engine::setBackendAlive(const std::string& theHostName,
     {
       if (!itsServices.queryBackendAlive(theHostName, thePort))
       {
-        std::cout << Fmi::SecondClock::local_time() << "Backend " << theHostName
-                  << ":" << thePort << " set alive" << std::endl;
+        std::cout << Fmi::SecondClock::local_time() << "Backend " << theHostName << ":" << thePort
+                  << " set alive" << std::endl;
       }
 
       itsServices.setBackendAlive(theHostName, thePort);
