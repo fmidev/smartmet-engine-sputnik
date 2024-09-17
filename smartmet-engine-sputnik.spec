@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 24.8.7
+Version: 24.9.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -21,13 +21,13 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 24.8.7
+BuildRequires: smartmet-library-spine-devel >= 24.8.12
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
 BuildRequires: smartmet-library-macgyver-devel >= 24.8.7
 Requires: protobuf
 Requires: smartmet-server >= 24.8.7
-Requires: smartmet-library-spine >= 24.8.7
+Requires: smartmet-library-spine >= 24.8.12
 Requires: smartmet-library-macgyver >= 24.8.7
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Tue Sep 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.17-1.fmi
+- Added optional pause configuration setting with default value false.
+
 * Wed Aug  7 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.8.7-1.fmi
 - Update to gdal-3.8, geos-3.12, proj-94 and fmt-11
 
