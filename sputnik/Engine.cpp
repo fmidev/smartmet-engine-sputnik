@@ -42,6 +42,8 @@ Engine::Engine(const char* theConfig)
     // Backend parameters
 
     itsPaused = conf.get_optional_config_param<bool>("pause", false);
+    if (itsPaused)
+      std::cout << Spine::log_time_str() << " *** Sputnik paused during startup" << std::endl;
 
     itsHostname = conf.get_optional_config_param<std::string>("hostname", "localhost");
     itsHttpAddress = conf.get_optional_config_param<std::string>("httpAddress", "127.0.0.1");
