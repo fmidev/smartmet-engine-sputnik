@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 24.9.17
+Version: 24.9.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Wed Sep 18 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.18-1.fmi
+- Print to journal if Sputnik is paused during startup
+
 * Tue Sep 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.17-1.fmi
 - Added optional pause configuration setting with default value false.
 
