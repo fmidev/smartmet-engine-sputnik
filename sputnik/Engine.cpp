@@ -7,6 +7,8 @@
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 #include <spine/Reactor.h>
+#include <spine/TableFormatterFactory.h>
+#include <spine/TableFormatterOptions.h>
 #include <iostream>
 #include <memory>
 
@@ -64,12 +66,46 @@ Engine::Engine(const char* theConfig)
     // Reuse address for easier restart
     boost::asio::ip::udp::socket::reuse_address reuse(true);
     itsSocket.set_option(reuse);
+
+    Spine::Reactor* reactor = Spine::Reactor::instance;
+    if (reactor)
+    {
+      reactor->addAdminCustomRequestHandler(
+          this,
+          "clusterinfo",
+          false,
+          std::bind(&Engine::requestClusterInfo, this, std::placeholders::_3),
+          "Cluster information");
+
+      reactor->addAdminCustomRequestHandler(
+          this,
+          "backendinfo",
+          false,
+          std::bind(&Engine::requestBackendInfo, this, std::placeholders::_2, std::placeholders::_3),
+          "Backend information");
+
+      reactor->addAdminCustomRequestHandler(
+          this,
+          "pause",
+          true,
+          std::bind(&Engine::requestPause, this, std::placeholders::_2, std::placeholders::_3),
+          "Pause Sputnik");
+
+      reactor->addAdminCustomRequestHandler(
+          this,
+          "continue",
+          true,
+          std::bind(&Engine::requestContinue, this, std::placeholders::_2, std::placeholders::_3),
+          "Continue Sputnik");
+
+    }
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Constructor failed!");
   }
 }
+
 
 // No-op, since construction is trivial
 void Engine::init() {}
@@ -655,6 +691,147 @@ bool Engine::isPaused() const
 
   return false;
 }
+
+
+void Engine::requestContinue(const Spine::HTTP::Request& theRequest, Spine::HTTP::Response& theResponse)
+try
+{
+  theResponse.setHeader("Content-Type", "text/plain");
+
+  // Optional deadline or duration:
+
+  auto time_opt = theRequest.getParameter("time");
+  auto duration_opt = theRequest.getParameter("duration");
+
+  if (time_opt)
+  {
+    auto deadline = Fmi::TimeParser::parse(*time_opt);
+    setPauseUntil(deadline);
+    theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
+  }
+  else if (duration_opt)
+  {
+    auto duration = Fmi::TimeParser::parse_duration(*duration_opt);
+    auto deadline = Fmi::SecondClock::universal_time() + duration;
+    setPauseUntil(deadline);
+    theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
+  }
+  else
+  {
+    setContinue();
+    theResponse.setContent("Sputnik continue request made");
+  }
+}
+catch (...)
+{
+  throw Fmi::Exception::Trace(BCP, "Operation failed!");
+}
+
+
+void Engine::requestClusterInfo(Spine::HTTP::Response& theResponse)
+try
+{
+    std::ostringstream out;
+    status(out);
+
+    // Make MIME header
+    std::string mime("text/html; charset=UTF-8");
+    theResponse.setHeader("Content-Type", mime);
+
+    // Set content
+    std::string ret = "<html><head><title>SmartMet Admin</title></head><body>";
+    ret += out.str();
+    ret += "</body></html>";
+    theResponse.setContent(ret);
+}
+catch (...)
+{
+  throw Fmi::Exception::Trace(BCP, "Operation failed!");
+}
+
+
+void Engine::requestBackendInfo(const Spine::HTTP::Request& theRequest, Spine::HTTP::Response& theResponse)
+try
+{
+  std::string service = Spine::optional_string(theRequest.getParameter("service"), "");
+  std::string format = Spine::optional_string(theRequest.getParameter("format"), "debug");
+
+  if (format == "wxml")
+  {
+    std::string response = "Wxml formatting not supported";
+    theResponse.setContent(response);
+  }
+
+  std::shared_ptr<Spine::Table> table = backends(service);
+
+  std::shared_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
+  Spine::TableFormatter::Names names;
+  names.push_back("Backend");
+  names.push_back("IP");
+  names.push_back("Port");
+
+  auto out = formatter->format(*table, names, theRequest, Spine::TableFormatterOptions());
+
+  std::ostringstream status;
+  this->status(status);
+  out += status.str();
+
+  // Make MIME header
+  std::string mime = formatter->mimetype() + "; charset=UTF-8";
+  theResponse.setHeader("Content-Type", mime);
+
+  // Set content
+  if (format != "html")
+    theResponse.setContent(out);
+  else
+  {
+    // Add html tags only when using human readable format
+    std::string ret = "<html><head><title>SmartMet Admin</title></head><body>";
+    ret += out;
+    ret += "</body></html>";
+    theResponse.setContent(ret);
+  }
+}
+catch (...)
+{
+  throw Fmi::Exception::Trace(BCP, "Operation failed!");
+}
+
+
+void Engine::requestPause(const Spine::HTTP::Request& theRequest, Spine::HTTP::Response& theResponse)
+try
+{
+    theResponse.setHeader("Content-Type", "text/plain");
+
+    // Optional deadline or duration:
+
+    auto time_opt = theRequest.getParameter("time");
+    auto duration_opt = theRequest.getParameter("duration");
+
+    if (time_opt)
+    {
+      auto deadline = Fmi::TimeParser::parse(*time_opt);
+      setPauseUntil(deadline);
+      theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
+    }
+    else if (duration_opt)
+    {
+      auto duration = Fmi::TimeParser::parse_duration(*duration_opt);
+      auto deadline = Fmi::SecondClock::universal_time() + duration;
+      setPauseUntil(deadline);
+      theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
+    }
+    else
+    {
+      setPause();
+      theResponse.setContent("Paused Sputnik until a continue request arrives");
+    }
+}
+catch (...)
+{
+  throw Fmi::Exception::Trace(BCP, "Operation failed!");
+}
+
 
 }  // namespace Sputnik
 }  // namespace Engine

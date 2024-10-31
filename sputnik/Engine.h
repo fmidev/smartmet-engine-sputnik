@@ -9,6 +9,7 @@
 #include "Services.h"
 #include <boost/asio.hpp>
 #include <boost/function.hpp>
+#include <spine/HTTP.h>
 #include <spine/Reactor.h>
 #include <spine/SmartMetEngine.h>
 #include <spine/Thread.h>
@@ -227,6 +228,12 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   void setPause();
   void setPauseUntil(const Fmi::DateTime& theDeadLine);
   void setContinue();
+
+private:
+  void requestClusterInfo(Spine::HTTP::Response& theResponse);
+  void requestBackendInfo(const Spine::HTTP::Request& theRequest, Spine::HTTP::Response& theResponse);
+  void requestPause(const Spine::HTTP::Request& theRequest, Spine::HTTP::Response& theResponse);
+  void requestContinue(const Spine::HTTP::Request& theRequest, Spine::HTTP::Response& theResponse);
 };
 
 }  // namespace Sputnik
