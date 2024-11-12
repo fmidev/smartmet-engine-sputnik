@@ -534,7 +534,7 @@ void Engine::setBackendAlive(const std::string& theHostName,
  */
 // ----------------------------------------------------------------------
 
-std::shared_ptr<SmartMet::Spine::Table> Engine::backends(const std::string& service) const
+std::unique_ptr<SmartMet::Spine::Table> Engine::backends(const std::string& service) const
 {
   try
   {

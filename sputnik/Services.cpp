@@ -353,13 +353,13 @@ bool Services::addService(const BackendServicePtr& theBackendService,
  */
 // ----------------------------------------------------------------------
 
-std::shared_ptr<SmartMet::Spine::Table> Services::backends(const std::string& service) const
+std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& service) const
 {
   try
   {
     SmartMet::Spine::ReadLock lock(itsMutex);
 
-    std::shared_ptr<SmartMet::Spine::Table> ret = std::make_shared<SmartMet::Spine::Table>();
+    std::unique_ptr<SmartMet::Spine::Table> ret = std::make_unique<SmartMet::Spine::Table>();
 
     std::string serviceuri = "/" + itsPrefixMap(service);
 

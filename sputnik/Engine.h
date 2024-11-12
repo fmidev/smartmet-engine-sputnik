@@ -215,7 +215,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
                        SmartMet::Spine::HTTP::ContentStreamer::StreamerStatus theStatus);
 
   void status(std::ostream& out) const;
-  std::shared_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
+  std::unique_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
   Services::BackendList getBackendList(const std::string& service = "") const;
 
   std::string URI() const;

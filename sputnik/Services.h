@@ -94,7 +94,7 @@ class Services
   Services& operator=(Services&& other) = delete;
 
   void status(std::ostream& out) const;
-  std::shared_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
+  std::unique_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
   BackendList getBackendList(const std::string& service = "") const;
 
   void setReactor(Spine::Reactor& theReactor);
