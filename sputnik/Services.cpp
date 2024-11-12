@@ -18,6 +18,8 @@
 #include <sstream>
 #include <string>
 
+using namespace std::string_literals;
+
 namespace SmartMet
 {
 BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
@@ -362,6 +364,10 @@ std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& se
     std::unique_ptr<SmartMet::Spine::Table> ret = std::make_unique<SmartMet::Spine::Table>();
 
     std::string serviceuri = "/" + itsPrefixMap(service);
+
+    ret->setTitle("Backends"s + (service.empty() ? "all services" : " for service " + service));
+    ret->setNames({"Backend", "IP", "Port"});
+
 
     // List all backends with matching URI
 
