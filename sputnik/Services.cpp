@@ -365,7 +365,7 @@ std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& se
 
     std::string serviceuri = "/" + itsPrefixMap(service);
 
-    ret->setTitle("Backends"s + (service.empty() ? "all services" : " for service " + service));
+    ret->setTitle("Backends"s + (service.empty() ? "" : " for service " + service));
     ret->setNames({"Backend", "IP", "Port"});
 
 
