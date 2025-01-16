@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 24.11.13
+Version: 25.1.16
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Thu Jan 16 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.1.16-1.fmi
+- Fix title of /admin?what=backends response
+
 * Wed Nov 13 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.11.13-1.fmi
 - Move handling admin requests to plugins (frontend and backend)
 
