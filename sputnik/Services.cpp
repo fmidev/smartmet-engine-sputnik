@@ -355,7 +355,9 @@ bool Services::addService(const BackendServicePtr& theBackendService,
  */
 // ----------------------------------------------------------------------
 
-std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& service) const
+std::unique_ptr<SmartMet::Spine::Table> Services::backends(
+    const std::string& service,
+    bool full) const
 {
   try
   {
@@ -366,8 +368,10 @@ std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& se
     std::string serviceuri = "/" + itsPrefixMap(service);
 
     ret->setTitle("Backends"s + (service.empty() ? "" : " for service " + service));
-    ret->setNames({"Backend", "IP", "Port"});
-
+    if (full)
+      ret->setNames({"Backend", "IP", "Port"});
+    else
+      ret->setNames({"Backend"});
 
     // List all backends with matching URI
 
@@ -379,8 +383,11 @@ std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& se
         for (const auto& backend : *uri.second.first)
         {
           ret->set(0, row, backend->Backend()->Name());
-          ret->set(1, row, backend->Backend()->IP());
-          ret->set(2, row, Fmi::to_string(backend->Backend()->Port()));
+          if (full)
+          {
+            ret->set(1, row, backend->Backend()->IP());
+            ret->set(2, row, Fmi::to_string(backend->Backend()->Port()));
+          }
           ++row;
         }
       }
@@ -437,7 +444,7 @@ Services::BackendList Services::getBackendList(const std::string& service) const
  */
 // ----------------------------------------------------------------------
 
-void Services::status(std::ostream& out) const
+void Services::status(std::ostream& out, bool full) const
 {
   try
   {
@@ -453,10 +460,14 @@ void Services::status(std::ostream& out) const
       out << "<ol>" << std::endl;
       for (const auto& backend : *uri.second.first)
       {
-        out << "<li>" << backend->Backend()->Name() << backend->URI() << " ["
+        out << "<li>" << backend->Backend()->Name() << backend->URI();
+        if (full)
+        {
+          out << " ["
             << backend->Backend()->IP() << ":" << backend->Backend()->Port() << "]"
-            << " [Sequence " << backend->SequenceNumber() << "]"
-            << "</li>" << std::endl;
+            << " [Sequence " << backend->SequenceNumber() << "]";
+        }
+        out << "</li>" << std::endl;
       }
       out << "</ol>" << std::endl;
     }
