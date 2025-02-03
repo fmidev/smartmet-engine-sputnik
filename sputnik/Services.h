@@ -93,8 +93,23 @@ class Services
   Services(Services&& other) = delete;
   Services& operator=(Services&& other) = delete;
 
-  void status(std::ostream& out) const;
-  std::unique_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
+  /**
+   * @brief Generate status report
+   *
+   * @param out Output stream to write the status report to
+   * @param full If true, full information is listed. If false, only the service name is listed.
+   */
+  void status(std::ostream& out, bool full) const;
+
+  /**
+   * @brief List backends with given service or all services
+   *
+   * @param service Service name to list backends for. If empty, all services are listed.
+   * @param full If true, full information is listed. If false, only the service name is listed.
+   * @return Table containing the backend information
+   */
+  std::unique_ptr<SmartMet::Spine::Table> backends(const std::string& service = "", bool full = true) const;
+
   BackendList getBackendList(const std::string& service = "") const;
 
   void setReactor(Spine::Reactor& theReactor);

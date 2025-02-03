@@ -214,8 +214,23 @@ class Engine : public SmartMet::Spine::SmartMetEngine
                        int thePort,
                        SmartMet::Spine::HTTP::ContentStreamer::StreamerStatus theStatus);
 
-  void status(std::ostream& out) const;
-  std::unique_ptr<SmartMet::Spine::Table> backends(const std::string& service = "") const;
+  /**
+   * @brief Generate status report
+   *
+   * @param out Output stream to write the status report to
+   * @param full If true, full information is listed. If false, only the service name is listed.
+   */
+  void status(std::ostream& out, bool full) const;
+
+  /**
+   * @brief List backends with given service or all services
+
+   * @param service Service name to list backends for. If empty, all services are listed.
+   * @param full If true, full information is listed. If false, only the service name is listed.
+   * @return Table containing the backend information
+   */
+  std::unique_ptr<SmartMet::Spine::Table> backends(const std::string& service = "", bool full = true) const;
+
   Services::BackendList getBackendList(const std::string& service = "") const;
 
   std::string URI() const;

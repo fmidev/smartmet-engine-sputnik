@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 24.11.13
+Version: 25.1.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -21,13 +21,13 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 24.11.8
+BuildRequires: smartmet-library-spine-devel >= 25.1.17
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
 BuildRequires: smartmet-library-macgyver-devel >= 24.10.28
 Requires: protobuf
 Requires: smartmet-server >= 24.11.8
-Requires: smartmet-library-spine >= 24.11.8
+Requires: smartmet-library-spine >= 25.1.17
 Requires: smartmet-library-macgyver >= 24.10.28
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
@@ -73,6 +73,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Fri Jan 17 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.1.17-1.fmi
+- Additional parameter for optional removing part of information from responses of Engine::backends and Engine::status
+
+* Thu Jan 16 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.1.16-1.fmi
+- Fix title of /admin?what=backends response
+
 * Wed Nov 13 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.11.13-1.fmi
 - Move handling admin requests to plugins (frontend and backend)
 

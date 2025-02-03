@@ -436,7 +436,7 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
  */
 // ----------------------------------------------------------------------
 
-void Engine::status(std::ostream& out) const
+void Engine::status(std::ostream& out, bool full) const
 {
   try
   {
@@ -458,14 +458,17 @@ void Engine::status(std::ostream& out) const
     }
     out << "</div>";
 
-    out << "<ul>" << std::endl
-        << "<li>Host: " << itsHostname << "</li>" << std::endl
-        << "<li>Comment: " << itsComment << "</li>" << std::endl
-        << "<li>HTTP Interface: " << itsHttpAddress << ":" << itsHttpPort << "</li>" << std::endl
-        << "<li>Throttle Limit: " << itsThrottleLimit << "</li>" << std::endl
-        << "<li>Broadcast Interface: " << itsUdpListenerAddress << ":" << itsUdpListenerPort
-        << "</li>" << std::endl
-        << "</ul>" << std::endl;
+    out << "<ul>" << '\n';
+    out << "<li>Host: " << itsHostname << "</li>" << '\n';
+    out << "<li>Comment: " << itsComment << "</li>" << '\n';
+    if (full)
+    {
+      out << "<li>HTTP Interface: " << itsHttpAddress << ":" << itsHttpPort << "</li>" << '\n';
+      out << "<li>Throttle Limit: " << itsThrottleLimit << "</li>" << '\n';
+      out << "<li>Broadcast Interface: " << itsUdpListenerAddress << ":" << itsUdpListenerPort << '\n';
+    }
+    out << "</li>" << std::endl;
+    out << "</ul>" << std::endl;
 
     if (itsMode == Backend)
     {
@@ -492,7 +495,7 @@ void Engine::status(std::ostream& out) const
     {
       // List frontend services
       out << "<h3>Services known by the frontend server</h3>" << std::endl;
-      itsServices.status(out);
+      itsServices.status(out, full);
     }
   }
   catch (...)
@@ -534,11 +537,13 @@ void Engine::setBackendAlive(const std::string& theHostName,
  */
 // ----------------------------------------------------------------------
 
-std::unique_ptr<SmartMet::Spine::Table> Engine::backends(const std::string& service) const
+std::unique_ptr<SmartMet::Spine::Table> Engine::backends(
+  const std::string& service,
+  bool full) const
 {
   try
   {
-    return itsServices.backends(service);
+    return itsServices.backends(service, full);
   }
   catch (...)
   {
