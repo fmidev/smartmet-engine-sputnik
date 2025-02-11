@@ -100,7 +100,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   Services itsServices;  /// Services object includes the list known services.
 
-  boost::asio::io_service itsIoService;  ///< The IO Service for UDP handling
+  boost::asio::io_context itsIoService;  ///< The IO Service for UDP handling
 
   boost::asio::ip::udp::socket itsSocket;  ///< The UDP socket for broacasting/replying
 
