@@ -58,7 +58,7 @@ Engine::Engine(const char* theConfig)
 
     // Setup the correct values for broadcast
 
-    itsBackendSocket.address(boost::asio::ip::address_v4::from_string(itsUdpListenerAddress));
+    itsBackendSocket.address(boost::asio::ip::make_address_v4(itsUdpListenerAddress));
     itsBackendSocket.port(itsUdpListenerPort);
 
     // Reuse address for easier restart
@@ -274,8 +274,8 @@ void Engine::startServiceDiscovery()
           // std::cout << addr << ":" << port << "\n";
 
           boost::asio::ip::udp::endpoint dest;
-          dest.address(boost::asio::ip::address_v4::from_string(addr));
-          dest.port(std::stoi(port));
+          dest.address(boost::asio::ip::make_address_v4(addr));
+          dest.port(Fmi::stoi(port));
           itsSocket.send_to(boost::asio::buffer(theRequestBuffer), dest);
         }
       }
@@ -292,7 +292,7 @@ void Engine::startServiceDiscovery()
         { this->handleFrontendRead(err, bytes_transferred); });
 
     // Reset the response deadline timer
-    itsResponseDeadlineTimer.expires_from_now(std::chrono::seconds(itsHeartBeatTimeout));
+    itsResponseDeadlineTimer.expires_after(std::chrono::seconds(itsHeartBeatTimeout));
     itsResponseDeadlineTimer.async_wait([this](const boost::system::error_code& err)
                                         { this->handleDeadlineTimer(err); });
   }
