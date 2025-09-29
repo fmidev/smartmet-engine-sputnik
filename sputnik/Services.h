@@ -12,7 +12,6 @@
 #include <iostream>
 #include <map>
 #include <memory>
-#include <stdexcept>
 #include <vector>
 
 namespace SmartMet
@@ -38,7 +37,7 @@ class Services
   using ServiceURIMap =
       std::map<std::string, std::pair<BackendServiceListPtr, BackendForwarderPtr>>;
 
-  enum ForwardingMode
+  enum ForwardingMode : std::uint8_t
   {
     Random,
     InverseLoad,
@@ -108,7 +107,8 @@ class Services
    * @param full If true, full information is listed. If false, only the service name is listed.
    * @return Table containing the backend information
    */
-  std::unique_ptr<SmartMet::Spine::Table> backends(const std::string& service = "", bool full = true) const;
+  std::unique_ptr<SmartMet::Spine::Table> backends(const std::string& service = "",
+                                                   bool full = true) const;
 
   BackendList getBackendList(const std::string& service = "") const;
 

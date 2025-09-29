@@ -34,7 +34,7 @@ void Engine::sendDiscoveryRequest(std::string& theMessageBuffer, int theSequence
     theMessage.SerializeToString(&theMessageBuffer);
 
 #ifdef MYDEBUG
-    std::cout << "Sending request " << theSequenceNumber << std::endl;
+    std::cout << "Sending request " << theSequenceNumber << '\n';
 #endif
   }
   catch (...)
@@ -66,7 +66,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
 
     if (host == nullptr)
     {
-      std::cerr << "Broadcast failed to acquire host information" << std::endl;
+      std::cerr << "Broadcast failed to acquire host information\n";
       return;
     }
 
@@ -97,7 +97,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
       theService = message.add_services();
       if (theService == nullptr)
       {
-        std::cerr << "Broadcast found a null service" << std::endl;
+        std::cerr << "Broadcast found a null service\n";
       }
       else
       {
@@ -173,20 +173,19 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
                           boost::numeric_cast<unsigned int>(host.throttle())));
 #ifdef MYDEBUG
     std::cout << "Processing reply " << theMessage.seqnum() << " from " << theMessage.name()
-              << std::endl;
+              << '\n';
 #endif
 
     for (int i = 0; i < theMessage.services_size(); i++)
     {
       const auto& service = theMessage.services(i);
       const bool is_prefix = service.has_is_prefix() && service.is_prefix();
-      BackendServicePtr theService =
-          std::make_shared<BackendService>(theServer,
-                                           service.uri(),
-                                           service.lastupdate(),
-                                           service.allowcache(),
-                                           theMessage.seqnum(),
-                                           is_prefix);
+      BackendServicePtr theService = std::make_shared<BackendService>(theServer,
+                                                                      service.uri(),
+                                                                      service.lastupdate(),
+                                                                      service.allowcache(),
+                                                                      theMessage.seqnum(),
+                                                                      is_prefix);
 
       // Add this BackendService to the list of Services
       itsServices.addService(theService,

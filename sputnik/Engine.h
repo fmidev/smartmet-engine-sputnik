@@ -30,7 +30,7 @@ namespace Sputnik
 /** \brief Enum to represent the Broadcast operating mode
  *
  */
-enum BroadcastMode
+enum BroadcastMode : std::uint8_t
 {
   Backend,
   Frontend,
@@ -114,14 +114,15 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   std::shared_ptr<boost::thread> itsAsyncThread;  ///< Async thread for the IO Service.
 
-  boost::asio::basic_waitable_timer<std::chrono::steady_clock> itsResponseDeadlineTimer;  ///< Timer to handle the deadline of
-                                                         /// backend responses
+  boost::asio::basic_waitable_timer<std::chrono::steady_clock>
+      itsResponseDeadlineTimer;  ///< Timer to handle the deadline of
+                                 /// backend responses
 
   // Sputnik may be paused for a while via an external request
 
   mutable Spine::MutexType itsPauseMutex;
-  mutable bool itsPaused{false};
-  mutable std::optional<Fmi::DateTime> itsPauseDeadLine{};
+  mutable bool itsPaused = false;
+  mutable std::optional<Fmi::DateTime> itsPauseDeadLine;
 
  protected:
   void init() override;
@@ -229,7 +230,8 @@ class Engine : public SmartMet::Spine::SmartMetEngine
    * @param full If true, full information is listed. If false, only the service name is listed.
    * @return Table containing the backend information
    */
-  std::unique_ptr<SmartMet::Spine::Table> backends(const std::string& service = "", bool full = true) const;
+  std::unique_ptr<SmartMet::Spine::Table> backends(const std::string& service = "",
+                                                   bool full = true) const;
 
   Services::BackendList getBackendList(const std::string& service = "") const;
 

@@ -37,7 +37,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     {
       // Nothing for this URI found on the list. Return with error.
       std::cout << Fmi::SecondClock::local_time() << " Nothing known about URI requested by "
-                << theRequest.getClientIP() << " : " << uri_prefix << std::endl;
+                << theRequest.getClientIP() << " : " << uri_prefix << '\n';
 
       return {};
     }
@@ -50,7 +50,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     {
       // Nothing for this URI found. Return with error.
       std::cout << Fmi::SecondClock::local_time() << " Backend server list empty for URI " << uri
-                << std::endl;
+                << '\n';
 
       return {};
     }
@@ -63,7 +63,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     auto theService = theBackendList->at(rndServerSlot);
 
 #ifdef MYDEBUG
-    std::cout << "Broadcast forwarding to backend: " << theService->Backend()->Name() << std::endl;
+    std::cout << "Broadcast forwarding to backend: " << theService->Backend()->Name() << '\n';
 #endif
 
     return theService;
@@ -91,7 +91,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
 #ifdef MYDEBUG
           std::cout << Fmi::SecondClock::local_time() << " Removing backend "
                     << (*it)->Backend()->Name() << " seq " << (*it)->SequenceNumber() << " URI "
-                    << (*it)->URI() << std::endl;
+                    << (*it)->URI() << '\n';
 #endif
           theURIs.second.second->removeBackend(
               (*it)->Backend()->Name(), (*it)->Backend()->Port(), *itsReactor);
@@ -102,7 +102,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
 #ifdef MYDEBUG
           std::cout << Fmi::SecondClock::local_time() << " Keeping backend "
                     << (*it)->Backend()->Name() << " seq " << (*it)->SequenceNumber() << " URI "
-                    << (*it)->URI() << std::endl;
+                    << (*it)->URI() << '\n';
 #endif
           ++it;
         }
@@ -117,8 +117,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
         return true;
     }
 
-    std::cout << Fmi::SecondClock::local_time() << " No services left, performing a restart"
-              << std::endl;
+    std::cout << Fmi::SecondClock::local_time() << " No services left, performing a restart\n";
     // Using exit might generate a coredump, and we want a fast restart
     kill(getpid(), SIGKILL);
 
@@ -162,8 +161,7 @@ void Services::setBackendAlive(const std::string& theHostName, int thePort)
     if (iter != itsSentinels.end())
     {
 #ifdef MYDEBUG
-      std::cout << Fmi::SecondClock::local_time() << " Setting backend " << sname << " alive"
-                << std::endl;
+      std::cout << Fmi::SecondClock::local_time() << " Setting backend " << sname << " alive\n";
 #endif
       iter->second->setAlive();
     }
@@ -188,7 +186,7 @@ void Services::signalBackendConnection(const std::string& theHostName, int thePo
 #ifdef MYDEBUG
       unsigned int count = iter->second->getCurrentThrottle();
       std::cout << Fmi::SecondClock::local_time() << " Incremented backend " << sname
-                << " connections to " << count << std::endl;
+                << " connections to " << count << '\n';
 #endif
     }
   }
@@ -209,7 +207,7 @@ bool Services::latestSequence(int itsSequenceNumber)
     SmartMet::Spine::WriteLock lock(itsMutex);
 
 #ifdef MYDEBUG
-    std::cout << "UPDATING TO SEQ " << itsSequenceNumber << std::endl;
+    std::cout << "UPDATING TO SEQ " << itsSequenceNumber << '\n';
 #endif
 
     for (const auto& theURIs : itsServicesByURI)
@@ -221,7 +219,7 @@ bool Services::latestSequence(int itsSequenceNumber)
 #ifdef MYDEBUG
           std::cout << Fmi::SecondClock::local_time() << "Removing sequence "
                     << (*it)->SequenceNumber() << " backend " << (*it)->Backend()->Name() << " URI "
-                    << (*it)->URI() << std::endl;
+                    << (*it)->URI() << '\n';
 #endif
 
           // Remove this entry as it has unmatching sequence number
@@ -233,8 +231,7 @@ bool Services::latestSequence(int itsSequenceNumber)
         {
 #ifdef MYDEBUG
           std::cout << Fmi::SecondClock::local_time() << "  sequence " << (*it)->SequenceNumber()
-                    << " backend " << (*it)->Backend()->Name() << " URI " << (*it)->URI()
-                    << std::endl;
+                    << " backend " << (*it)->Backend()->Name() << " URI " << (*it)->URI() << '\n';
 #endif
           ++it;
         }
@@ -259,12 +256,12 @@ bool Services::addService(const BackendServicePtr& theBackendService,
     if (!theBackendService)
       return false;
 
-      // Check if URI is already known
+    // Check if URI is already known
 
 #ifdef MYDEBUG
     std::cout << Fmi::SecondClock::local_time() << " Adding service "
               << theBackendService->Backend()->Name() << " seq "
-              << theBackendService->SequenceNumber() << " URI " << theFrontendURI << std::endl;
+              << theBackendService->SequenceNumber() << " URI " << theFrontendURI << '\n';
 #endif
 
     SmartMet::Spine::WriteLock lock(itsMutex);
@@ -355,9 +352,8 @@ bool Services::addService(const BackendServicePtr& theBackendService,
  */
 // ----------------------------------------------------------------------
 
-std::unique_ptr<SmartMet::Spine::Table> Services::backends(
-    const std::string& service,
-    bool full) const
+std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& service,
+                                                           bool full) const
 {
   try
   {
@@ -452,24 +448,23 @@ void Services::status(std::ostream& out, bool full) const
 
     // Read the Backend information list
 
-    out << "<ul>" << std::endl;
+    out << "<ul>\n";
     for (const auto& uri : itsServicesByURI)
     {
-      out << "<li>URI " << uri.first << "</li>" << std::endl;
+      out << "<li>URI " << uri.first << "</li>\n";
 
-      out << "<ol>" << std::endl;
+      out << "<ol>\n";
       for (const auto& backend : *uri.second.first)
       {
         out << "<li>" << backend->Backend()->Name() << backend->URI();
         if (full)
         {
-          out << " ["
-            << backend->Backend()->IP() << ":" << backend->Backend()->Port() << "]"
-            << " [Sequence " << backend->SequenceNumber() << "]";
+          out << " [" << backend->Backend()->IP() << ":" << backend->Backend()->Port() << "]"
+              << " [Sequence " << backend->SequenceNumber() << "]";
         }
-        out << "</li>" << std::endl;
+        out << "</li>\n";
       }
-      out << "</ol>" << std::endl;
+      out << "</ol>\n";
     }
   }
   catch (...)

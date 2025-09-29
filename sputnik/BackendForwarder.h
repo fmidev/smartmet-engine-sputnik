@@ -11,10 +11,10 @@
 #include <boost/random/discrete_distribution.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/taus88.hpp>
-#include <memory>
 #include <boost/thread.hpp>
 #include <spine/Reactor.h>
 #include <spine/Thread.h>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -87,7 +87,7 @@ class BackendForwarder
    * This is called whenever the interal backend list changes.
    */
 
-  virtual void redistribute(Spine::Reactor& theReactor){};
+  virtual void redistribute(Spine::Reactor& theReactor) {}
 
   /*! \brief Redistributes the internal forwarding probabilities
    *
@@ -96,7 +96,7 @@ class BackendForwarder
    * some load balancers update their state every time.
    */
 
-  virtual void rebalance(Spine::Reactor& theReactor){};
+  virtual void rebalance(Spine::Reactor& theReactor) {}
 
   boost::taus88 itsGenerator;  /// The randomizer object for RNG.
 

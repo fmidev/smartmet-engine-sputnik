@@ -1,6 +1,8 @@
 #include "ExponentialConnectionsForwarder.h"
 #include <macgyver/Exception.h>
 
+#include <cmath>
+
 namespace SmartMet
 {
 ExponentialConnectionsForwarder::~ExponentialConnectionsForwarder() = default;
@@ -23,7 +25,7 @@ void ExponentialConnectionsForwarder::redistribute(Spine::Reactor& theReactor)
     {
       int count = connections[info.hostName][info.port];  // zero if not found
 
-      probVec.push_back(exp(-itsBalancingCoefficient * count));
+      probVec.push_back(std::exp(-itsBalancingCoefficient * count));
 #ifdef MYDEBUG
       std::cout << "Inverse prob: " << probVec.back() << " from conns " << count << std::endl;
 #endif

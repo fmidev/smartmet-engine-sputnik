@@ -43,7 +43,7 @@ Engine::Engine(const char* theConfig)
 
     itsPaused = conf.get_optional_config_param<bool>("pause", false);
     if (itsPaused)
-      std::cout << Spine::log_time_str() << " *** Sputnik paused during startup" << std::endl;
+      std::cout << Spine::log_time_str() << " *** Sputnik paused during startup\n";
 
     itsHostname = conf.get_optional_config_param<std::string>("hostname", "localhost");
     itsHttpAddress = conf.get_optional_config_param<std::string>("httpAddress", "127.0.0.1");
@@ -95,7 +95,7 @@ void Engine::shutdown()
 Engine::~Engine()
 {
   // Debug message
-  std::cout << "\t + Broadcast Service Discovery Engine shutting down" << std::endl;
+  std::cout << "\t + Broadcast Service Discovery Engine shutting down\n";
 }
 
 // Start actively listen to UDP broadcasts on the network
@@ -127,7 +127,7 @@ void Engine::frontendMode()
   try
   {
     std::cout << "Using Broadcast balancing configuration: balance factor => " << itsBalanceFactor
-              << ", mode => " << itsForwardingMode << std::endl;
+              << ", mode => " << itsForwardingMode << '\n';
 
     itsServices.setForwarding(itsForwardingMode, itsBalanceFactor);
 
@@ -226,7 +226,7 @@ void Engine::handleFrontendRead(const boost::system::error_code& e, std::size_t 
     {
 #ifdef MYDEBUG
       std::cout << "Broadcast received data from " << itsRemoteEnd.address().to_string() << ":"
-                << itsRemoteEnd.port() << std::endl;
+                << itsRemoteEnd.port() << '\n';
 #endif
 
       // Construct a std::string from the buffer contents
@@ -282,7 +282,7 @@ void Engine::startServiceDiscovery()
     }
     catch (const boost::system::system_error& err)
     {
-      std::cerr << "Error: Broadcast failed to send discovery request: " << err.what() << std::endl;
+      std::cerr << "Error: Broadcast failed to send discovery request: " << err.what() << '\n';
     }
 
     itsSocket.async_receive_from(
@@ -328,23 +328,22 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
     if (e)
     {
       // Some error occurred in receive
-      std::cerr << "Broadcast UDP receive encountered an error: " << e.message() << std::endl;
+      std::cerr << "Broadcast UDP receive encountered an error: " << e.message() << '\n';
     }
     else if (isPaused())
     {
-      // std::cout << Spine::log_time_str() << " Sputnik paused, not responding" << std::endl;
+      // std::cout << Spine::log_time_str() << " Sputnik paused, not responding\n";
     }
     else if (itsReactor->isLoadHigh())
     {
-      std::cout << Spine::log_time_str() << " Sputnik will not respond to frontend, high load"
-                << std::endl;
+      std::cout << Spine::log_time_str() << " Sputnik will not respond to frontend, high load\n";
     }
     else
     {
       // No error, proceed
 #ifdef MYDEBUG
       std::cout << "Broadcast received data from " << itsRemoteEnd.address().to_string() << ":"
-                << itsRemoteEnd.port() << std::endl;
+                << itsRemoteEnd.port() << '\n';
 #endif
 
       // Construct a std::string from the buffer contents
@@ -369,7 +368,7 @@ void Engine::handleBackendRead(const boost::system::error_code& e, std::size_t b
         }
         catch (const boost::system::system_error& err)
         {
-          std::cerr << "Error: Broadcast failed to send response: " << err.what() << std::endl;
+          std::cerr << "Error: Broadcast failed to send response: " << err.what() << '\n';
         }
       }
     }
@@ -441,7 +440,7 @@ void Engine::status(std::ostream& out, bool full) const
   try
   {
     // Information about Broadcast
-    out << "<h2>Broadcast Cluster Information</h2>" << std::endl << std::endl;
+    out << "<h2>Broadcast Cluster Information</h2>\n\n";
 
     out << "<div>This server is ";
     switch (itsMode)
@@ -465,36 +464,37 @@ void Engine::status(std::ostream& out, bool full) const
     {
       out << "<li>HTTP Interface: " << itsHttpAddress << ":" << itsHttpPort << "</li>" << '\n';
       out << "<li>Throttle Limit: " << itsThrottleLimit << "</li>" << '\n';
-      out << "<li>Broadcast Interface: " << itsUdpListenerAddress << ":" << itsUdpListenerPort << '\n';
+      out << "<li>Broadcast Interface: " << itsUdpListenerAddress << ":" << itsUdpListenerPort
+          << '\n';
     }
-    out << "</li>" << std::endl;
-    out << "</ul>" << std::endl;
+    out << "</li>\n";
+    out << "</ul>\n";
 
     if (itsMode == Backend)
     {
       // List backend services
-      out << "<h3>Services currently provided by this backend server</h3>" << std::endl;
+      out << "<h3>Services currently provided by this backend server</h3>\n";
 
       // Read the URI list
 
       if (itsReactor == nullptr)
-        out << "<div>List not available, Reactor not initialized</div>" << std::endl;
+        out << "<div>List not available, Reactor not initialized</div>\n";
       else
       {
         const auto theHandlers = itsReactor->getURIMap();
 
-        out << "<ol>" << std::endl;
+        out << "<ol>\n";
         for (const auto& handler : theHandlers)
         {
-          out << "<li>" << handler.first << "</li>" << std::endl;
+          out << "<li>" << handler.first << "</li>\n";
         }
-        out << "</ol>" << std::endl;
+        out << "</ol>\n";
       }
     }
     else
     {
       // List frontend services
-      out << "<h3>Services known by the frontend server</h3>" << std::endl;
+      out << "<h3>Services known by the frontend server</h3>\n";
       itsServices.status(out, full);
     }
   }
@@ -512,14 +512,14 @@ void Engine::setBackendAlive(const std::string& theHostName,
   {
 #ifdef MYDEBUG
     std::cout << "Backend connection to " << theHostName << ":" << thePort
-              << " finished with status " << static_cast<int>(theStatus) << std::endl;
+              << " finished with status " << static_cast<int>(theStatus) << '\n';
 #endif
     if (theStatus == SmartMet::Spine::HTTP::ContentStreamer::StreamerStatus::EXIT_OK)
     {
       if (!itsServices.queryBackendAlive(theHostName, thePort))
       {
         std::cout << Fmi::SecondClock::local_time() << "Backend " << theHostName << ":" << thePort
-                  << " set alive" << std::endl;
+                  << " set alive\n";
       }
 
       itsServices.setBackendAlive(theHostName, thePort);
@@ -537,9 +537,8 @@ void Engine::setBackendAlive(const std::string& theHostName,
  */
 // ----------------------------------------------------------------------
 
-std::unique_ptr<SmartMet::Spine::Table> Engine::backends(
-  const std::string& service,
-  bool full) const
+std::unique_ptr<SmartMet::Spine::Table> Engine::backends(const std::string& service,
+                                                         bool full) const
 {
   try
   {
@@ -597,7 +596,7 @@ std::string Engine::URI() const
 
 void Engine::setPause()
 {
-  std::cout << Spine::log_time_str() << " *** Sputnik paused" << std::endl;
+  std::cout << Spine::log_time_str() << " *** Sputnik paused\n";
   Spine::WriteLock lock(itsPauseMutex);
   itsPaused = true;
   itsPauseDeadLine = std::nullopt;
@@ -612,7 +611,7 @@ void Engine::setPause()
 void Engine::setPauseUntil(const Fmi::DateTime& theDeadLine)
 {
   std::cout << Spine::log_time_str() << " *** Sputnik paused until "
-            << Fmi::to_iso_string(theDeadLine) << std::endl;
+            << Fmi::to_iso_string(theDeadLine) << '\n';
   Spine::WriteLock lock(itsPauseMutex);
   itsPaused = true;
   itsPauseDeadLine = theDeadLine;
@@ -626,7 +625,7 @@ void Engine::setPauseUntil(const Fmi::DateTime& theDeadLine)
 
 void Engine::setContinue()
 {
-  std::cout << Spine::log_time_str() << " *** Sputnik instructed to continue" << std::endl;
+  std::cout << Spine::log_time_str() << " *** Sputnik instructed to continue\n";
   Spine::WriteLock lock(itsPauseMutex);
   itsPaused = false;
   itsPauseDeadLine = std::nullopt;
@@ -653,7 +652,7 @@ bool Engine::isPaused() const
     return true;
 
   // deadline expired, continue
-  std::cout << Spine::log_time_str() << " *** Sputnik deadline expired, continuing" << std::endl;
+  std::cout << Spine::log_time_str() << " *** Sputnik deadline expired, continuing\n";
   Spine::UpgradeWriteLock writelock(readlock);
   itsPaused = false;
   itsPauseDeadLine = std::nullopt;
