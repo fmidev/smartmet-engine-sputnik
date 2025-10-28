@@ -13,7 +13,6 @@ LIBS += $(PREFIX_LDFLAGS) \
 	-lsmartmet-spine \
 	-lsmartmet-macgyver \
 	-lboost_thread \
-	-lboost_system \
 	-lpthread \
 	-lconfig++ \
 	-lprotobuf
