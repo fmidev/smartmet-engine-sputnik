@@ -44,4 +44,10 @@ message BroadcastMessage
  }
  repeated Service services = 8;
 
+ message InfoQuery
+ {
+  required string name = 1; // Name of info InfoQuery (/info?what=<name>)
+  required int32 lastupdate = 2; // Unix timestamp for the last data update
+ }
+ repeated InfoQuery infoQuery = 16;
 }
