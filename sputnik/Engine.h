@@ -14,6 +14,7 @@
 #include <spine/Thread.h>
 #include <iostream>
 #include <memory>
+#include <set>
 #include <string>
 
 namespace SmartMet
@@ -235,10 +236,14 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   Services::BackendList getBackendList(const std::string& service = "") const;
 
+  Services::BackendList getInfoRequestBackendList(const std::string& infoRequestName) const;
+
   std::string URI() const;
 
   const Services& getServices() const { return itsServices; }
   Services& getServices() { return itsServices; }
+
+  std::set<std::string> getInfoRequestNames() const { return itsServices.getInfoRequestNames(); }
 
   bool isPaused() const;
   void setPause();

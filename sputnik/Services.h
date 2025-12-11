@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BackendForwarder.h"
+#include "BackendInfoRequest.h"
 #include "BackendSentinel.h"
 #include "BackendServer.h"
 #include "BackendService.h"
@@ -12,6 +13,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <set>
 #include <vector>
 
 namespace SmartMet
@@ -23,6 +25,7 @@ class Table;
 
 using BackendServicePtr = std::shared_ptr<BackendService>;
 using BackendServerPtr = std::shared_ptr<BackendServer>;
+using BackendInfoRequestPtr = std::shared_ptr<BackendInfoRequest>;
 
 class Services
 {
@@ -32,10 +35,14 @@ class Services
 
  public:
   using BackendServiceList = std::vector<BackendServicePtr>;
+  using BackendInfoRequestList = std::vector<BackendInfoRequestPtr>;
   using BackendServiceListPtr = std::shared_ptr<BackendServiceList>;
+  using BackendInfoRequestListPtr = std::shared_ptr<BackendInfoRequestList>;
   using SentinelMap = std::map<std::string, std::shared_ptr<BackendSentinel>>;
   using ServiceURIMap =
       std::map<std::string, std::pair<BackendServiceListPtr, BackendForwarderPtr>>;
+  using BackendInfoRequestMap =
+      std::map<std::string, BackendInfoRequestListPtr>;
 
   enum ForwardingMode : std::uint8_t
   {
@@ -51,6 +58,8 @@ class Services
 
   // Map contain lists of BackendService lists associated with URI
   ServiceURIMap itsServicesByURI;
+
+  BackendInfoRequestMap itsBackendInfoRequests;
 
   // Map contain mapping of URI prefixes to backends
   URIPrefixMap itsPrefixMap;
@@ -71,6 +80,10 @@ class Services
                   const std::string& theFrontEndURI,
                   float theLoad,
                   unsigned int theThrottle);
+
+  bool addBackendInfoRequest(const BackendInfoRequestPtr& theRequest);
+
+  std::set<std::string> getInfoRequestNames() const;
 
   bool removeBackend(const std::string& theHostname, int thePort, const std::string& theURI = "");
 
@@ -111,6 +124,8 @@ class Services
                                                    bool full = true) const;
 
   BackendList getBackendList(const std::string& service = "") const;
+
+  BackendList getInfoRequestBackendList(const std::string& infoRequestName) const;
 
   void setReactor(Spine::Reactor& theReactor);
 };

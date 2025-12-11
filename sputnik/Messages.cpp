@@ -108,6 +108,25 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
       }
     }
 
+    // Add info queries (admin request names)
+    if (Spine::Reactor::isShuttingDown())
+      return;
+
+    auto infoRequestNames = itsReactor->getAdminRequestNames();
+    for (const auto& name : infoRequestNames)
+    {
+      auto* infoQuery = message.add_infoquery();
+      if (infoQuery == nullptr)
+      {
+        std::cerr << "Broadcast found a null info query\n";
+      }
+      else
+      {
+        infoQuery->set_name(name);
+        infoQuery->set_lastupdate(0);  // Could be updated to track actual updates if needed
+      }
+    }
+
     message.SerializeToString(&theMessageBuffer);
   }
   catch (...)
@@ -204,6 +223,20 @@ void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
                              itsDirectURI,
                              host.load(),
                              boost::numeric_cast<unsigned int>(host.throttle()));
+    }
+
+    // Process info queries
+    for (int i = 0; i < theMessage.infoquery_size(); i++)
+    {
+      const auto& infoQuery = theMessage.infoquery(i);
+      BackendInfoRequestPtr theInfoRequest = std::make_shared<BackendInfoRequest>(
+          theServer,
+          infoQuery.name(),
+          infoQuery.lastupdate(),
+          theMessage.seqnum());
+
+      // Add this BackendInfoRequest to the list of info requests
+      itsServices.addBackendInfoRequest(theInfoRequest);
     }
 
     // We have received a valid response, increment the counter

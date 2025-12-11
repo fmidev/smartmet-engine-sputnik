@@ -210,6 +210,7 @@ bool Services::latestSequence(int itsSequenceNumber)
     std::cout << "UPDATING TO SEQ " << itsSequenceNumber << '\n';
 #endif
 
+    // Clean up services
     for (const auto& theURIs : itsServicesByURI)
       for (auto it = (*theURIs.second.first).begin(); it != (*theURIs.second.first).end();)
       {
@@ -236,6 +237,36 @@ bool Services::latestSequence(int itsSequenceNumber)
           ++it;
         }
       }
+
+    // Clean up info requests - remove entries from backends that didn't respond
+    for (auto& infoReqPair : itsBackendInfoRequests)
+    {
+      auto& requestList = infoReqPair.second;
+      if (requestList)
+      {
+        for (auto it = requestList->begin(); it != requestList->end();)
+        {
+          if ((*it)->SequenceNumber() != itsSequenceNumber)
+          {
+#ifdef MYDEBUG
+            std::cout << Fmi::SecondClock::local_time() << "Removing info request sequence "
+                      << (*it)->SequenceNumber() << " backend " << (*it)->Backend()->Name()
+                      << " name " << (*it)->Name() << '\n';
+#endif
+            it = requestList->erase(it);
+          }
+          else
+          {
+#ifdef MYDEBUG
+            std::cout << Fmi::SecondClock::local_time() << "  info request sequence "
+                      << (*it)->SequenceNumber() << " backend " << (*it)->Backend()->Name()
+                      << " name " << (*it)->Name() << '\n';
+#endif
+            ++it;
+          }
+        }
+      }
+    }
 
     return true;
   }
@@ -436,6 +467,42 @@ Services::BackendList Services::getBackendList(const std::string& service) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Return list of backends providing the given info request
+ */
+// ----------------------------------------------------------------------
+
+Services::BackendList Services::getInfoRequestBackendList(const std::string& infoRequestName) const
+{
+  try
+  {
+    SmartMet::Spine::ReadLock lock(itsMutex);
+
+    BackendList theList;
+
+    // Find the info request by name
+    auto pos = itsBackendInfoRequests.find(infoRequestName);
+    if (pos != itsBackendInfoRequests.end() && pos->second)
+    {
+      // List all backends providing this info request
+      for (const auto& infoRequest : *pos->second)
+      {
+        theList.push_back(boost::make_tuple(
+            infoRequest->Backend()->Name(),
+            infoRequest->Backend()->IP(),
+            infoRequest->Backend()->Port()));
+      }
+    }
+
+    return theList;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate status report
  */
 // ----------------------------------------------------------------------
@@ -466,6 +533,80 @@ void Services::status(std::ostream& out, bool full) const
       }
       out << "</ol>\n";
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add backend info request
+ */
+// ----------------------------------------------------------------------
+
+bool Services::addBackendInfoRequest(const BackendInfoRequestPtr& theRequest)
+{
+  try
+  {
+    // Sanity check
+    if (!theRequest)
+      return false;
+
+#ifdef MYDEBUG
+    std::cout << Fmi::SecondClock::local_time() << " Adding info request "
+              << theRequest->Backend()->Name() << " seq "
+              << theRequest->SequenceNumber() << " name " << theRequest->Name() << '\n';
+#endif
+
+    SmartMet::Spine::WriteLock lock(itsMutex);
+
+    const auto pos = itsBackendInfoRequests.find(theRequest->Name());
+    if (pos != itsBackendInfoRequests.end())
+    {
+      // Info request name already known, add to the existing list
+      pos->second->push_back(theRequest);
+    }
+    else
+    {
+      // Info request name not known, make new list
+      BackendInfoRequestListPtr newlist(new BackendInfoRequestList());
+      newlist->push_back(theRequest);
+      itsBackendInfoRequests[theRequest->Name()] = newlist;
+    }
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get all unique info request names from all backends
+ */
+// ----------------------------------------------------------------------
+
+std::set<std::string> Services::getInfoRequestNames() const
+{
+  try
+  {
+    SmartMet::Spine::ReadLock lock(itsMutex);
+
+    std::set<std::string> names;
+    for (const auto& item : itsBackendInfoRequests)
+    {
+      // Only include if there's at least one backend providing this info request
+      if (item.second && !item.second->empty())
+      {
+        names.insert(item.first);
+      }
+    }
+
+    return names;
   }
   catch (...)
   {

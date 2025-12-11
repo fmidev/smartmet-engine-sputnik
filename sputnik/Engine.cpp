@@ -570,6 +570,24 @@ Services::BackendList Engine::getBackendList(const std::string& service) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Return list of backends providing the given info request
+ */
+// ----------------------------------------------------------------------
+
+Services::BackendList Engine::getInfoRequestBackendList(const std::string& infoRequestName) const
+{
+  try
+  {
+    return itsServices.getInfoRequestBackendList(infoRequestName);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Return the URI with the http:// part
  */
 // ----------------------------------------------------------------------
