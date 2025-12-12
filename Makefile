@@ -86,7 +86,7 @@ rpm: clean protoc $(SPEC).spec
 obj/%.o: %.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF $(patsubst obj/%.o, obj/%.d, $@) -MT $@ -o $@ $<
 
-obj/Engine.o obj/Messages.o : protoc
+obj/Engine.o obj/Messages.o : $(COMPILED_PB_SRCS)
 
 protoc: $(COMPILED_PB_SRCS)
 
