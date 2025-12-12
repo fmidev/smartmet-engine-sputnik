@@ -4,7 +4,7 @@
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
 Version: 25.12.12
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
 URL: https://github.com/fmidev/smartmet-engine-sputnik
@@ -76,8 +76,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
-* Fri Dec 12 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.12.12-1.fmi
-- Include list of info requests provided by plugins and engines into broadcast message [ci skip]
+* Fri Dec 12 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.12.12-2.fmi
+- Include list of info requests provided by plugins and engines into broadcast message
 
 * Mon Sep 29 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.9.29-1.fmi
 - Fixed compiler warnings
