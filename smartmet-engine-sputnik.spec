@@ -24,14 +24,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 25.12.12
+BuildRequires: smartmet-library-spine-devel >= 26.2.4
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 25.9.19
+BuildRequires: smartmet-library-macgyver-devel >= 26.2.4
 Requires: protobuf
-Requires: smartmet-server >= 25.9.9
-Requires: smartmet-library-spine >= 25.12.12
-Requires: smartmet-library-macgyver >= 25.9.19
+Requires: smartmet-server >= 26.2.4
+Requires: smartmet-library-spine >= 26.2.4
+Requires: smartmet-library-macgyver >= 26.2.4
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
 Provides: %{SPECNAME}
