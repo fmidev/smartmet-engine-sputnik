@@ -82,6 +82,9 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   std::vector<std::string> itsBackendUdpListeners;  ///< List of backend UDP listeners
                                                     ///(ipAddress1:udpPort1, ipAddress2:udpPort2)
 
+  std::string itsFrontendUdpAddress = "0.0.0.0";     ///< Frontend UDP bind address
+  unsigned short itsFrontendUdpPort = 0;              ///< Frontend UDP bind port (0 = any port)
+
   std::string itsHostname = "localhost";              ///< Backend hostname
   std::string itsHttpAddress = "127.0.0.1";           ///< Backend HTTP address
   unsigned int itsHttpPort = 80;                      ///< Backend HTTP port

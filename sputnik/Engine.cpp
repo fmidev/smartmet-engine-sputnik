@@ -32,6 +32,9 @@ Engine::Engine(const char* theConfig)
 
     conf.get_config_array("backendUdpListeners", itsBackendUdpListeners);
 
+    itsFrontendUdpAddress = conf.get_optional_config_param<std::string>("frontendUdpAddress", "0.0.0.0");
+    itsFrontendUdpPort = conf.get_optional_config_param<int>("frontendUdpPort", 0);
+
     itsForwardingMode = conf.get_optional_config_param<std::string>("forwarding", "random");
     itsBalanceFactor = conf.get_optional_config_param<float>("balance_factor", 2.0F);
 
@@ -143,13 +146,19 @@ void Engine::frontendMode()
           "Error: Broadcast Frontend was unable to set UDP/IP broadcast option: " + e.message());
     }
 
-    itsSocket.bind(boost::asio::ip::udp::endpoint(), e);
-    // Bind the socket to local address
+    // Bind the socket to configured frontend address and port
+    boost::asio::ip::udp::endpoint frontend_endpoint(
+        boost::asio::ip::make_address_v4(itsFrontendUdpAddress),
+        itsFrontendUdpPort);
+    itsSocket.bind(frontend_endpoint, e);
     if (e.value() != boost::system::errc::success)
     {
       // Log error and exit
       throw Fmi::Exception(BCP, "Error: Frontend can't bind local address: " + e.message());
     }
+
+    std::cout << "Frontend bound to UDP address: " << itsFrontendUdpAddress << ":" 
+              << (itsFrontendUdpPort == 0 ? itsSocket.local_endpoint().port() : itsFrontendUdpPort) << '\n';
 
     startServiceDiscovery();
   }

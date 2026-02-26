@@ -6,6 +6,32 @@
  
 backendUdpListeners = ["192.168.122.255:31337","192.168.122.135:31338","192.168.122.135:31339"];
 
+# Frontend UDP binding configuration. These settings control which address and port
+# the frontend binds to when listening for backend responses. Setting a specific port
+# allows for predictable firewall rules, which is especially important when frontend
+# and backend run on the same system.
+#
+# frontendUdpAddress: Address to bind to (default: "0.0.0.0" = all interfaces)
+# frontendUdpPort: Port to bind to (default: 0 = let OS assign a random port)
+#
+# Examples:
+#
+# 1. Bind to all interfaces with OS-assigned port (default behavior):
+# frontendUdpAddress = "0.0.0.0";
+# frontendUdpPort = 0;
+#
+# 2. Bind to all interfaces with fixed port (recommended for firewall rules):
+# frontendUdpAddress = "0.0.0.0";
+# frontendUdpPort = 31340;
+#
+# 3. Bind to specific subnet/interface with fixed port:
+# frontendUdpAddress = "192.168.122.135";
+# frontendUdpPort = 31340;
+#
+# 4. Bind to localhost only (when frontend and backend are on same host):
+# frontendUdpAddress = "127.0.0.1";
+# frontendUdpPort = 31340;
+
 # The backend servers should be configured so that they are listening one of these 
 # addresses. I.e. when the frontend sends a service request to a brodcast address 
 # then the same broadcast address should be configured in the backend as "udpListenerAddress" 
