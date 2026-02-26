@@ -401,6 +401,7 @@ std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& se
       ret->setNames({"Backend"});
 
     // List all backends with matching URI
+    std::set<std::string> listedIds;  // To avoid listing the same backend multiple times if it appears in multiple URIs
 
     std::size_t row = 0;
     for (const auto& uri : itsServicesByURI)
@@ -409,11 +410,18 @@ std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& se
       {
         for (const auto& backend : *uri.second.first)
         {
-          ret->set(0, row, backend->Backend()->Name());
+          const std::string backendName = backend->Backend()->Name();
+          const std::string backendIP = backend->Backend()->IP();
+          const int backendPort = backend->Backend()->Port();
+          const std::string id = backendName + "|" + backendIP + "|" + std::to_string(backendPort);
+          if (!listedIds.insert(id).second)
+            continue;  // This backend has already been listed, skip it
+
+          ret->set(0, row, backendName);
           if (full)
           {
-            ret->set(1, row, backend->Backend()->IP());
-            ret->set(2, row, Fmi::to_string(backend->Backend()->Port()));
+            ret->set(1, row, backendIP);
+            ret->set(2, row, Fmi::to_string(backendPort));
           }
           ++row;
         }
