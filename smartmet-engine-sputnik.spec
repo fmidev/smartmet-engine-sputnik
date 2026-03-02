@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.2.4
+Version: 26.3.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Mon Mar  2 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.3.2-1.fmi
+- Bind to fixed port (configuratio) for listening to backends multicast messages
+
 * Wed Feb  4 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.2.4-1.fmi
 - Update to proj-9.7, gdal-3.12, fmt-12
 
