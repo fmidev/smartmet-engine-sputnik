@@ -25,6 +25,7 @@ namespace SmartMet
 Services::Services()
 {
   itsSnapshot.store(std::make_shared<Snapshot>());
+  itsSnapshotVersion.store(1);
 }
 
 BackendForwarderPtr Services::createForwarder(const std::vector<BackendServicePtr>& services,
@@ -74,16 +75,23 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
 {
   try
   {
+    ++itsGetServiceCalls;
+
     const auto uri = theRequest.getResource();
     auto snapshot = itsSnapshot.load();
     if (!snapshot)
+    {
+      ++itsGetServiceMisses;
       return {};
+    }
 
     // Check that URI map for server list
     const std::string uri_prefix = itsPrefixMap(uri);
     auto pos = snapshot->servicesByURI.find(uri_prefix);
     if (pos == snapshot->servicesByURI.end())
     {
+      ++itsGetServiceMisses;
+
       // Nothing for this URI found on the list. Return with error.
       std::cout << Fmi::SecondClock::local_time() << " Nothing known about URI requested by "
                 << theRequest.getClientIP() << " : " << uri_prefix << '\n';
@@ -97,6 +105,8 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     auto theBackendList = pos->second.first;
     if (theBackendList->empty())
     {
+      ++itsGetServiceMisses;
+
       // Nothing for this URI found. Return with error.
       std::cout << Fmi::SecondClock::local_time() << " Backend server list empty for URI " << uri
                 << '\n';
@@ -177,6 +187,7 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
     }
 
     itsSnapshot.store(newSnapshot);
+    ++itsSnapshotVersion;
 
     // If there are no services left, something has gone wrong.
     // Better exit and restart.
@@ -361,6 +372,7 @@ bool Services::latestSequence(int itsSequenceNumber)
     }
 
     itsSnapshot.store(newSnapshot);
+    ++itsSnapshotVersion;
 
     return true;
   }
@@ -412,6 +424,7 @@ bool Services::addService(const BackendServicePtr& theBackendService,
         std::make_pair(newListPtr, createForwarder(*newListPtr, theLoad));
 
     itsSnapshot.store(newSnapshot);
+    ++itsSnapshotVersion;
 
     // Update sentinel information for this backend
     SmartMet::Spine::WriteLock sentinelLock(itsSentinelMutex);
@@ -594,6 +607,8 @@ void Services::status(std::ostream& out, bool full) const
     // Read the Backend information list
 
     out << "<ul>\n";
+    out << "<li>Snapshot version " << itsSnapshotVersion.load() << " getService calls "
+      << itsGetServiceCalls.load() << " misses " << itsGetServiceMisses.load() << "</li>\n";
     for (const auto& uri : snapshot->servicesByURI)
     {
       out << "<li>URI " << uri.first << "</li>\n";
@@ -655,6 +670,7 @@ bool Services::addBackendInfoRequest(const BackendInfoRequestPtr& theRequest)
         std::make_shared<BackendInfoRequestList>(std::move(newList));
 
     itsSnapshot.store(newSnapshot);
+    ++itsSnapshotVersion;
 
     return true;
   }

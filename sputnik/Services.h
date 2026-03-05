@@ -11,6 +11,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <spine/Reactor.h>
 #include <spine/Thread.h>
+#include <atomic>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -43,6 +44,9 @@ class Services
   Spine::Reactor* itsReactor = nullptr;
 
   Fmi::AtomicSharedPtr<Snapshot> itsSnapshot;
+  std::atomic<std::uint64_t> itsSnapshotVersion{0};
+  std::atomic<std::uint64_t> itsGetServiceCalls{0};
+  std::atomic<std::uint64_t> itsGetServiceMisses{0};
 
   BackendForwarderPtr createForwarder(const std::vector<BackendServicePtr>& services,
                                       float defaultLoad) const;
