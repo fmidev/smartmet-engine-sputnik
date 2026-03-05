@@ -635,9 +635,13 @@ void Services::status(std::ostream& out, bool full) const
 
     // Read the Backend information list
 
+    const auto calls = itsGetServiceCalls.load();
+    const auto misses = itsGetServiceMisses.load();
+    const auto missRatio = (calls > 0 ? (misses * 100) / calls : 0);
+
     out << "<ul>\n";
     out << "<li>Snapshot version " << itsSnapshotVersion.load() << " getService calls "
-      << itsGetServiceCalls.load() << " misses " << itsGetServiceMisses.load() << "</li>\n";
+      << calls << " misses " << misses << " miss ratio " << missRatio << "%</li>\n";
     for (const auto& uri : snapshot->servicesByURI)
     {
       out << "<li>URI " << uri.first << "</li>\n";
