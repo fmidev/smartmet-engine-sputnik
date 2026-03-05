@@ -200,12 +200,17 @@ bool Services::queryBackendAlive(const std::string& theHostName, int thePort)
 {
   try
   {
-    SmartMet::Spine::ReadLock lock(itsSentinelMutex);
-
     std::string sname = theHostName + ":" + std::to_string(thePort);
-    auto iter = itsSentinels.find(sname);
-    if (iter != itsSentinels.end())
-      return iter->second->getAlive();
+    std::shared_ptr<BackendSentinel> sentinel;
+    {
+      SmartMet::Spine::ReadLock lock(itsSentinelMutex);
+      auto iter = itsSentinels.find(sname);
+      if (iter != itsSentinels.end())
+        sentinel = iter->second;
+    }
+
+    if (sentinel)
+      return sentinel->getAlive();
 
     // Unknown backend, this should not happen
     return false;
@@ -220,16 +225,21 @@ void Services::setBackendAlive(const std::string& theHostName, int thePort)
 {
   try
   {
-    SmartMet::Spine::ReadLock lock(itsSentinelMutex);
-
     std::string sname = theHostName + ":" + std::to_string(thePort);
-    auto iter = itsSentinels.find(sname);
-    if (iter != itsSentinels.end())
+    std::shared_ptr<BackendSentinel> sentinel;
+    {
+      SmartMet::Spine::ReadLock lock(itsSentinelMutex);
+      auto iter = itsSentinels.find(sname);
+      if (iter != itsSentinels.end())
+        sentinel = iter->second;
+    }
+
+    if (sentinel)
     {
 #ifdef MYDEBUG
       std::cout << Fmi::SecondClock::local_time() << " Setting backend " << sname << " alive\n";
 #endif
-      iter->second->setAlive();
+      sentinel->setAlive();
     }
   }
   catch (...)
@@ -242,15 +252,20 @@ void Services::signalBackendConnection(const std::string& theHostName, int thePo
 {
   try
   {
-    SmartMet::Spine::ReadLock lock(itsSentinelMutex);
-
     std::string sname = theHostName + ":" + std::to_string(thePort);
-    auto iter = itsSentinels.find(sname);
-    if (iter != itsSentinels.end())
+    std::shared_ptr<BackendSentinel> sentinel;
     {
-      iter->second->signalSentConnection();
+      SmartMet::Spine::ReadLock lock(itsSentinelMutex);
+      auto iter = itsSentinels.find(sname);
+      if (iter != itsSentinels.end())
+        sentinel = iter->second;
+    }
+
+    if (sentinel)
+    {
+      sentinel->signalSentConnection();
 #ifdef MYDEBUG
-      unsigned int count = iter->second->getCurrentThrottle();
+      unsigned int count = sentinel->getCurrentThrottle();
       std::cout << Fmi::SecondClock::local_time() << " Incremented backend " << sname
                 << " connections to " << count << '\n';
 #endif
