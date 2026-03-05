@@ -22,18 +22,67 @@ using namespace std::string_literals;
 
 namespace SmartMet
 {
+Services::Services()
+{
+  itsSnapshot.store(std::make_shared<Snapshot>());
+}
+
+BackendForwarderPtr Services::createForwarder(const std::vector<BackendServicePtr>& services,
+                                              float defaultLoad) const
+{
+  BackendForwarderPtr theForwarder;
+  switch (itsFwdMode)
+  {
+    case ForwardingMode::InverseLoad:
+      theForwarder = BackendForwarderPtr(new InverseLoadForwarder(itsBalancingCoefficient));
+      break;
+    case ForwardingMode::Random:
+      theForwarder = BackendForwarderPtr(new RandomForwarder);
+      break;
+    case ForwardingMode::DoubleRandom:
+      theForwarder = BackendForwarderPtr(new DoubleRandomForwarder);
+      break;
+    case ForwardingMode::LeastConnections:
+      theForwarder = BackendForwarderPtr(new LeastConnectionsForwarder);
+      break;
+    case ForwardingMode::InverseConnections:
+      theForwarder = BackendForwarderPtr(new InverseConnectionsForwarder(itsBalancingCoefficient));
+      break;
+    case ForwardingMode::ExponentialConnections:
+      theForwarder =
+          BackendForwarderPtr(new ExponentialConnectionsForwarder(itsBalancingCoefficient));
+      break;
+  }
+
+  for (const auto& backendService : services)
+  {
+    if (!backendService)
+      continue;
+
+    const auto backend = backendService->Backend();
+    if (!backend)
+      continue;
+
+    const float load = backend->Load() > 0 ? backend->Load() : defaultLoad;
+    theForwarder->addBackend(backend->Name(), backend->Port(), load, *itsReactor);
+  }
+
+  return theForwarder;
+}
+
 BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
 {
   try
   {
     const auto uri = theRequest.getResource();
-
-    SmartMet::Spine::ReadLock lock(itsMutex);
+    auto snapshot = itsSnapshot.load();
+    if (!snapshot)
+      return {};
 
     // Check that URI map for server list
     const std::string uri_prefix = itsPrefixMap(uri);
-    auto pos = itsServicesByURI.find(uri_prefix);
-    if (pos == itsServicesByURI.end())
+    auto pos = snapshot->servicesByURI.find(uri_prefix);
+    if (pos == snapshot->servicesByURI.end())
     {
       // Nothing for this URI found on the list. Return with error.
       std::cout << Fmi::SecondClock::local_time() << " Nothing known about URI requested by "
@@ -60,6 +109,8 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     // NOTE: Uses backend load information
     auto backendRandPtr = pos->second.second;
     std::size_t rndServerSlot = backendRandPtr->getBackend(*itsReactor);
+    if (rndServerSlot >= theBackendList->size())
+      rndServerSlot %= theBackendList->size();
     auto theService = theBackendList->at(rndServerSlot);
 
 #ifdef MYDEBUG
@@ -79,43 +130,58 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
   try
   {
     SmartMet::Spine::WriteLock lock(itsMutex);
+    auto oldSnapshot = itsSnapshot.load();
+    if (!oldSnapshot)
+      oldSnapshot = std::make_shared<Snapshot>();
 
-    for (auto& theURIs : itsServicesByURI)
-      for (auto it = (*theURIs.second.first).begin(); it != (*theURIs.second.first).end();)
+    auto newSnapshot = std::make_shared<Snapshot>(*oldSnapshot);
+
+    bool anyServicesLeft = false;
+    for (auto& theURIs : newSnapshot->servicesByURI)
+    {
+      BackendServiceList newList;
+      const auto& oldList = *theURIs.second.first;
+      newList.reserve(oldList.size());
+
+      for (const auto& backendService : oldList)
       {
-        itsPrefixMap.removeBackend(theURI, *it);
-        if (((*it)->Backend()->Name() == theHostname && (*it)->Backend()->Port() == thePort) &&
-            (theURI.empty() || theURI == (*it)->URI()))
+        itsPrefixMap.removeBackend(theURI, backendService);
+
+        const bool matchingBackend =
+            backendService && backendService->Backend() &&
+            backendService->Backend()->Name() == theHostname &&
+            backendService->Backend()->Port() == thePort;
+
+        if (matchingBackend && (theURI.empty() || theURI == backendService->URI()))
         {
-// Temporarily retire the server from the service.
 #ifdef MYDEBUG
           std::cout << Fmi::SecondClock::local_time() << " Removing backend "
-                    << (*it)->Backend()->Name() << " seq " << (*it)->SequenceNumber() << " URI "
-                    << (*it)->URI() << '\n';
+                    << backendService->Backend()->Name() << " seq "
+                    << backendService->SequenceNumber() << " URI " << backendService->URI() << '\n';
 #endif
-          theURIs.second.second->removeBackend(
-              (*it)->Backend()->Name(), (*it)->Backend()->Port(), *itsReactor);
-          it = (*theURIs.second.first).erase(it);
+          continue;
         }
-        else
-        {
+
 #ifdef MYDEBUG
-          std::cout << Fmi::SecondClock::local_time() << " Keeping backend "
-                    << (*it)->Backend()->Name() << " seq " << (*it)->SequenceNumber() << " URI "
-                    << (*it)->URI() << '\n';
+        std::cout << Fmi::SecondClock::local_time() << " Keeping backend "
+                  << backendService->Backend()->Name() << " seq "
+                  << backendService->SequenceNumber() << " URI " << backendService->URI() << '\n';
 #endif
-          ++it;
-        }
+        newList.push_back(backendService);
       }
+
+      theURIs.second.first = std::make_shared<BackendServiceList>(std::move(newList));
+      theURIs.second.second = createForwarder(*theURIs.second.first, 1.0F);
+      if (!theURIs.second.first->empty())
+        anyServicesLeft = true;
+    }
+
+    itsSnapshot.store(newSnapshot);
 
     // If there are no services left, something has gone wrong.
     // Better exit and restart.
-
-    for (const auto& theURIs : itsServicesByURI)
-    {
-      if (!theURIs.second.first->empty())
-        return true;
-    }
+    if (anyServicesLeft)
+      return true;
 
     std::cout << Fmi::SecondClock::local_time() << " No services left, performing a restart\n";
     // Using exit might generate a coredump, and we want a fast restart
@@ -205,68 +271,81 @@ bool Services::latestSequence(int itsSequenceNumber)
   try
   {
     SmartMet::Spine::WriteLock lock(itsMutex);
+    auto oldSnapshot = itsSnapshot.load();
+    if (!oldSnapshot)
+      oldSnapshot = std::make_shared<Snapshot>();
+
+    auto newSnapshot = std::make_shared<Snapshot>(*oldSnapshot);
 
 #ifdef MYDEBUG
     std::cout << "UPDATING TO SEQ " << itsSequenceNumber << '\n';
 #endif
 
     // Clean up services
-    for (const auto& theURIs : itsServicesByURI)
-      for (auto it = (*theURIs.second.first).begin(); it != (*theURIs.second.first).end();)
+    for (auto& theURIs : newSnapshot->servicesByURI)
+    {
+      BackendServiceList newList;
+      const auto& oldList = *theURIs.second.first;
+      newList.reserve(oldList.size());
+
+      for (const auto& backendService : oldList)
       {
-        if ((*it)->SequenceNumber() != itsSequenceNumber)
+        if (backendService->SequenceNumber() != itsSequenceNumber)
         {
 // Temporarily retire the server from the service.
 #ifdef MYDEBUG
           std::cout << Fmi::SecondClock::local_time() << "Removing sequence "
-                    << (*it)->SequenceNumber() << " backend " << (*it)->Backend()->Name() << " URI "
-                    << (*it)->URI() << '\n';
+                    << backendService->SequenceNumber() << " backend "
+                    << backendService->Backend()->Name() << " URI " << backendService->URI() << '\n';
 #endif
-
-          // Remove this entry as it has unmatching sequence number
-          theURIs.second.second->removeBackend(
-              (*it)->Backend()->Name(), (*it)->Backend()->Port(), *itsReactor);
-          it = (*theURIs.second.first).erase(it);
         }
         else
         {
 #ifdef MYDEBUG
-          std::cout << Fmi::SecondClock::local_time() << "  sequence " << (*it)->SequenceNumber()
-                    << " backend " << (*it)->Backend()->Name() << " URI " << (*it)->URI() << '\n';
+          std::cout << Fmi::SecondClock::local_time() << "  sequence "
+                    << backendService->SequenceNumber() << " backend "
+                    << backendService->Backend()->Name() << " URI " << backendService->URI() << '\n';
 #endif
-          ++it;
+          newList.push_back(backendService);
         }
       }
+      theURIs.second.first = std::make_shared<BackendServiceList>(std::move(newList));
+      theURIs.second.second = createForwarder(*theURIs.second.first, 1.0F);
+    }
 
     // Clean up info requests - remove entries from backends that didn't respond
-    for (auto& infoReqPair : itsBackendInfoRequests)
+    for (auto& infoReqPair : newSnapshot->backendInfoRequests)
     {
-      auto& requestList = infoReqPair.second;
+      BackendInfoRequestList newList;
+      const auto& requestList = infoReqPair.second;
       if (requestList)
       {
-        for (auto it = requestList->begin(); it != requestList->end();)
+        newList.reserve(requestList->size());
+        for (const auto& infoRequest : *requestList)
         {
-          if ((*it)->SequenceNumber() != itsSequenceNumber)
+          if (infoRequest->SequenceNumber() != itsSequenceNumber)
           {
 #ifdef MYDEBUG
             std::cout << Fmi::SecondClock::local_time() << "Removing info request sequence "
-                      << (*it)->SequenceNumber() << " backend " << (*it)->Backend()->Name()
-                      << " name " << (*it)->Name() << '\n';
+                      << infoRequest->SequenceNumber() << " backend "
+                      << infoRequest->Backend()->Name() << " name " << infoRequest->Name() << '\n';
 #endif
-            it = requestList->erase(it);
           }
           else
           {
 #ifdef MYDEBUG
             std::cout << Fmi::SecondClock::local_time() << "  info request sequence "
-                      << (*it)->SequenceNumber() << " backend " << (*it)->Backend()->Name()
-                      << " name " << (*it)->Name() << '\n';
+                      << infoRequest->SequenceNumber() << " backend "
+                      << infoRequest->Backend()->Name() << " name " << infoRequest->Name() << '\n';
 #endif
-            ++it;
+            newList.push_back(infoRequest);
           }
         }
       }
+      infoReqPair.second = std::make_shared<BackendInfoRequestList>(std::move(newList));
     }
+
+    itsSnapshot.store(newSnapshot);
 
     return true;
   }
@@ -296,60 +375,28 @@ bool Services::addService(const BackendServicePtr& theBackendService,
 #endif
 
     SmartMet::Spine::WriteLock lock(itsMutex);
+    auto oldSnapshot = itsSnapshot.load();
+    if (!oldSnapshot)
+      oldSnapshot = std::make_shared<Snapshot>();
+
+    auto newSnapshot = std::make_shared<Snapshot>(*oldSnapshot);
 
     if (theBackendService->DefinesPrefix())
     {
       itsPrefixMap.addPrefix(theFrontendURI, theBackendService);
     }
 
-    const auto pos = itsServicesByURI.find(theFrontendURI);
-    if (pos != itsServicesByURI.end())
-    {
-      // URI already known, take the URI's existing std::list
-      pos->second.first->push_back(theBackendService);
-      pos->second.second->addBackend(theBackendService->Backend()->Name(),
-                                     theBackendService->Backend()->Port(),
-                                     theLoad,
-                                     *itsReactor);
-    }
-    else
-    {
-      // URI not known, make new list
-      BackendServiceListPtr newlist(new BackendServiceList());
-      newlist->push_back(theBackendService);
+    BackendServiceList newList;
+    const auto pos = newSnapshot->servicesByURI.find(theFrontendURI);
+    if (pos != newSnapshot->servicesByURI.end() && pos->second.first)
+      newList = *pos->second.first;
 
-      BackendForwarderPtr theForwarder;
-      switch (itsFwdMode)
-      {
-        case ForwardingMode::InverseLoad:
-          theForwarder = BackendForwarderPtr(new InverseLoadForwarder(itsBalancingCoefficient));
-          break;
-        case ForwardingMode::Random:
-          theForwarder = BackendForwarderPtr(new RandomForwarder);
-          break;
-        case ForwardingMode::DoubleRandom:
-          theForwarder = BackendForwarderPtr(new DoubleRandomForwarder);
-          break;
-        case ForwardingMode::LeastConnections:
-          theForwarder = BackendForwarderPtr(new LeastConnectionsForwarder);
-          break;
-        case ForwardingMode::InverseConnections:
-          theForwarder =
-              BackendForwarderPtr(new InverseConnectionsForwarder(itsBalancingCoefficient));
-          break;
-        case ForwardingMode::ExponentialConnections:
-          theForwarder =
-              BackendForwarderPtr(new ExponentialConnectionsForwarder(itsBalancingCoefficient));
-          break;
-      }
+    newList.push_back(theBackendService);
+    auto newListPtr = std::make_shared<BackendServiceList>(std::move(newList));
+    newSnapshot->servicesByURI[theFrontendURI] =
+        std::make_pair(newListPtr, createForwarder(*newListPtr, theLoad));
 
-      theForwarder->addBackend(theBackendService->Backend()->Name(),
-                               theBackendService->Backend()->Port(),
-                               theLoad,
-                               *itsReactor);
-
-      itsServicesByURI[theFrontendURI] = std::make_pair(newlist, theForwarder);
-    }
+    itsSnapshot.store(newSnapshot);
 
     // Update sentinel information for this backend
     SmartMet::Spine::WriteLock sentinelLock(itsSentinelMutex);
@@ -388,7 +435,9 @@ std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& se
 {
   try
   {
-    SmartMet::Spine::ReadLock lock(itsMutex);
+    auto snapshot = itsSnapshot.load();
+    if (!snapshot)
+      snapshot = std::make_shared<Snapshot>();
 
     std::unique_ptr<SmartMet::Spine::Table> ret = std::make_unique<SmartMet::Spine::Table>();
 
@@ -404,7 +453,7 @@ std::unique_ptr<SmartMet::Spine::Table> Services::backends(const std::string& se
     std::set<std::string> listedIds;  // To avoid listing the same backend multiple times if it appears in multiple URIs
 
     std::size_t row = 0;
-    for (const auto& uri : itsServicesByURI)
+    for (const auto& uri : snapshot->servicesByURI)
     {
       if (uri.first == serviceuri)
       {
@@ -446,14 +495,16 @@ Services::BackendList Services::getBackendList(const std::string& service) const
 {
   try
   {
-    SmartMet::Spine::ReadLock lock(itsMutex);
+    auto snapshot = itsSnapshot.load();
+    if (!snapshot)
+      snapshot = std::make_shared<Snapshot>();
 
     std::string serviceuri = "/" + itsPrefixMap(service);
 
     // List all backends with matching URI
 
     BackendList theList;
-    for (const auto& uri : itsServicesByURI)
+    for (const auto& uri : snapshot->servicesByURI)
     {
       if (uri.first == serviceuri)
       {
@@ -483,13 +534,15 @@ Services::BackendList Services::getInfoRequestBackendList(const std::string& inf
 {
   try
   {
-    SmartMet::Spine::ReadLock lock(itsMutex);
+    auto snapshot = itsSnapshot.load();
+    if (!snapshot)
+      snapshot = std::make_shared<Snapshot>();
 
     BackendList theList;
 
     // Find the info request by name
-    auto pos = itsBackendInfoRequests.find(infoRequestName);
-    if (pos != itsBackendInfoRequests.end() && pos->second)
+    auto pos = snapshot->backendInfoRequests.find(infoRequestName);
+    if (pos != snapshot->backendInfoRequests.end() && pos->second)
     {
       // List all backends providing this info request
       for (const auto& infoRequest : *pos->second)
@@ -519,12 +572,14 @@ void Services::status(std::ostream& out, bool full) const
 {
   try
   {
-    SmartMet::Spine::ReadLock lock(itsMutex);
+    auto snapshot = itsSnapshot.load();
+    if (!snapshot)
+      snapshot = std::make_shared<Snapshot>();
 
     // Read the Backend information list
 
     out << "<ul>\n";
-    for (const auto& uri : itsServicesByURI)
+    for (const auto& uri : snapshot->servicesByURI)
     {
       out << "<li>URI " << uri.first << "</li>\n";
 
@@ -569,20 +624,22 @@ bool Services::addBackendInfoRequest(const BackendInfoRequestPtr& theRequest)
 #endif
 
     SmartMet::Spine::WriteLock lock(itsMutex);
+    auto oldSnapshot = itsSnapshot.load();
+    if (!oldSnapshot)
+      oldSnapshot = std::make_shared<Snapshot>();
 
-    const auto pos = itsBackendInfoRequests.find(theRequest->Name());
-    if (pos != itsBackendInfoRequests.end())
-    {
-      // Info request name already known, add to the existing list
-      pos->second->push_back(theRequest);
-    }
-    else
-    {
-      // Info request name not known, make new list
-      BackendInfoRequestListPtr newlist(new BackendInfoRequestList());
-      newlist->push_back(theRequest);
-      itsBackendInfoRequests[theRequest->Name()] = newlist;
-    }
+    auto newSnapshot = std::make_shared<Snapshot>(*oldSnapshot);
+
+    BackendInfoRequestList newList;
+    const auto pos = newSnapshot->backendInfoRequests.find(theRequest->Name());
+    if (pos != newSnapshot->backendInfoRequests.end() && pos->second)
+      newList = *pos->second;
+
+    newList.push_back(theRequest);
+    newSnapshot->backendInfoRequests[theRequest->Name()] =
+        std::make_shared<BackendInfoRequestList>(std::move(newList));
+
+    itsSnapshot.store(newSnapshot);
 
     return true;
   }
@@ -602,10 +659,12 @@ std::set<std::string> Services::getInfoRequestNames() const
 {
   try
   {
-    SmartMet::Spine::ReadLock lock(itsMutex);
+    auto snapshot = itsSnapshot.load();
+    if (!snapshot)
+      snapshot = std::make_shared<Snapshot>();
 
     std::set<std::string> names;
-    for (const auto& item : itsBackendInfoRequests)
+    for (const auto& item : snapshot->backendInfoRequests)
     {
       // Only include if there's at least one backend providing this info request
       if (item.second && !item.second->empty())
@@ -626,6 +685,8 @@ void Services::setForwarding(const std::string& theMode, float balancingCoeffici
 {
   try
   {
+    SmartMet::Spine::WriteLock lock(itsMutex);
+
     if (theMode == "inverseload")
       itsFwdMode = ForwardingMode::InverseLoad;
     else if (theMode == "random")

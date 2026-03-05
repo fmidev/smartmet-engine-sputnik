@@ -6,6 +6,7 @@
 #include "BackendServer.h"
 #include "BackendService.h"
 #include "URIPrefixMap.h"
+#include <macgyver/AtomicSharedPtr.h>
 #include <boost/thread.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <spine/Reactor.h>
@@ -30,8 +31,21 @@ using BackendInfoRequestPtr = std::shared_ptr<BackendInfoRequest>;
 class Services
 {
  private:
+  struct Snapshot
+  {
+    std::map<std::string,
+             std::pair<std::shared_ptr<std::vector<BackendServicePtr>>, BackendForwarderPtr>>
+        servicesByURI;
+    std::map<std::string, std::shared_ptr<std::vector<BackendInfoRequestPtr>>> backendInfoRequests;
+  };
+
   mutable SmartMet::Spine::MutexType itsMutex;
   Spine::Reactor* itsReactor = nullptr;
+
+  Fmi::AtomicSharedPtr<Snapshot> itsSnapshot;
+
+  BackendForwarderPtr createForwarder(const std::vector<BackendServicePtr>& services,
+                                      float defaultLoad) const;
 
  public:
   using BackendServiceList = std::vector<BackendServicePtr>;
@@ -55,11 +69,6 @@ class Services
   };
 
   using BackendList = std::list<boost::tuple<std::string, std::string, int>>;
-
-  // Map contain lists of BackendService lists associated with URI
-  ServiceURIMap itsServicesByURI;
-
-  BackendInfoRequestMap itsBackendInfoRequests;
 
   // Map contain mapping of URI prefixes to backends
   URIPrefixMap itsPrefixMap;
@@ -98,7 +107,7 @@ class Services
   void setBackendAlive(const std::string& theHostName, int thePort);
 
   ~Services() = default;
-  Services() = default;
+  Services();
 
   Services(const Services& other) = delete;
   Services& operator=(const Services& other) = delete;
