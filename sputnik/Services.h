@@ -47,6 +47,9 @@ class Services
   std::atomic<std::uint64_t> itsSnapshotVersion{0};
   std::atomic<std::uint64_t> itsGetServiceCalls{0};
   std::atomic<std::uint64_t> itsGetServiceMisses{0};
+  mutable std::atomic<std::uint64_t> itsLastMissWarningCallCount{0};
+
+  void maybeLogHighMissRate() const;
 
   BackendForwarderPtr createForwarder(const std::vector<BackendServicePtr>& services,
                                       float defaultLoad) const;

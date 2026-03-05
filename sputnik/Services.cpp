@@ -22,6 +22,32 @@ using namespace std::string_literals;
 
 namespace SmartMet
 {
+void Services::maybeLogHighMissRate() const
+{
+  static constexpr std::uint64_t sampleInterval = 1000;
+  static constexpr std::uint64_t warningCooldown = 10000;
+  static constexpr std::uint64_t thresholdPercent = 20;
+
+  const auto calls = itsGetServiceCalls.load();
+  if (calls < sampleInterval || (calls % sampleInterval) != 0)
+    return;
+
+  const auto misses = itsGetServiceMisses.load();
+  if ((misses * 100) / calls <= thresholdPercent)
+    return;
+
+  auto lastWarningAt = itsLastMissWarningCallCount.load();
+  if (calls - lastWarningAt < warningCooldown)
+    return;
+
+  if (itsLastMissWarningCallCount.compare_exchange_strong(lastWarningAt, calls))
+  {
+    std::cout << Fmi::SecondClock::local_time() << " Services::getService miss ratio is "
+              << ((misses * 100) / calls) << "% (" << misses << "/" << calls
+              << "), snapshot version " << itsSnapshotVersion.load() << '\n';
+  }
+}
+
 Services::Services()
 {
   itsSnapshot.store(std::make_shared<Snapshot>());
@@ -82,6 +108,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     if (!snapshot)
     {
       ++itsGetServiceMisses;
+      maybeLogHighMissRate();
       return {};
     }
 
@@ -91,6 +118,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     if (pos == snapshot->servicesByURI.end())
     {
       ++itsGetServiceMisses;
+      maybeLogHighMissRate();
 
       // Nothing for this URI found on the list. Return with error.
       std::cout << Fmi::SecondClock::local_time() << " Nothing known about URI requested by "
@@ -106,6 +134,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     if (theBackendList->empty())
     {
       ++itsGetServiceMisses;
+      maybeLogHighMissRate();
 
       // Nothing for this URI found. Return with error.
       std::cout << Fmi::SecondClock::local_time() << " Backend server list empty for URI " << uri
