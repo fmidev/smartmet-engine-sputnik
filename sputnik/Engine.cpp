@@ -28,6 +28,11 @@ Engine::Engine(const char* theConfig)
 
     SmartMet::Spine::ConfigBase conf(theConfig);
 
+    const SmartMet::Spine::Reactor* reactor = SmartMet::Spine::Reactor::instance;
+    if (reactor == nullptr)
+      throw Fmi::Exception(BCP, "Reactor instance is not available during Engine construction");
+    itsHttpPort = reactor->getOptions().port;
+
     // Frontend parameters
 
     conf.get_config_array("backendUdpListeners", itsBackendUdpListeners);
@@ -50,7 +55,7 @@ Engine::Engine(const char* theConfig)
 
     itsHostname = conf.get_optional_config_param<std::string>("hostname", "localhost");
     itsHttpAddress = conf.get_optional_config_param<std::string>("httpAddress", "127.0.0.1");
-    itsHttpPort = conf.get_optional_config_param<int>("httpPort", 80);
+    //itsHttpPort = conf.get_optional_config_param<int>("httpPort", 80);
     itsUdpListenerAddress =
         conf.get_optional_config_param<std::string>("udpListenerAddress", "127.0.0.1");
     itsUdpListenerPort = conf.get_optional_config_param<int>("udpListenerPort", COMM_UDP_PORT);
