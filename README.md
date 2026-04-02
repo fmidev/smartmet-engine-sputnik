@@ -1,47 +1,12 @@
-Table of Contents
-=================
-  * [SmartMet Server](#SmartMet Server)
-  * [Introduction](#introduction)
-  * [API](#api)
-  * [SputnikMessage](#sputnikmessage)
-  * [Events](#events)
-  * [Configuration](#configuration)
-    * [Frontend Sputink configuration](#frontend-sputink-configuration)
-    * [Backend Sputnik configuration](#backend-sputnik-configuration)
-  * [Docker](#docker)
+# smartmet-engine-sputnik
 
-# SmartMet Server
+Part of [SmartMet Server](https://github.com/fmidev/smartmet-server). See the [SmartMet Server documentation](https://github.com/fmidev/smartmet-server) for a full overview of the ecosystem.
 
-[SmartMet Server](https://github.com/fmidev/smartmet-server) is a data
-and procut server for MetOcean data. It provides high capacity and
-high availability data and product server for MetOcean data. The
-server is written in C++.
+## Overview
 
-# Introduction
+The Sputnik engine facilitates communication in the SmartMet Server frontend/backend cluster. It uses UDP broadcasting for service discovery, allowing frontend servers to automatically discover backend servers and distribute load across them.
 
-The SmartMet server framework is a common base for all the servers
-regardless of their individual server type. Some servers are
-configured as frontend and some are configured as backend
-servers. These servers have many engines and plugins based on the
-service they provide. The Sputnik engine is loaded in every frontend
-and backend servers and it facilitates the communication in the
-SmartMet framework. The SmartMet server framework is shown below.
-
-<br>
-
-![](images/smartmet_server_schematic_dia.png)
-
-
-The Sputnik engine provides support for self-organizing client/server
-network using  UDP (User Datagram Protocol, RFC 768) broadcasting.  The
-frontend server should configure the IP addresses and ports for the
-UDP broadcast for the Service Discovery and Request (SDR) and the
-backend servers should listen to these IP addresses and ports. In the
-configuration file of the Sputnik engine we have to specify these IP
-addresses and ports for the frontend and for the backend servers.
-
-
-#API 
+## API
 
 The Sputnik-module is initialized by calling the constructor.
 
@@ -79,7 +44,7 @@ Using the broadcast method  a pre-formatted broadcast packet can be send  to all
 <pre><code> int Broadcast(const std::string & theMessageBuffer); </code></pre>
 
 
-#SputnikMessage
+## SputnikMessage
 
 SputkikMessage is a data packet delivered via UDP broadcast to all the servers (both frontend and backend) in the SmartMet server message.
 
@@ -138,7 +103,8 @@ repeated Service services = 8;
 
 <pre><code>}</code></pre>
 
-# Events
+## Events
+
 The UDP Broadcast must be done by the backend in the following events:
 
 1. Data update in Service, i.e., plugin has uploaded some data and caches should be flushed.
@@ -158,7 +124,7 @@ the related Services-information.
 Some broadcasts must specifically initiated by an engine/plugin in
 situations where data refresh is needed are not known to Sputnik.
 
-#Configuration
+## Configuration
 
 As mentioned earlier we should have to specify the configuration for
 both the  frontend and the backend servers in the Sputnik engine. Sample
@@ -166,7 +132,7 @@ configurations for frontend and backend are discussed in the following
 sections.
 
 
-## Frontend Sputink configuration 
+### Frontend Sputink configuration 
 
 The frontend parameters are the list of the IP addresses and the UDP
 ports that the backend servers are listening to. The frontend sends
@@ -199,7 +165,7 @@ and the backend can use is given below.
 
 </code></pre>
 
-## Backend Sputnik configuration
+### Backend Sputnik configuration
 
 The backend parameters with some example values are given below.
 
@@ -224,10 +190,10 @@ udpListenerPort = 31337;
 comment = "SmartMet server in myhost";
 </code></pre>
 
-# Docker
+## License
 
-SmartMet Server can be dockerized. This [tutorial](docs/docker.md)
-explains how to explains how to configure the Sputnik engine
-of the SmartMet Server when using Docker.
+MIT — see [LICENSE](LICENSE)
 
+## Contributing
 
+Bug reports and pull requests are welcome on [GitHub](../../issues).
