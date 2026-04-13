@@ -190,6 +190,10 @@ udpListenerPort = 31337;
 comment = "SmartMet server in myhost";
 </code></pre>
 
+## Documentation
+
+- [Docker configuration tutorial](docs/docker.md)
+
 ## License
 
 MIT — see [LICENSE](LICENSE)
