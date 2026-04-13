@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.3.9
+Version: 26.4.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -24,14 +24,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 26.3.9
+BuildRequires: smartmet-library-spine-devel >= 26.4.13
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 26.2.4
+BuildRequires: smartmet-library-macgyver-devel >= 26.4.13
 Requires: protobuf
-Requires: smartmet-server >= 26.2.4
-Requires: smartmet-library-spine >= 26.3.9
-Requires: smartmet-library-macgyver >= 26.2.4
+Requires: smartmet-server >= 26.4.13
+Requires: smartmet-library-spine >= 26.4.13
+Requires: smartmet-library-macgyver >= 26.4.13
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
 Provides: %{SPECNAME}
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Mon Apr 13 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.4.13-1.fmi
+- Repackaged due to API changes
+
 * Mon Mar  9 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.3.9-1.fmi
 - Take backend HTTP port from Reactor configuration
 
