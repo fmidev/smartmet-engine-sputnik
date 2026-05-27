@@ -43,8 +43,35 @@ backendUdpListeners = ["192.168.122.255:31337","192.168.122.135:31338","192.168.
 #  Broadcast      192.168.100.255:31337   192.168.100.255:31337
 #  Direct IP      192.168.122.135:31000   192.168.122.135:31000 
 #  Direct IP      192.168.122.135:32000   192.168.122.135:32000 
-#  Direct IP      192.168.122.138:31000   192.168.122.138:31000 
+#  Direct IP      192.168.122.138:31000   192.168.122.138:31000
 
+
+# Load balancing / request forwarding.
+#
+# forwarding: backend selection strategy. One of:
+#   random, doublerandom, inverseload, inverseconnections,
+#   leastconnections, exponentialconnections, sticky
+#
+# sticky: routes a client to the same backend as long as the backend set is
+# unchanged (rendezvous/HRW hashing). The selection key is, in priority order:
+#   1. the sticky_cookie value if the client sends that cookie, otherwise
+#   2. the effective client IP (X-Forwarded-For if present, else the peer)
+#      combined with the User-Agent.
+# Backends with significantly more active connections than the least-loaded
+# backend are excluded from selection; in sticky mode balance_factor sets how
+# many times the minimum connection count a backend may reach before exclusion.
+#
+# balance_factor: balancing coefficient (default 2.0). For the connection- and
+# load-weighted strategies it controls the weighting; for sticky it controls
+# the hotspot exclusion threshold.
+#
+# sticky_cookie: name of the client-set affinity cookie (default
+# "smartmet-session-id"). Set to "" to disable the cookie step and key only on
+# IP + User-Agent.
+
+# forwarding     = "sticky";
+# balance_factor = 2.0;
+# sticky_cookie  = "smartmet-session-id";
 
 
 #####################  BACKEND PARAMETERS ######################

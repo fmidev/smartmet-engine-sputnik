@@ -42,7 +42,7 @@ Both modes run an async Boost.Asio io_context on a dedicated thread.
 
 ### Service routing and load balancing
 
-`Services` is the central routing table on the frontend. It maps each URI to a list of `BackendService` entries plus a `BackendForwarder` that selects which backend handles each request. Six forwarding strategies are available (configured via `forwarding` in sputnik.conf):
+`Services` is the central routing table on the frontend. It maps each URI to a list of `BackendService` entries plus a `BackendForwarder` that selects which backend handles each request. Seven forwarding strategies are available (configured via `forwarding` in sputnik.conf):
 
 | Config value | Class | Algorithm |
 |---|---|---|
@@ -52,8 +52,11 @@ Both modes run an async Boost.Asio io_context on a dedicated thread.
 | `inverseconnections` | `InverseConnectionsForwarder` | Weight by `1/(1 + a*connections)` |
 | `leastconnections` | `LeastConnectionsForwarder` | Pick the backend with fewest active connections |
 | `exponentialconnections` | `ExponentialConnectionsForwarder` | Exponential weighting by connection count |
+| `sticky` | `StickyForwarder` | Session affinity via rendezvous (HRW) hashing, with active-connection hotspot exclusion |
 
-All forwarders extend `BackendForwarder` and override `redistribute()` (called on backend list changes) and optionally `rebalance()` (called per-request). The `balance_factor` config parameter controls the `a` coefficient.
+The first six forwarders extend `BackendForwarder` and override `redistribute()` (called on backend list changes) and optionally `rebalance()` (called per-request); the `balance_factor` config parameter controls the `a` coefficient.
+
+`StickyForwarder` instead overrides `getBackend()` directly (which now also receives the `Spine::HTTP::Request`). It keys each request on a client-set affinity cookie (`sticky_cookie`, default `smartmet-session-id`) when present, otherwise on the effective client IP (X-Forwarded-For or peer) combined with the User-Agent, and maps the key to a backend with rendezvous hashing. Backends whose active connections exceed `balance_factor * min_connections + slack` are excluded from selection.
 
 ### URI prefix routing
 
@@ -73,7 +76,7 @@ The engine supports pause/resume via `setPause()`, `setPauseUntil(deadline)`, an
 
 Configuration uses libconfig++ format. See `cnf/sputnik.conf.sample` for a complete example. Key parameters:
 
-**Frontend**: `backendUdpListeners` (required), `frontendUdpAddress`, `frontendUdpPort`, `forwarding`, `balance_factor`, `heartbeat.interval`, `heartbeat.timeout`, `heartbeat.max_skipped_cycles`
+**Frontend**: `backendUdpListeners` (required), `frontendUdpAddress`, `frontendUdpPort`, `forwarding`, `balance_factor`, `sticky_cookie`, `heartbeat.interval`, `heartbeat.timeout`, `heartbeat.max_skipped_cycles`
 
 **Backend**: `hostname`, `httpAddress`, `udpListenerAddress`, `udpListenerPort`, `comment`, `throttle`, `pause`
 

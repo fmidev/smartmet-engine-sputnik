@@ -12,6 +12,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/taus88.hpp>
 #include <boost/thread.hpp>
+#include <spine/HTTP.h>
 #include <spine/Reactor.h>
 #include <spine/Thread.h>
 #include <memory>
@@ -50,7 +51,8 @@ class BackendForwarder
    * using the underlying balancing algorithm.
    */
 
-  virtual std::size_t getBackend(Spine::Reactor& theReactor);
+  virtual std::size_t getBackend(Spine::Reactor& theReactor,
+                                 const Spine::HTTP::Request& theRequest);
 
   /*! \brief Set the internal backend list explicitly
    *

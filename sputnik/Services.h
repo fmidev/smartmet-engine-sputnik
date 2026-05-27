@@ -51,7 +51,8 @@ class Services
     InverseConnections,
     LeastConnections,
     DoubleRandom,
-    ExponentialConnections
+    ExponentialConnections,
+    Sticky
   };
 
   using BackendList = std::list<boost::tuple<std::string, std::string, int>>;
@@ -72,6 +73,8 @@ class Services
 
   float itsBalancingCoefficient = 2.0F;
 
+  std::string itsCookieName;  // Affinity cookie name for the Sticky forwarder
+
   // Service accessing methods
   BackendServicePtr getService(const Spine::HTTP::Request& theRequest);
 
@@ -89,7 +92,9 @@ class Services
 
   bool latestSequence(int itsSequenceNumber);
 
-  void setForwarding(const std::string& theMode, float balancingCoefficient);
+  void setForwarding(const std::string& theMode,
+                     float balancingCoefficient,
+                     const std::string& cookieName = "");
 
   bool queryBackendAlive(const std::string& theHostName, int thePort);
 

@@ -42,6 +42,8 @@ Engine::Engine(const char* theConfig)
 
     itsForwardingMode = conf.get_optional_config_param<std::string>("forwarding", "random");
     itsBalanceFactor = conf.get_optional_config_param<float>("balance_factor", 2.0F);
+    itsStickyCookie =
+        conf.get_optional_config_param<std::string>("sticky_cookie", "smartmet-session-id");
 
     itsHeartBeatInterval = conf.get_optional_config_param<int>("heartbeat.interval", 5);
     itsHeartBeatTimeout = conf.get_optional_config_param<int>("heartbeat.timeout", 2);
@@ -135,9 +137,12 @@ void Engine::frontendMode()
   try
   {
     std::cout << "Using Broadcast balancing configuration: balance factor => " << itsBalanceFactor
-              << ", mode => " << itsForwardingMode << '\n';
+              << ", mode => " << itsForwardingMode;
+    if (itsForwardingMode == "sticky")
+      std::cout << ", sticky cookie => " << itsStickyCookie;
+    std::cout << '\n';
 
-    itsServices.setForwarding(itsForwardingMode, itsBalanceFactor);
+    itsServices.setForwarding(itsForwardingMode, itsBalanceFactor, itsStickyCookie);
 
     boost::system::error_code e;
 

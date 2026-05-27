@@ -5,6 +5,7 @@
 #include "InverseLoadForwarder.h"
 #include "LeastConnectionsForwarder.h"
 #include "RandomForwarder.h"
+#include "StickyForwarder.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
 #include <macgyver/DateTime.h>
@@ -59,7 +60,7 @@ BackendServicePtr Services::getService(const Spine::HTTP::Request& theRequest)
     //
     // NOTE: Uses backend load information
     auto backendRandPtr = pos->second.second;
-    std::size_t rndServerSlot = backendRandPtr->getBackend(*itsReactor);
+    std::size_t rndServerSlot = backendRandPtr->getBackend(*itsReactor, theRequest);
     auto theService = theBackendList->at(rndServerSlot);
 
 #ifdef MYDEBUG
@@ -340,6 +341,10 @@ bool Services::addService(const BackendServicePtr& theBackendService,
         case ForwardingMode::ExponentialConnections:
           theForwarder =
               BackendForwarderPtr(new ExponentialConnectionsForwarder(itsBalancingCoefficient));
+          break;
+        case ForwardingMode::Sticky:
+          theForwarder =
+              BackendForwarderPtr(new StickyForwarder(itsBalancingCoefficient, itsCookieName));
           break;
       }
 
@@ -622,7 +627,9 @@ std::set<std::string> Services::getInfoRequestNames() const
   }
 }
 
-void Services::setForwarding(const std::string& theMode, float balancingCoefficient)
+void Services::setForwarding(const std::string& theMode,
+                             float balancingCoefficient,
+                             const std::string& cookieName)
 {
   try
   {
@@ -638,10 +645,13 @@ void Services::setForwarding(const std::string& theMode, float balancingCoeffici
       itsFwdMode = ForwardingMode::LeastConnections;
     else if (theMode == "exponentialconnections")
       itsFwdMode = ForwardingMode::ExponentialConnections;
+    else if (theMode == "sticky")
+      itsFwdMode = ForwardingMode::Sticky;
     else
       throw Fmi::Exception(BCP, "Unknown backend forwarding mode: '" + theMode + "'");
 
     itsBalancingCoefficient = balancingCoefficient;
+    itsCookieName = cookieName;
   }
   catch (...)
   {

@@ -99,6 +99,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   std::string itsForwardingMode = "random";  //< Forwarding mode
   float itsBalanceFactor = 2.0F;             // Balancing factor
+  std::string itsStickyCookie;               // Affinity cookie name for sticky forwarding
 
   Spine::Reactor* itsReactor = nullptr;  ///< The reactor pointer for URI map retrieval
 

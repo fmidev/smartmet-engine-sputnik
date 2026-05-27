@@ -25,7 +25,8 @@ class DoubleRandomForwarder : public BackendForwarder
   DoubleRandomForwarder(DoubleRandomForwarder&& other) = delete;
   DoubleRandomForwarder& operator=(DoubleRandomForwarder&& other) = delete;
 
-  std::size_t getBackend(Spine::Reactor& theReactor) override;
+  std::size_t getBackend(Spine::Reactor& theReactor,
+                         const Spine::HTTP::Request& theRequest) override;
 };
 
 using BackendForwarderPtr = std::shared_ptr<BackendForwarder>;

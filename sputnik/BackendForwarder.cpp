@@ -29,7 +29,8 @@ void BackendForwarder::setBackends(const std::vector<BackendInfo>& backends,
   }
 }
 
-std::size_t BackendForwarder::getBackend(Spine::Reactor& theReactor)
+std::size_t BackendForwarder::getBackend(Spine::Reactor& theReactor,
+                                         const Spine::HTTP::Request& /* theRequest */)
 {
   try
   {

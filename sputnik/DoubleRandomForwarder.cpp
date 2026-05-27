@@ -7,7 +7,8 @@ DoubleRandomForwarder::~DoubleRandomForwarder() = default;
 
 DoubleRandomForwarder::DoubleRandomForwarder() : BackendForwarder(0.0) {}
 
-std::size_t DoubleRandomForwarder::getBackend(Spine::Reactor& theReactor)
+std::size_t DoubleRandomForwarder::getBackend(Spine::Reactor& theReactor,
+                                              const Spine::HTTP::Request& /* theRequest */)
 {
   try
   {

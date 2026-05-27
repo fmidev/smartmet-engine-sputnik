@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.4.13
+Version: 26.5.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -76,6 +76,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Wed May 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.27-1.fmi
+- Added 'sticky' forwarding mode: session affinity via rendezvous (HRW) hashing
+  keyed on a client-set cookie (sticky_cookie, default smartmet-session-id) or on
+  the effective client IP plus User-Agent, with active-connection hotspot exclusion
+
 * Mon Apr 13 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.4.13-1.fmi
 - Repackaged due to API changes
 
