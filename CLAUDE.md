@@ -28,6 +28,14 @@ There are no unit tests in this engine. The `make test` target is a CI stub that
 
 Requires `smartmet-library-spine`, `smartmet-library-macgyver`, Boost (thread, asio, random), libconfig++ (`configpp`), and protobuf. The engine links against `-lsmartmet-spine -lsmartmet-macgyver -lprotobuf -lconfig++ -lboost_thread`.
 
+### ABI hazard: `Engine.h` inline accessors
+
+`Engine.h` exposes members through **inline accessors** that consumers compile in directly — notably `Services& getServices() { return itsServices; }`, called on the hot path by `smartmet-plugin-frontend` (`HTTP.cpp` getService/removeBackend/queryBackendAlive). Each consumer therefore bakes in its own compiled offset of `itsServices`.
+
+**Adding or reordering any data member before `itsServices` is an ABI break.** A consumer built against the old header then reads `itsServices` at the wrong offset and operates on a misaligned `Services` — including its `boost::shared_mutex`, which yields a corrupted lock word: a `ReadLock` in `Services::getService` that waits for a write that no thread owns, hanging the frontend at startup (downgrading the engine "fixes" it by restoring the old layout). This is exactly what adding `itsStickyCookie` (sputnik 26.5.27, sticky forwarder) did to a frontend built against 26.4.13.
+
+When changing `Engine`'s members: treat it as an ABI change — bump the version dependents `Require:`, rebuild and repackage **all** consumers, deploy them together, and note "ABI change" in the changelog. Cheap mitigation: append new members at the **end** of the class so the inline-exposed `itsServices` offset never moves.
+
 ## Architecture
 
 ### Two operating modes
@@ -67,6 +75,10 @@ The first six forwarders extend `BackendForwarder` and override `redistribute()`
 - `BackendSentinel`: Per-backend throttling tracker. Counts unanswered connections; the backend is considered unresponsive if the throttle limit is exceeded.
 - Sequence-number based cleanup: Backends that don't respond to a heartbeat cycle get their services pruned from the routing table.
 - If all backends disappear, `Services::removeBackend` issues `SIGKILL` to force a fast restart.
+
+> **Intentional backpressure (don't "fix" it):** the frontend calls `Services::removeBackend` when a backend replies `1234` high-load (`smartmet-plugin-frontend` `HTTP.cpp`). This globally retires the busy backend for ~2-3s; the discovery heartbeat re-adds it as soon as it resumes announcing (an overloaded backend also suppresses its own reply, see Backend mode). This sheds load instead of bouncing requests, and it is also what keeps the deterministic `sticky` forwarder from looping on one backend (the just-denied backend is gone from the set on the next pick). So do **not** remove the retire-on-`1234` behavior, and do not add a per-request "excluded" set to `getBackend`.
+>
+> **Known defect:** the `SIGKILL`-on-empty above does not distinguish "backend genuinely dead" (`queryBackendAlive` false) from "backend transiently high-load". Under cluster-wide high load the HTTP path can retire the last backend on a `1234` and kill the frontend, whereas the heartbeat path handles the same state gracefully (404s, no suicide). The fix is to `SIGKILL` only for genuine-dead retirements.
 
 ### Pause/resume
 
