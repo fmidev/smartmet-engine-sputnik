@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.5.27
+Version: 26.6.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -24,14 +24,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 26.4.27
+BuildRequires: smartmet-library-spine-devel >= 26.6.24
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 26.5.21
+BuildRequires: smartmet-library-macgyver-devel >= 26.6.15
 Requires: protobuf
-Requires: smartmet-server >= 26.4.16
-Requires: smartmet-library-spine >= 26.4.27
-Requires: smartmet-library-macgyver >= 26.5.21
+Requires: smartmet-server >= 26.6.24
+Requires: smartmet-library-spine >= 26.6.24
+Requires: smartmet-library-macgyver >= 26.6.15
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
 Provides: %{SPECNAME}
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Wed Jun 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.24-1.fmi
+- Mass rebuild
+
 * Wed May 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.27-1.fmi
 - Added 'sticky' forwarding mode: session affinity via rendezvous (HRW) hashing
   keyed on a client-set cookie (sticky_cookie, default smartmet-session-id) or on
