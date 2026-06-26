@@ -5,6 +5,7 @@
 #include <boost/thread.hpp>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
+#include <macgyver/ThreadName.h>
 #include <spine/Convenience.h>
 #include <spine/Reactor.h>
 #include <iostream>
@@ -440,7 +441,12 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
     }
 
     // Fire the thread to process async handlers
-    itsAsyncThread = std::make_shared<boost::thread>([this]() { this->itsIoService.run(); });
+    itsAsyncThread = std::make_shared<boost::thread>(
+        [this]()
+        {
+          Fmi::set_thread_name("sputnik-io");
+          this->itsIoService.run();
+        });
   }
   catch (...)
   {
