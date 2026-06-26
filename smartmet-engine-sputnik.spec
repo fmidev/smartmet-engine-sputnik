@@ -27,11 +27,11 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: smartmet-library-spine-devel >= 26.6.24
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 26.6.15
+BuildRequires: smartmet-library-macgyver-devel >= 26.6.26
 Requires: protobuf
 Requires: smartmet-server >= 26.6.24
 Requires: smartmet-library-spine >= 26.6.24
-Requires: smartmet-library-macgyver >= 26.6.15
+Requires: smartmet-library-macgyver >= 26.6.26
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
 Provides: %{SPECNAME}
