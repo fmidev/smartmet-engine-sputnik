@@ -95,16 +95,65 @@ void Engine::shutdown()
   try
   {
     std::cout << "  -- Shutdown requested (sputnik)\n";
-    itsIoService.stop();
+    stopIoService();
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Constructor failed!");
+    throw Fmi::Exception::Trace(BCP, "Shutdown failed!");
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Stop the IO service and wait for the thread that runs it
+ *
+ * The join is what matters here. A boost::thread detaches when it is destroyed
+ * rather than terminating, so without it itsIoService could be destroyed while
+ * the sputnik-io thread was still on its way out of run(). A thread leaving
+ * run() puts asio's task_operation_ sentinel back into the scheduler's queue,
+ * and while scheduler::shutdown() knows to skip that sentinel when it drains
+ * the queue, ~op_queue() does not: it calls the sentinel's func_, which is a
+ * null pointer by construction. The result was a SIGSEGV at process exit, rare
+ * enough to look random and reproducible only by luck.
+ *
+ * Stopping the service does not interrupt a handler that is already running,
+ * and the heartbeat handler sleeps for heartbeat.interval seconds at a time
+ * (it checks Reactor::isShuttingDown() when it wakes), so on a frontend this
+ * may wait out one heartbeat interval. That is the price of shutting down in
+ * the right order.
+ */
+// ----------------------------------------------------------------------
+
+void Engine::stopIoService()
+{
+  itsIoService.stop();
+
+  if (!itsAsyncThread)
+    return;
+
+  // Joining the IO thread from a handler running on it would deadlock
+  if (itsAsyncThread->get_id() == boost::this_thread::get_id())
+    return;
+
+  if (itsAsyncThread->joinable())
+    itsAsyncThread->join();
+
+  itsAsyncThread.reset();
 }
 
 Engine::~Engine()
 {
+  // shutdown() is not guaranteed to have been called - and the IO thread must
+  // not outlive the io_context it runs, whichever way we got here
+  try
+  {
+    stopIoService();
+  }
+  catch (...)
+  {
+    std::cout << Fmi::Exception::Trace(BCP, "Failed to stop the sputnik IO service") << std::endl;
+  }
+
   // Debug message
   std::cout << "\t + Broadcast Service Discovery Engine shutting down\n";
 }

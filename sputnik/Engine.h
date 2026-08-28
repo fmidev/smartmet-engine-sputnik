@@ -133,6 +133,12 @@ class Engine : public SmartMet::Spine::SmartMetEngine
   void init() override;
   void shutdown() override;
 
+  /** \brief Stop the IO service and wait for the thread running it
+   *
+   * Idempotent, and a no-op when called from the IO thread itself.
+   */
+  void stopIoService();
+
  public:
   Engine() = delete;
 
