@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.6.26
+Version: 26.9.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -76,6 +76,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Fri Sep 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.18-1.fmi
+- The pause state is now a single atomic instead of a mutex, a boolean and an
+  optional deadline. Testing whether sputnik is paused no longer serializes the
+  UDP broadcast handling against itself, which the upgrade lock used to do
+- The IO thread is now joined before the io_context it runs is destroyed
+
 * Fri Jun 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.6.26-1.fmi
 - Thread naming: Named the async IO service thread
 
