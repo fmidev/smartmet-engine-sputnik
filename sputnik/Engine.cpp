@@ -8,6 +8,7 @@
 #include <macgyver/ThreadName.h>
 #include <spine/Convenience.h>
 #include <spine/Reactor.h>
+#include <ctime>
 #include <iostream>
 #include <memory>
 
@@ -52,9 +53,11 @@ Engine::Engine(const char* theConfig)
 
     // Backend parameters
 
-    itsPaused = conf.get_optional_config_param<bool>("pause", false);
-    if (itsPaused)
+    if (conf.get_optional_config_param<bool>("pause", false))
+    {
+      itsPauseDeadLine = PAUSED_FOREVER;
       std::cout << Spine::log_time_str() << " *** Sputnik paused during startup\n";
+    }
 
     itsHostname = conf.get_optional_config_param<std::string>("hostname", "localhost");
     itsHttpAddress = conf.get_optional_config_param<std::string>("httpAddress", "127.0.0.1");
@@ -689,9 +692,7 @@ std::string Engine::URI() const
 void Engine::setPause()
 {
   std::cout << Spine::log_time_str() << " *** Sputnik paused\n";
-  Spine::WriteLock lock(itsPauseMutex);
-  itsPaused = true;
-  itsPauseDeadLine = std::nullopt;
+  itsPauseDeadLine = PAUSED_FOREVER;
 }
 
 // ----------------------------------------------------------------------
@@ -704,9 +705,7 @@ void Engine::setPauseUntil(const Fmi::DateTime& theDeadLine)
 {
   std::cout << Spine::log_time_str() << " *** Sputnik paused until "
             << Fmi::to_iso_string(theDeadLine) << '\n';
-  Spine::WriteLock lock(itsPauseMutex);
-  itsPaused = true;
-  itsPauseDeadLine = theDeadLine;
+  itsPauseDeadLine = theDeadLine.as_time_t();
 }
 
 // ----------------------------------------------------------------------
@@ -718,9 +717,32 @@ void Engine::setPauseUntil(const Fmi::DateTime& theDeadLine)
 void Engine::setContinue()
 {
   std::cout << Spine::log_time_str() << " *** Sputnik instructed to continue\n";
-  Spine::WriteLock lock(itsPauseMutex);
-  itsPaused = false;
-  itsPauseDeadLine = std::nullopt;
+  itsPauseDeadLine = NOT_PAUSED;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the pause deadline, expiring the pause if the deadline has passed
+ */
+// ----------------------------------------------------------------------
+
+std::time_t Engine::pauseDeadLine() const
+{
+  auto deadline = itsPauseDeadLine.load();
+
+  if (deadline == NOT_PAUSED || deadline == PAUSED_FOREVER)
+    return deadline;
+
+  if (std::time(nullptr) < deadline)
+    return deadline;
+
+  // Deadline expired, continue. The pause state must not be cleared if it has been
+  // changed by another thread in the meantime.
+
+  if (itsPauseDeadLine.compare_exchange_strong(deadline, NOT_PAUSED))
+    std::cout << Spine::log_time_str() << " *** Sputnik deadline expired, continuing\n";
+
+  return NOT_PAUSED;
 }
 
 // ----------------------------------------------------------------------
@@ -731,25 +753,7 @@ void Engine::setContinue()
 
 bool Engine::isPaused() const
 {
-  Spine::UpgradeReadLock readlock(itsPauseMutex);
-  if (!itsPaused)
-    return false;
-
-  if (!itsPauseDeadLine)
-    return true;
-
-  auto now = Fmi::MicrosecClock::universal_time();
-
-  if (now < itsPauseDeadLine)
-    return true;
-
-  // deadline expired, continue
-  std::cout << Spine::log_time_str() << " *** Sputnik deadline expired, continuing\n";
-  Spine::UpgradeWriteLock writelock(readlock);
-  itsPaused = false;
-  itsPauseDeadLine = std::nullopt;
-
-  return false;
+  return pauseDeadLine() != NOT_PAUSED;
 }
 
 }  // namespace Sputnik

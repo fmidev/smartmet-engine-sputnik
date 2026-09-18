@@ -11,8 +11,10 @@
 #include <boost/function.hpp>
 #include <spine/Reactor.h>
 #include <spine/SmartMetEngine.h>
-#include <spine/Thread.h>
+#include <atomic>
+#include <ctime>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <set>
 #include <string>
@@ -123,11 +125,19 @@ class Engine : public SmartMet::Spine::SmartMetEngine
       itsResponseDeadlineTimer;  ///< Timer to handle the deadline of
                                  /// backend responses
 
-  // Sputnik may be paused for a while via an external request
+  // Sputnik may be paused for a while via an external request. The pause state is
+  // encoded into a single atomic so that it can be read and updated without a lock.
 
-  mutable Spine::MutexType itsPauseMutex;
-  mutable bool itsPaused = false;
-  mutable std::optional<Fmi::DateTime> itsPauseDeadLine;
+  static constexpr std::time_t NOT_PAUSED = 0;
+  static constexpr std::time_t PAUSED_FOREVER = std::numeric_limits<std::time_t>::max();
+
+  mutable std::atomic<std::time_t> itsPauseDeadLine{NOT_PAUSED};
+
+  /** \brief Return the current pause state, expiring an elapsed deadline
+   *
+   * The return value is NOT_PAUSED, PAUSED_FOREVER or the deadline itself.
+   */
+  std::time_t pauseDeadLine() const;
 
  protected:
   void init() override;
