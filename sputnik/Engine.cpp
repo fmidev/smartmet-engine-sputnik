@@ -18,6 +18,23 @@ namespace Engine
 {
 namespace Sputnik
 {
+namespace  // anonymous
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Format a pause deadline for an operator to read
+ *
+ * The zone is spelled out since the deadline is UTC while the server log
+ * timestamps beside it are local.
+ */
+// ----------------------------------------------------------------------
+
+std::string format_deadline(const Fmi::DateTime& theTime)
+{
+  return Fmi::to_simple_string(theTime) + " UTC";
+}
+}  // namespace
+
 Engine::Engine(const char* theConfig)
     : itsMode(Unknown),
       itsSocket(itsIoService, boost::asio::ip::udp::v4()),
@@ -704,7 +721,7 @@ void Engine::setPause()
 void Engine::setPauseUntil(const Fmi::DateTime& theDeadLine)
 {
   std::cout << Spine::log_time_str() << " *** Sputnik paused until "
-            << Fmi::to_iso_string(theDeadLine) << '\n';
+            << format_deadline(theDeadLine) << '\n';
   itsPauseDeadLine = theDeadLine.as_time_t();
 }
 
