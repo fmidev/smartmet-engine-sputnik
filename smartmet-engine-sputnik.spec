@@ -4,7 +4,7 @@
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
 Version: 26.9.18
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
 URL: https://github.com/fmidev/smartmet-engine-sputnik
@@ -76,6 +76,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Fri Sep 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.18-2.fmi
+- Pause deadlines are now logged in a readable form ('2026-Sep-18 06:21:21 UTC')
+  instead of a bare ISO timestamp
+
 * Fri Sep 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.18-1.fmi
 - The pause state is now a single atomic instead of a mutex, a boolean and an
   optional deadline. Testing whether sputnik is paused no longer serializes the
