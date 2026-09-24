@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.9.18
-Release: 2%{?dist}.fmi
+Version: 26.9.24
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
 URL: https://github.com/fmidev/smartmet-engine-sputnik
@@ -24,14 +24,14 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 26.6.24
+BuildRequires: smartmet-library-spine-devel >= 26.9.23
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 26.6.26
+BuildRequires: smartmet-library-macgyver-devel >= 26.9.23
 Requires: protobuf
-Requires: smartmet-server >= 26.6.24
-Requires: smartmet-library-spine >= 26.6.24
-Requires: smartmet-library-macgyver >= 26.6.26
+Requires: smartmet-server >= 26.9.2
+Requires: smartmet-library-spine >= 26.9.23
+Requires: smartmet-library-macgyver >= 26.9.23
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
 Provides: %{SPECNAME}
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Thu Sep 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.24-1.fmi
+- Repackaged due to library ABI changes
+
 * Fri Sep 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.18-2.fmi
 - Pause deadlines are now logged in a readable form ('2026-Sep-18 06:21:21 UTC')
   instead of a bare ISO timestamp
