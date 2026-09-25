@@ -192,6 +192,7 @@ comment = "SmartMet server in myhost";
 
 ## Documentation
 
+- [Developer guide](docs/developer-guide.md) — discovery protocol, backend and frontend modes, routing table, forwarders, health, binary compatibility
 - [Docker configuration tutorial](docs/docker.md)
 
 ## License

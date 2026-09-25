@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Part of the SmartMet Server ecosystem developed by the Finnish Meteorological Institute (FMI). See the parent workspace `CLAUDE.md` at `~/hub/CLAUDE.md` for full ecosystem context.
 
+Full developer documentation: `docs/developer-guide.md`.
+
 ## Build Commands
 
 ```bash
