@@ -149,7 +149,7 @@ connection counts from the frontend's own active requests to each backend.
   unanswered at once; `BackendSentinel` counts them, and a backend over its limit is
   treated as unresponsive.
 * **Empty table.** If `removeBackend()` leaves no services at all, the frontend process
-  `SIGKILL`s itself, to be restarted by systemd. See the pitfalls.
+  exits, to be restarted by systemd.
 
 ## 9. Configuration
 
@@ -182,12 +182,6 @@ version, rebuild the frontend and backend plugins, and deploy them together.
 
 ## 11. Known pitfalls
 
-* **The frontend can kill itself under cluster-wide overload.** `removeBackend()` sends
-  `SIGKILL` when the table becomes empty, and the frontend also retires backends on
-  high-load replies. When every backend is overloaded at once, the last retirement kills
-  the frontend. The heartbeat path handles the same situation without the kill (it empties
-  the table after the tolerated empty cycles, and requests get 404). The fix is to kill only
-  when the last backend is genuinely dead (see CLAUDE.md).
 * **Overload looks like absence.** A backend under high load stops replying and is dropped
   from the table, so a load spike across the cluster shows up as missing backends rather
   than as errors.
