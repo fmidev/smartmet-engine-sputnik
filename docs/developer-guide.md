@@ -75,7 +75,7 @@ Messages are `BroadcastMessage` protobufs over UDP:
 |-------|---------|
 | `name`, `messageType`, `seqnum` | Sender, `SERVICE_DISCOVERY_REQUEST` / `REPLY` (`BEACON` is defined but ignored), and the frontend's cycle number, echoed in replies. |
 | `host` | The backend's HTTP address, port, comment, load average and throttle limit. |
-| `services` | One entry per public URI: `uri`, `is_prefix`, and the unused `lastupdate` / `allowcache`. |
+| `services` | One entry per public URI: `uri`, `is_prefix`, `lastupdate` and `allowcache`. |
 | `infoQuery` | The names of the backend's public admin requests (`/info?what=…`), so the frontend can route those too. |
 
 A cycle: the frontend sends a request with a new sequence number to every address in
@@ -187,5 +187,4 @@ version, rebuild the frontend and backend plugins, and deploy them together.
   than as errors.
 * **Only public URIs are routed.** Private content handlers are never announced, so they
   are unreachable through a frontend.
-* **`lastupdate` and `allowcache` are not used.** Do not rely on them.
 * **Inline accessors are ABI** (§10).
