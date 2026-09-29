@@ -10,8 +10,8 @@
 #include <boost/make_shared.hpp>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
-#include <smartmet/macgyver/StringConversion.h>
-#include <smartmet/spine/Table.h>
+#include <macgyver/StringConversion.h>
+#include <spine/Table.h>
 #include <csignal>
 #include <iostream>
 #include <list>
