@@ -102,6 +102,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
       else
       {
         theService->set_uri(handler.first);
+        // Unused fields, required by the message format
         theService->set_lastupdate(0);
         theService->set_allowcache(false);
         theService->set_is_prefix(itsReactor->isURIPrefix(handler.first));
@@ -123,7 +124,7 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
       else
       {
         infoQuery->set_name(name);
-        infoQuery->set_lastupdate(0);  // Could be updated to track actual updates if needed
+        infoQuery->set_lastupdate(0);  // Unused, required by the message format
       }
     }
 
