@@ -12,7 +12,6 @@
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <spine/Table.h>
-#include <csignal>
 #include <iostream>
 #include <list>
 #include <map>
@@ -109,8 +108,11 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
         }
       }
 
-    // If there are no services left, something has gone wrong.
-    // Better exit and restart.
+    // If there are no services left, the requests fail until the backends
+    // announce themselves again in the next broadcast replies. The process used
+    // to kill itself here to force a restart, but backends are retired also
+    // when they report high load, so an overload of the whole cluster killed
+    // the frontend too, although rediscovery restores the services anyway.
 
     for (const auto& theURIs : itsServicesByURI)
     {
@@ -118,11 +120,9 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
         return true;
     }
 
-    std::cout << Fmi::SecondClock::local_time() << " No services left, performing a restart\n";
-    // Using exit might generate a coredump, and we want a fast restart
-    kill(getpid(), SIGKILL);
+    std::cout << Fmi::SecondClock::local_time()
+              << " No services left, waiting for the backends to announce themselves again\n";
 
-    // a dummy return to avoid compiler warnings
     return true;
   }
   catch (...)
