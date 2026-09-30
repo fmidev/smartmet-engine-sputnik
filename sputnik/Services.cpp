@@ -83,10 +83,11 @@ bool Services::removeBackend(const std::string& theHostname, int thePort, const 
     for (auto& theURIs : itsServicesByURI)
       for (auto it = (*theURIs.second.first).begin(); it != (*theURIs.second.first).end();)
       {
-        itsPrefixMap.removeBackend(theURI, *it);
         if (((*it)->Backend()->Name() == theHostname && (*it)->Backend()->Port() == thePort) &&
             (theURI.empty() || theURI == (*it)->URI()))
         {
+          // The prefix entry was registered with the frontend URI of the service
+          itsPrefixMap.removeBackend(theURIs.first, *it);
 // Temporarily retire the server from the service.
 #ifdef MYDEBUG
           std::cout << Fmi::SecondClock::local_time() << " Removing backend "
