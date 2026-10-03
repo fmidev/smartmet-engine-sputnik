@@ -38,8 +38,10 @@ message BroadcastMessage
  message Service
  {
   required string uri = 1;	// URI of the service
-  required int32 lastupdate = 2;// Unix timestamp for the last data update
-  required bool allowcache = 4;	// Whether caching of this service is allowed
+  // Unused: always sent as 0 and false and ignored when received. The fields
+  // stay required only so that mixed-version clusters keep interoperating.
+  required int32 lastupdate = 2;
+  required bool allowcache = 4;
   optional bool is_prefix = 5;  // Whether provided uri is prefix (begins with provided value)
  }
  repeated Service services = 8;
@@ -47,7 +49,9 @@ message BroadcastMessage
  message InfoQuery
  {
   required string name = 1; // Name of info InfoQuery (/info?what=<name>)
-  required int32 lastupdate = 2; // Unix timestamp for the last data update
+  // Unused: always sent as 0 and ignored when received. Required only for
+  // compatibility with older cluster members.
+  required int32 lastupdate = 2;
  }
  repeated InfoQuery infoQuery = 16;
 }

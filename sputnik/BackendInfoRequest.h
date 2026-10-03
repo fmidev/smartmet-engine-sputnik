@@ -16,14 +16,17 @@ class BackendInfoRequest
  private:
   std::shared_ptr<BackendServer> itsBackend;
   std::string itsName;          // Name of the info request (/info?what=<name>)
-  int itsLastUpdate;            // Unix timestamp for the last data update
+  int itsLastUpdate;            // Unused: the backends always send 0
   int itsSequenceNumber;        // Sequence number from the broadcast message
 
  public:
   // Accessors
   std::shared_ptr<BackendServer> Backend() const { return itsBackend; }
   const std::string& Name() const { return itsName; }
-  int LastUpdate() const { return itsLastUpdate; }
+  [[deprecated("Always 0, the backends do not track updates")]] int LastUpdate() const
+  {
+    return itsLastUpdate;
+  }
   int SequenceNumber() const { return itsSequenceNumber; }
 
   ~BackendInfoRequest() = default;
