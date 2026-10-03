@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.9.24
+Version: 26.10.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -34,6 +34,12 @@ Requires: smartmet-library-spine >= 26.9.23
 Requires: smartmet-library-macgyver >= 26.9.23
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
+#TestRequires: gcc-c++
+#TestRequires: make
+#TestRequires: %{smartmet_boost}-devel
+#TestRequires: protobuf-devel
+#TestRequires: smartmet-library-macgyver-devel >= 26.9.23
+#TestRequires: smartmet-library-spine-devel >= 26.9.23
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-sputnik < 16.11.1
 Obsoletes: smartmet-brainstorm-sputnik-debuginfo < 16.11.1
@@ -76,6 +82,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Sat Oct  3 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.3-1.fmi
+- URI prefixes now require a path separator after the prefix and the longest matching prefix wins,
+  as in the spine content handler dispatch
+
 * Thu Sep 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.24-1.fmi
 - Repackaged due to library ABI changes
 

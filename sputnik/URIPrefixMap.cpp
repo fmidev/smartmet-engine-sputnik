@@ -69,17 +69,26 @@ void URIPrefixMap::removeBackend(const std::string& prefix, const BackendService
 
 std::string URIPrefixMap::operator()(const std::string& uri) const
 {
+  // Like the content handler dispatch in spine, the prefix must be followed by a path separator
+  // or the end of the URI. If several prefixes match, the longest one wins.
+
   std::unique_lock<std::mutex> lock(mutex);
+  const std::string* best = nullptr;
   for (const auto& curr : prefixMap)
   {
-    if (ba::starts_with(uri, curr.first))
-    {
-#if defined(MYDEBUG)
-      std::cout << Fmi::SecondClock::local_time() << "Translated URI '" << uri
-                << "' to prefix '" << curr.first << std::endl;
-#endif
-      return curr.first;
-    }
+    const auto& prefix = curr.first;
+    if (ba::starts_with(uri, prefix) &&
+        (uri.size() == prefix.size() || uri[prefix.size()] == '/' || prefix.back() == '/') &&
+        (best == nullptr || prefix.size() > best->size()))
+      best = &prefix;
   }
-  return uri;
+
+  if (best == nullptr)
+    return uri;
+
+#if defined(MYDEBUG)
+  std::cout << Fmi::SecondClock::local_time() << "Translated URI '" << uri << "' to prefix '"
+            << *best << std::endl;
+#endif
+  return *best;
 }
