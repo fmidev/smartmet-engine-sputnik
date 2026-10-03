@@ -4,7 +4,7 @@
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
 Version: 26.10.3
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
 URL: https://github.com/fmidev/smartmet-engine-sputnik
@@ -24,22 +24,22 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 26.9.23
+BuildRequires: smartmet-library-spine-devel >= 26.10.3
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 26.9.23
+BuildRequires: smartmet-library-macgyver-devel >= 26.10.3
 Requires: protobuf
 Requires: smartmet-server >= 26.9.2
-Requires: smartmet-library-spine >= 26.9.23
-Requires: smartmet-library-macgyver >= 26.9.23
+Requires: smartmet-library-spine >= 26.10.3
+Requires: smartmet-library-macgyver >= 26.10.3
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
 #TestRequires: gcc-c++
 #TestRequires: make
 #TestRequires: %{smartmet_boost}-devel
 #TestRequires: protobuf-devel
-#TestRequires: smartmet-library-macgyver-devel >= 26.9.23
-#TestRequires: smartmet-library-spine-devel >= 26.9.23
+#TestRequires: smartmet-library-macgyver-devel >= 26.10.3
+#TestRequires: smartmet-library-spine-devel >= 26.10.3
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-sputnik < 16.11.1
 Obsoletes: smartmet-brainstorm-sputnik-debuginfo < 16.11.1
@@ -82,6 +82,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Sat Oct 03 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.3-2.fmi
+- Remove the prefix entries of the removed backend only
+- Do not kill the frontend when the service table becomes empty
+- Mark the unused lastupdate and allowcache fields
+
 * Sat Oct  3 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.3-1.fmi
 - URI prefixes now require a path separator after the prefix and the longest matching prefix wins,
   as in the spine content handler dispatch
