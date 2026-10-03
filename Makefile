@@ -96,7 +96,8 @@ sputnik/%.pb.cpp: %.proto; mkdir -p tmp
 	mv tmp/BroadcastMessage.pb.cc $(SUBNAME)/BroadcastMessage.pb.cpp
 	rm -rf tmp 
 
+.PHONY: test
 test:
-	@test "$$CI" = "true" && true || false
+	cd test && $(MAKE) test
 
 -include $(wildcard obj/*.d)

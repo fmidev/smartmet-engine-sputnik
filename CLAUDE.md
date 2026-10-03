@@ -20,7 +20,7 @@ make rpm            # Build RPM package (runs protoc, then tar + rpmbuild)
 make install        # Install sputnik.so to enginedir, headers to includedir/smartmet/engines/sputnik/
 ```
 
-There are no unit tests in this engine. The `make test` target is a CI stub that passes only when `$CI=true`.
+`make test` builds and runs `test/ForwarderTest`, which covers the URI prefix map and the random, inverse load, least connections and sticky forwarders.
 
 ### Protobuf code generation
 
