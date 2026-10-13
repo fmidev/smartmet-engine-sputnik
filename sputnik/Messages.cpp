@@ -137,7 +137,8 @@ void Engine::sendDiscoveryReply(std::string& theMessageBuffer, int theSequenceNu
 }
 
 // Backend
-void Engine::processRequest(SmartMet::BroadcastMessage& theMessage, std::string& theResponseBuffer)
+void Engine::processRequest(const SmartMet::BroadcastMessage& theMessage,
+                            std::string& theResponseBuffer)
 {
   if (Spine::Reactor::isShuttingDown())
     return;
@@ -161,7 +162,7 @@ void Engine::processRequest(SmartMet::BroadcastMessage& theMessage, std::string&
 }
 
 // Frontend
-void Engine::processReply(SmartMet::BroadcastMessage& theMessage)
+void Engine::processReply(const SmartMet::BroadcastMessage& theMessage)
 {
   if (Spine::Reactor::isShuttingDown())
     return;

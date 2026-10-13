@@ -218,13 +218,13 @@ class Engine : public SmartMet::Spine::SmartMetEngine
    *
    * Ensures received message is of correct type and sends response.
    */
-  void processRequest(BroadcastMessage& theMessage, std::string& theResponseBuffer);
+  void processRequest(const BroadcastMessage& theMessage, std::string& theResponseBuffer);
 
   /** \brief Processes received discovery response (frontend behaviour)
    *
    * Ensures received message is of correct type and updates the frontend Services.
    */
-  void processReply(BroadcastMessage& theMessage);
+  void processReply(const BroadcastMessage& theMessage);
 
   /** \brief Set a backend alive (reset the throttle counter)
    *
