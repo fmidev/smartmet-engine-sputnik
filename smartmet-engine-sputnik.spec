@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.10.15
+Version: 26.10.16
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -24,22 +24,22 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 26.10.15
+BuildRequires: smartmet-library-spine-devel >= 26.10.16
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 26.10.15
+BuildRequires: smartmet-library-macgyver-devel >= 26.10.16
 Requires: protobuf
-Requires: smartmet-server >= 26.10.15
-Requires: smartmet-library-spine >= 26.10.15
-Requires: smartmet-library-macgyver >= 26.10.15
+Requires: smartmet-server >= 26.10.16
+Requires: smartmet-library-spine >= 26.10.16
+Requires: smartmet-library-macgyver >= 26.10.16
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
 #TestRequires: gcc-c++
 #TestRequires: make
 #TestRequires: %{smartmet_boost}-devel
 #TestRequires: protobuf-devel
-#TestRequires: smartmet-library-macgyver-devel >= 26.10.15
-#TestRequires: smartmet-library-spine-devel >= 26.10.15
+#TestRequires: smartmet-library-macgyver-devel >= 26.10.16
+#TestRequires: smartmet-library-spine-devel >= 26.10.16
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-sputnik < 16.11.1
 Obsoletes: smartmet-brainstorm-sputnik-debuginfo < 16.11.1
@@ -82,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-1.fmi
+- Rebuilt due to ABI changes in macgyver, spine, newbase and other libraries
+
 * Thu Oct 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.15-1.fmi
 - Declare member functions and parameters const where nothing is modified (const correctness), no functional changes
 - Requires 26.10.15 versions of spine due to their ABI changes
