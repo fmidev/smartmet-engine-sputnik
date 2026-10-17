@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.10.16
+Version: 26.10.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -29,9 +29,9 @@ BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
 BuildRequires: smartmet-library-macgyver-devel >= 26.10.16
 Requires: protobuf
-Requires: smartmet-server >= 26.10.16
-Requires: smartmet-library-spine >= 26.10.16
-Requires: smartmet-library-macgyver >= 26.10.16
+Requires: smartmet-server >= 26.10.17
+Requires: smartmet-library-spine >= 26.10.17
+Requires: smartmet-library-macgyver >= 26.10.17
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
 #TestRequires: gcc-c++
@@ -82,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
+- Rebuilt against the new library versions
+
 * Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-1.fmi
 - Rebuilt due to ABI changes in macgyver, spine, newbase and other libraries
 
