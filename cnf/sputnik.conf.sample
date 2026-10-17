@@ -73,12 +73,27 @@ backendUdpListeners = ["192.168.122.255:31337","192.168.122.135:31338","192.168.
 # balance_factor = 2.0;
 # sticky_cookie  = "smartmet-session-id";
 
+# Discovery cycle: a request is sent every interval seconds and the replies are
+# collected for timeout seconds. Backends which did not reply are then dropped;
+# if no backend replied at all, dropping is postponed for up to
+# max_skipped_cycles cycles.
+
+# heartbeat:
+# {
+#   interval           = 5;
+#   timeout            = 2;
+#   max_skipped_cycles = 2;
+# };
+
 
 #####################  BACKEND PARAMETERS ######################
 
 hostname = "localhost";  
 httpAddress = "192.168.122.135";        
-httpPort = 8090; 
+# The HTTP port announced to the frontends is the port of the server itself
 udpListenerAddress = "192.168.122.255";   
 udpListenerPort = 31337;   
 comment = "Brainstorm server in myhost";
+
+# throttle = 0;   # max unanswered transfers to this backend, 0 = unlimited
+# pause = false;  # start in the paused state

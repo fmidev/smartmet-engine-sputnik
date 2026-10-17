@@ -48,7 +48,6 @@ pause = false;
 
 hostname = "localhost";
 httpAddress = "192.168.122.135";
-httpPort = 8090;
 udpListenerAddress = "192.168.122.255";
 udpListenerPort = 31337;
 comment = "Brainstorm server in myhost";
@@ -65,7 +64,6 @@ pause = false;
 
 hostname = "localhost";
 httpAddress = "192.168.122.135";
-httpPort = 8090;
 udpListenerAddress = "192.168.122.255";
 udpListenerPort = 31337;
 comment = "SmartMet server in myhost";

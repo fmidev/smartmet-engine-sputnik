@@ -52,8 +52,10 @@ make rpm
 ```
 
 `BroadcastMessage.proto` generates `sputnik/BroadcastMessage.pb.{h,cpp}`, which are not
-committed. There are no tests in this repository (`make test` passes only with `CI=true`);
-the cluster behaviour is tested by the frontend's `RunClusterTests`.
+committed. `make test` runs `test/ForwarderTest`, which covers the URI prefix map and
+the random, inverse load, least connections and sticky forwarders; CI does not run it
+(`.circleci/disable-tests-in-ci`). The cluster behaviour is tested by the frontend's
+`RunClusterTests`.
 
 ## 3. Source files
 
@@ -148,8 +150,8 @@ connection counts from the frontend's own active requests to each backend.
 * **Throttle.** A backend's `throttle` (0 = off) limits how many transfers to it may be
   unanswered at once; `BackendSentinel` counts them, and a backend over its limit is
   treated as unresponsive.
-* **Empty table.** If `removeBackend()` leaves no services at all, the frontend process
-  exits, to be restarted by systemd.
+* **Empty table.** If `removeBackend()` leaves no services at all, it only logs it:
+  requests fail until the backends announce themselves again in the next cycle.
 
 ## 9. Configuration
 
@@ -167,7 +169,7 @@ Frontend settings:
 | `heartbeat.max_skipped_cycles` | 2 | Empty cycles tolerated before pruning. |
 
 Backend settings: `hostname` (`localhost`), `httpAddress` (`127.0.0.1`),
-`udpListenerAddress` (`127.0.0.1`), `udpListenerPort`, `comment`, `throttle` (0), and
+`udpListenerAddress` (`127.0.0.1`), `udpListenerPort` (31337), `comment`, `throttle` (0), and
 `pause` (false). The HTTP port is the server's `port`.
 
 ## 10. Binary compatibility

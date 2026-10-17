@@ -46,7 +46,7 @@ The `Engine` class (inherits `SmartMet::Spine::SmartMetEngine`) is loaded dynami
 
 - **Backend mode**: Binds a UDP socket to `udpListenerAddress:udpListenerPort`, listens for `SERVICE_DISCOVERY_REQUEST` messages from frontends, and replies with `SERVICE_DISCOVERY_REPLY` containing the server's URI map, load average, and admin request names. A backend will suppress replies when paused or under high load (`Reactor::isLoadHigh()`).
 
-- **Frontend mode**: Sends periodic UDP discovery requests to configured `backendUdpListeners`, collects replies within a `heartbeat.timeout` window, and maintains a `Services` object that maps URIs to available backends. Stale backends are pruned after `heartbeat.max_skipped_cycles` consecutive unanswered heartbeats. The frontend also registers a `BackendConnectionFinishedHook` with the Reactor to track backend liveness from HTTP response completions.
+- **Frontend mode**: Sends periodic UDP discovery requests to configured `backendUdpListeners`, collects replies within a `heartbeat.timeout` window, and maintains a `Services` object that maps URIs to available backends. At the end of each cycle the backends which did not reply are pruned; if no backend replied at all, pruning is postponed for up to `heartbeat.max_skipped_cycles` cycles. The frontend also registers a `BackendConnectionFinishedHook` with the Reactor to track backend liveness from HTTP response completions.
 
 Both modes run an async Boost.Asio io_context on a dedicated thread.
 
@@ -76,11 +76,9 @@ The first six forwarders extend `BackendForwarder` and override `redistribute()`
 
 - `BackendSentinel`: Per-backend throttling tracker. Counts unanswered connections; the backend is considered unresponsive if the throttle limit is exceeded.
 - Sequence-number based cleanup: Backends that don't respond to a heartbeat cycle get their services pruned from the routing table.
-- If all backends disappear, `Services::removeBackend` issues `SIGKILL` to force a fast restart.
+- If all backends disappear, `Services::removeBackend` only logs it: requests fail until the backends announce themselves again. (The frontend used to `SIGKILL` itself here, which killed it also under cluster-wide high load.)
 
 > **Intentional backpressure (don't "fix" it):** the frontend calls `Services::removeBackend` when a backend replies `1234` high-load (`smartmet-plugin-frontend` `HTTP.cpp`). This globally retires the busy backend for ~2-3s; the discovery heartbeat re-adds it as soon as it resumes announcing (an overloaded backend also suppresses its own reply, see Backend mode). This sheds load instead of bouncing requests, and it is also what keeps the deterministic `sticky` forwarder from looping on one backend (the just-denied backend is gone from the set on the next pick). So do **not** remove the retire-on-`1234` behavior, and do not add a per-request "excluded" set to `getBackend`.
->
-> **Known defect:** the `SIGKILL`-on-empty above does not distinguish "backend genuinely dead" (`queryBackendAlive` false) from "backend transiently high-load". Under cluster-wide high load the HTTP path can retire the last backend on a `1234` and kill the frontend, whereas the heartbeat path handles the same state gracefully (404s, no suicide). The fix is to `SIGKILL` only for genuine-dead retirements.
 
 ### Pause/resume
 

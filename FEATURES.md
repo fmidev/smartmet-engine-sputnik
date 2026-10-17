@@ -38,8 +38,10 @@ the server via `launch(BroadcastMode, Reactor*)`:
   - `SERVICE_DISCOVERY_REPLY` — sent by backends.
 - **Heartbeat** — frontends send requests on `heartbeat.interval` and
   await replies within `heartbeat.timeout`.
-- **Stale pruning** — backends missing `heartbeat.max_skipped_cycles`
-  consecutive replies are pruned from the routing table.
+- **Stale pruning** — backends which did not reply in a cycle are
+  pruned from the routing table; when no backend replied at all,
+  pruning is postponed for up to `heartbeat.max_skipped_cycles`
+  cycles.
 - **Backend self-suppression** — a backend skips its reply when paused
   or when `Reactor::isLoadHigh()` reports overload.
 
@@ -98,9 +100,9 @@ Seven `BackendForwarder` strategies are available; chosen with
   the throttle limit is reached.
 - **Sequence-number cleanup** — backends that miss the current
   heartbeat sequence get pruned from the routing table.
-- **All-backends-gone watchdog** — `Services::removeBackend` issues
-  `SIGKILL` if every backend disappears, forcing a fast restart of
-  the frontend process.
+- **Empty routing table** — if every backend disappears, requests
+  fail until the backends announce themselves again; the frontend
+  process is no longer killed.
 - **`BackendConnectionFinishedHook`** — registered with the Reactor
   to update liveness from HTTP response completions, not only from
   UDP heartbeats.
@@ -174,7 +176,9 @@ split by role:
   `$(includedir)/smartmet/engines/sputnik/`, `.so` under
   `$(enginedir)`.
 - **RPM**: `make rpm`.
-- **No unit tests** — `make test` is a CI stub.
+- **Unit tests** — `make test` runs `test/ForwarderTest` (URI prefix
+  map, random, inverse load, least connections and sticky forwarders);
+  CI does not run it.
 - **Linked libraries**: `smartmet-library-spine`,
   `smartmet-library-macgyver`, Boost (thread, asio, random),
   libconfig++ (`configpp`), protobuf.

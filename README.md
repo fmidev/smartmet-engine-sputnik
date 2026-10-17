@@ -8,121 +8,102 @@ The Sputnik engine facilitates communication in the SmartMet Server frontend/bac
 
 ## API
 
-The Sputnik-module is initialized by calling the constructor.
+The server loads the engine and constructs it with the name of its
+configuration file. Constructing it does not start sending or
+listening anything:
 
-Calling the constructor will not, however, start sending or listening
-anything. Call to appropriate API method is required for
-that. theConfig must specify the libconfig++ library.
-
-<pre><code>Sputnik(const std::string & theConfig); </code></pre>
+<pre><code>Engine(const char* theConfig);</code></pre>
 
 The frontend and backend configuration parameters are taken from the
 sputnik.conf file.
 
-The launch method is invoked with different modes such as "Backend"
-and "Frontend".
+The backend and frontend plugins start the engine in their own mode:
 
-If Backend mode is true, start actively listen to the UDP broadcasts
-in the network.
+<pre><code>void launch(BroadcastMode theMode, Spine::Reactor* theReactor);</code></pre>
 
-<pre><code>void launch(bool Backend); </code></pre>
+In `Backend` mode the engine listens to the discovery requests of the
+frontends on its UDP address and answers them with the services of
+this server. In `Frontend` mode it sets up the configured forwarding
+mode and starts sending SDR (Service Discovery Request) messages to
+the backends periodically. In both modes the communication is handled
+by asynchronous handlers running in a thread of their own, and
+`launch()` returns almost immediately.
 
-If the mode is "Frontend", the Sputnik engine sets up the backend
-forwarding mode thereby initializing the communication and starts the
-SDR (Service Discovery Request) messages.
-
-<pre><code>void launch(bool Frontend); </code></pre>
-
-If the Backend or Frontend mode is false, the launch method will start
-the asynchronous handlers, background tasks detached from the main
-functionality, to process the communication between the frontend and
-the backend. The asynchronous handler is invoked by a separate
-boost::thread  and the launch() method returns almost immediately.
+The frontend plugin picks a backend for each request from the routing
+table returned by `getServices()`.
 
 
-Using the broadcast method  a pre-formatted broadcast packet can be send  to all the  servers in the network.
-<pre><code> int Broadcast(const std::string & theMessageBuffer); </code></pre>
+## BroadcastMessage
 
+BroadcastMessage is a data packet delivered via UDP between the
+frontend and the backend servers of a SmartMet server cluster.
 
-## SputnikMessage
+The message processing is implemented via <a href="https://developers.google.com/protocol-buffers/">Google Protocol Buffers</a>. The current schema for UDP Messages (`BroadcastMessage.proto`) is:
 
-SputkikMessage is a data packet delivered via UDP broadcast to all the servers (both frontend and backend) in the SmartMet server message.
+<pre><code>package SmartMet;
 
-The message processing is implemented via <a href="https://developers.google.com/protocol-buffers/">Google Protocol Buffers</a>. The current schema for UDP Messages is:
-
-<pre><code>package SmartMetserver; </code></pre>
-
-<pre><code>
-message SputnikMessage
+message BroadcastMessage
 {
-// Human-readable name of the sending host (REQUIRED)
-required string name = 1;
-</code></pre>
+ // Human-readable name of the sending host (REQUIRED)
+ required string name = 1;
 
-<pre><code> 
-// This specified the type of the SputnikMessage (REQUIRED)
-enum MessageTypes
-{
-SERVICE_DISCOVERY_REQUEST = 0;
-SERVICE_DISCOVERY_REPLY = 1;
-SERVICE_DISCOVERY_BEACON = 2;
+ // This specified the type of the BroadcastMessage (REQUIRED)
+ enum MessageTypes
+ {
+   SERVICE_DISCOVERY_REQUEST = 0;
+   SERVICE_DISCOVERY_REPLY = 1;
+   SERVICE_DISCOVERY_BEACON = 2;
+ }
+ required MessageTypes messageType = 2;
+
+ // This specified the BroadcastMessage sequence number, so that messages
+ // target to correct machine in case of multiple broadcasts.
+ required int32 seqnum = 3;
+
+ // hostInfo submessage used for server discovery
+ message HostInfo
+ {
+  required string ip = 1;      // IP address of the backend HTTP server
+  required int32 port = 2;     // IP port of the backend HTTP server
+  required string comment = 3; // Comment associated with the backend server
+  required float load = 4;     // Current load of the backend server
+  optional int32 throttle = 5; // How many unanswered transfers are allowed
+ }
+ optional HostInfo host = 4;
+
+ // Service submessage used for service discovery
+ message Service
+ {
+  required string uri = 1;       // URI of the service
+  required int32 lastupdate = 2; // Unused, always 0
+  required bool allowcache = 4;  // Unused, always false
+  optional bool is_prefix = 5;   // Whether provided uri is prefix
+ }
+ repeated Service services = 8;
+
+ message InfoQuery
+ {
+  required string name = 1;      // Name of info InfoQuery (/info?what=&lt;name&gt;)
+  required int32 lastupdate = 2; // Unused, always 0
+ }
+ repeated InfoQuery infoQuery = 16;
 }
-required MessageTypes messageType = 2;
 </code></pre>
 
-<pre><code>
-// This specified the SputnikMessage sequence number, so that messages
-// target to correct machine in case of multiple broadcasts.
-required int32 seqnum = 3;
- </code></pre>
-
-<pre><code>
-// hostInfo submessage used for server discovery
-message HostInfo {
-required string ip = 1; // IP address of the backends HTTP server
-required int32 port = 2; // IP port of the backends HTTP server
-required string comment = 3; // Comment associated with this host
-required float load = 4; // Current load of this server
-}
-optional HostInfo host = 4;
-</code></pre>
-
-<pre><code> 
-// Service submessage used for service discovery
-message Service
-{
-required string uri = 1; // URI of the service
-required int32 lastupdate = 2;// Unix timestamp for the last data update
-required bool allowcache = 4; // Whether caching of this service is allowed
-</code></pre>
-
-<pre><code> 
-}
-repeated Service services = 8;
-</code></pre>
-
-<pre><code>}</code></pre>
+The unused fields stay required only so that clusters with servers
+of different versions keep interoperating. `SERVICE_DISCOVERY_BEACON`
+is defined but ignored.
 
 ## Events
 
-The UDP Broadcast must be done by the backend in the following events:
-
-1. Data update in Service, i.e., plugin has uploaded some data and caches should be flushed.
-2. Backend server Service additions, i.e. new plugin loaded.
-3. Backend server Service removal, i.e. plugin unloaded.
-4. Backend server start
-5. Backend server shutdown
-
-The UDP Broadcast must be done by the Frontend in the following events:
-
-1. Frontend server start
-2. Periodically to refresh Service and routing information
-
-These UDP broadcasts are mostly done automatically by Sputnik using
-the related Services-information.
-
-Some broadcasts must specifically initiated by an engine/plugin in
-situations where data refresh is needed are not known to Sputnik.
+The frontend sends a discovery request to every address in
+`backendUdpListeners` every `heartbeat.interval` seconds. Each running
+backend answers with its host information, its public URIs and its
+public admin requests, unless it is paused or under high load. The
+frontend collects the replies for `heartbeat.timeout` seconds and then
+drops the backends which did not answer. Hence new backends, new or
+removed plugins and stopped backends are noticed within one cycle
+without any explicit broadcasts.
 
 ## Configuration
 
@@ -151,6 +132,11 @@ be configured in the backend as "udpListenerAddress" and
 IP addresses.  In this case the backend should listen exactly the same
 addresses that the frontend is using.
 
+The other frontend settings (`frontendUdpAddress`, `frontendUdpPort`,
+`forwarding`, `balance_factor`, `sticky_cookie` and the `heartbeat`
+group) are described in `cnf/sputnik.conf.sample` and in the
+developer guide.
+
 An Example showing the IP addresses and port addresses the frontend
 and the backend can use is given below.
 
@@ -170,21 +156,23 @@ and the backend can use is given below.
 The backend parameters with some example values are given below.
 
 <pre><code>
-hostname = "junuu";  // Name of the host
-httpAddress = "192.168.13.12"; // IP of this server
-httpPort = 80;
-udpListenerAddress = "192.168.222.255"; // broadcast 
+hostname = "junuu";                     // Name of the host
+httpAddress = "192.168.13.12";          // IP of this server
+udpListenerAddress = "192.168.222.255"; // broadcast
 udpListenerPort = 31337;
 comment = "SmartMet server in junnu";
-forwarding = "inverseload" #For frontend behaviour
+throttle = 0;                           // max unanswered transfers, 0 = unlimited
+pause = false;                          // start paused
 </code></pre>
+
+The HTTP port announced to the frontends is the `port` of the server
+itself, there is no setting for it in the Sputnik configuration.
 
 A sample  backend Sputnik configuration is given below.
 
 <pre><code>
 hostname = "localhost";
 httpAddress = "192.168.122.135";
-httpPort = 8090;
 udpListenerAddress = "192.168.122.255";
 udpListenerPort = 31337;
 comment = "SmartMet server in myhost";
