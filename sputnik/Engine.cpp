@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "BroadcastMessage.pb.h"
 #include "Services.h"
+#include <spine/ConfigBase.h>
 #include <boost/filesystem/operations.hpp>
 #include <boost/thread.hpp>
 #include <macgyver/DateTime.h>

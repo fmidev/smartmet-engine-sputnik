@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.10.17
-Release: 2%{?dist}.fmi
+Version: 26.11.6
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
 URL: https://github.com/fmidev/smartmet-engine-sputnik
@@ -24,13 +24,13 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-spine-devel >= 26.10.16
+BuildRequires: smartmet-library-spine-devel >= 26.11.6-2
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
 BuildRequires: smartmet-library-macgyver-devel >= 26.10.16
 Requires: protobuf
 Requires: smartmet-server >= 26.10.17
-Requires: smartmet-library-spine >= 26.10.17
+Requires: smartmet-library-spine >= 26.11.6-2
 Requires: smartmet-library-macgyver >= 26.10.17
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_boost}-thread
@@ -39,7 +39,7 @@ Requires: %{smartmet_boost}-thread
 #TestRequires: %{smartmet_boost}-devel
 #TestRequires: protobuf-devel
 #TestRequires: smartmet-library-macgyver-devel >= 26.10.16
-#TestRequires: smartmet-library-spine-devel >= 26.10.16
+#TestRequires: smartmet-library-spine-devel >= 26.11.6-2
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-sputnik < 16.11.1
 Obsoletes: smartmet-brainstorm-sputnik-debuginfo < 16.11.1
@@ -82,6 +82,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Fri Nov 6 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.6-1.fmi
+- Include the headers used directly instead of relying on transitive includes
+- Rebuilt against the new spine Reactor layout
+
 * Mon Oct 19 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-2.fmi
 - Repackaged: simultaneous CI runs corrupted the 26.10.17-1 RPMs
 * Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
