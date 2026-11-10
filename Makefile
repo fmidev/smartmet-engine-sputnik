@@ -30,10 +30,10 @@ vpath %.o $(objdir)
 # The files to be compiled
 PB_SRCS = $(wildcard *.proto)
 COMPILED_PB_SRCS = $(patsubst %.proto, $(SUBNAME)/%.pb.cpp, $(PB_SRCS))
-COMPILED_PB_HDRS = $(patsubst %.proto, $(SUBNAME)/%.pb.h, $(PB_SRCS))
 
 SRCS = $(filter-out %.pb.cpp, $(wildcard $(SUBNAME)/*.cpp)) $(COMPILED_PB_SRCS)
-HDRS = $(filter-out %.pb.h, $(wildcard $(SUBNAME)/*.h)) $(COMPILED_PB_HDRS)
+# The generated protobuf header is private to the engine and is not installed
+HDRS = $(filter-out %.pb.h, $(wildcard $(SUBNAME)/*.h))
 OBJS = $(patsubst %.cpp, obj/%.o, $(notdir $(SRCS)))
 
 .PHONY: rpm

@@ -91,6 +91,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Nov 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.10-1.fmi
 - Use protobuf 3.21 on RHEL 8, the same runtime OpenTelemetry in spine uses, since two protobuf runtimes in one process abort smartmetd at startup
+- The generated BroadcastMessage.pb.h is no longer installed, it is private to the engine
 
 * Fri Nov 6 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.6-1.fmi
 - Include the headers used directly instead of relying on transitive includes
