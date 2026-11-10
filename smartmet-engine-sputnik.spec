@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-engine-%{DIRNAME}
 Summary: SmartMet Sputnik cluster management engine
 Name: %{SPECNAME}
-Version: 26.11.6
+Version: 26.11.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Engines
@@ -25,10 +25,17 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: smartmet-library-spine-devel >= 26.11.6-2
+BuildRequires: smartmet-library-macgyver-devel >= 26.10.16
+%if 0%{?rhel} && 0%{rhel} < 9
+# RHEL 8: protobuf 3.21 (protobuf21), the same runtime OpenTelemetry in spine uses
+BuildRequires: protobuf-compiler >= 3.21
+BuildRequires: protobuf-devel >= 3.21
+Requires: protobuf21
+%else
 BuildRequires: protobuf-compiler
 BuildRequires: protobuf-devel
-BuildRequires: smartmet-library-macgyver-devel >= 26.10.16
 Requires: protobuf
+%endif
 Requires: smartmet-server >= 26.10.17
 Requires: smartmet-library-spine >= 26.11.6-2
 Requires: smartmet-library-macgyver >= 26.10.17
@@ -82,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/smartmet/engines/%{DIRNAME}
 
 %changelog
+* Tue Nov 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.10-1.fmi
+- Use protobuf 3.21 on RHEL 8, the same runtime OpenTelemetry in spine uses, since two protobuf runtimes in one process abort smartmetd at startup
+
 * Fri Nov 6 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.6-1.fmi
 - Include the headers used directly instead of relying on transitive includes
 - Rebuilt against the new spine Reactor layout
