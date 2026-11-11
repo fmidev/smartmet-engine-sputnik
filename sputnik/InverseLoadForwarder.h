@@ -14,7 +14,7 @@ namespace SmartMet
 {
 /*! \brief Inverse load forwarder
  *
- * Forwards requests by weighting backends using the forumula
+ * Forwards requests by weighting backends using the formula
  * w(l) = 1 / (1 + a*l) where 'l' is reported backend load
  * 'a' is the balancing coefficient .
  */

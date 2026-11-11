@@ -262,7 +262,7 @@ void Engine::handleDeadlineTimer(const boost::system::error_code& err)
     // Cancel all and any pending async operations
     itsSocket.cancel();
 
-    // Clean the service list of old entires only if we have received at least one response
+    // Clean the service list of old entries only if we have received at least one response
     if (itsReceivedResponses > 0)
     {
       itsServices.latestSequence(boost::numeric_cast<int>(itsFrontendSequence));
@@ -495,7 +495,7 @@ void Engine::launch(BroadcastMode theMode, SmartMet::Spine::Reactor* theReactor)
         break;
       case Frontend:
         frontendMode();
-        // Add hook for response based backend hearbeat
+        // Add hook for response based backend heartbeat
         if (!theReactor->addBackendConnectionFinishedHook(
                 "sputnik_backend_hearbeat_hook",
                 [this](const std::string& theHostName,

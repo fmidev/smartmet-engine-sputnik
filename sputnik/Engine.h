@@ -79,7 +79,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   unsigned int itsReceivedResponses = 0;  ///< Number of received responses from the last heartbeat
 
-  unsigned int itsSkippedCycles = 0;  ///< Number of hearbeat cycles that have gone unanswered
+  unsigned int itsSkippedCycles = 0;  ///< Number of heartbeat cycles that have gone unanswered
 
   std::vector<std::string> itsBackendUdpListeners;  ///< List of backend UDP listeners
                                                     ///(ipAddress1:udpPort1, ipAddress2:udpPort2)
@@ -109,7 +109,7 @@ class Engine : public SmartMet::Spine::SmartMetEngine
 
   boost::asio::io_context itsIoService;  ///< The IO Service for UDP handling
 
-  boost::asio::ip::udp::socket itsSocket;  ///< The UDP socket for broacasting/replying
+  boost::asio::ip::udp::socket itsSocket;  ///< The UDP socket for broadcasting/replying
 
   boost::asio::ip::udp::endpoint itsRemoteEnd;  ///< The remote endpoint to which replies are sent
   boost::asio::ip::udp::endpoint itsBackendSocket;

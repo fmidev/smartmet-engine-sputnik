@@ -10,7 +10,7 @@ namespace SmartMet
 {
 /*! \brief Inverse load forwarder
  *
- * Forwards requests by weighting backends using the forumula
+ * Forwards requests by weighting backends using the formula
  * w(l) = exp(-alpha * c) where 'c' is the number of active connections.
  */
 
