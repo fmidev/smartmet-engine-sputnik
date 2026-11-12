@@ -1,12 +1,5 @@
 #define BOOST_TEST_MODULE "SputnikForwarderTest"
 
-#include "../sputnik/BackendServer.h"
-#include "../sputnik/BackendService.h"
-#include "../sputnik/InverseLoadForwarder.h"
-#include "../sputnik/LeastConnectionsForwarder.h"
-#include "../sputnik/RandomForwarder.h"
-#include "../sputnik/StickyForwarder.h"
-#include "../sputnik/URIPrefixMap.h"
 #include "BackendServer.h"
 #include "BackendService.h"
 #include "InverseLoadForwarder.h"
