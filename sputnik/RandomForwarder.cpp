@@ -1,6 +1,5 @@
 #include "RandomForwarder.h"
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/random/discrete_distribution.hpp>
 #include <macgyver/Exception.h>
 #include <spine/Thread.h>
 #include <string>
