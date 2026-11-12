@@ -1,12 +1,19 @@
+#include "BackendInfoRequest.h"
+#include "BackendServer.h"
+#include "BackendService.h"
 #include "BroadcastMessage.pb.h"
 #include "Engine.h"
 #include "Services.h"
+#include <boost/thread.hpp>
 #include <macgyver/Exception.h>
 #include <spine/Reactor.h>
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
-#include <map>
+#include <memory>
+#include <set>
 #include <string>
+#include <utility>
 
 namespace SmartMet
 {

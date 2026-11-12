@@ -1,5 +1,11 @@
 #include "InverseLoadForwarder.h"
+#include "BackendInfo.h"
+#include <boost/random/discrete_distribution.hpp>
 #include <macgyver/Exception.h>
+#include <algorithm>
+#include <numeric>
+#include <string>
+#include <vector>
 
 namespace SmartMet
 {

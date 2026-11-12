@@ -1,9 +1,17 @@
 #include "StickyForwarder.h"
+#include "BackendInfo.h"
 #include <boost/algorithm/string.hpp>
 #include <macgyver/Exception.h>
+#include <spine/HTTP.h>
+#include <spine/Reactor.h>
+#include <spine/Thread.h>
+#include <algorithm>
 #include <cstdint>
 #include <limits>
+#include <map>
+#include <optional>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 namespace SmartMet

@@ -8,20 +8,34 @@
 
 #include "Services.h"
 #include <boost/asio.hpp>
-#include <boost/function.hpp>
-#include <spine/Reactor.h>
+#include <macgyver/DateTime.h>
+#include <spine/HTTP.h>
 #include <spine/SmartMetEngine.h>
+#include <array>
 #include <atomic>
+#include <chrono>
+#include <cstdint>
 #include <ctime>
 #include <iostream>
 #include <limits>
 #include <memory>
 #include <set>
 #include <string>
+#include <vector>
+
+namespace SmartMet::Spine
+{
+class Reactor;
+}  // namespace SmartMet::Spine
+namespace boost
+{
+class thread;
+}  // namespace boost
 
 namespace SmartMet
 {
 class BroadcastMessage;
+
 namespace Spine
 {
 class Table;

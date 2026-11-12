@@ -1,11 +1,13 @@
 #pragma once
 
-#include "BackendServer.h"
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace SmartMet
 {
+class BackendServer;
+
 /*! \brief This struct contains info request information from a backend server.
  *
  * This information is collected from backends through protobuf messages

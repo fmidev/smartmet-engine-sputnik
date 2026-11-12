@@ -1,5 +1,7 @@
 #include "URIPrefixMap.h"
+#include "BackendServer.h"
 #include <boost/algorithm/string/predicate.hpp>
+#include <utility>
 
 using SmartMet::URIPrefixMap;
 namespace ba = boost::algorithm;

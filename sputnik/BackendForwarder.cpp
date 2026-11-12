@@ -1,6 +1,16 @@
 #include "BackendForwarder.h"
+#include <boost/numeric/conversion/cast.hpp>
 #include <macgyver/Exception.h>
-#include <algorithm>
+#include <ctime>
+
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+}  // namespace SmartMet::Spine::HTTP
+namespace SmartMet::Spine
+{
+class Reactor;
+}  // namespace SmartMet::Spine
 
 namespace SmartMet
 {

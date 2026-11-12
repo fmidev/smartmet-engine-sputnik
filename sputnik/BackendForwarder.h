@@ -9,15 +9,21 @@
 
 #include "BackendInfo.h"
 #include <boost/random/discrete_distribution.hpp>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/random/taus88.hpp>
-#include <boost/thread.hpp>
-#include <spine/HTTP.h>
-#include <spine/Reactor.h>
 #include <spine/Thread.h>
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <vector>
+
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+}  // namespace SmartMet::Spine::HTTP
+namespace SmartMet::Spine
+{
+class Reactor;
+}  // namespace SmartMet::Spine
 
 namespace SmartMet
 {

@@ -1,15 +1,7 @@
 #pragma once
 
-#include "BackendSentinel.h"
-#include <memory>
-#include <boost/thread.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <spine/Reactor.h>
-#include <spine/Thread.h>
-#include <iostream>
-#include <map>
-#include <stdexcept>
-#include <vector>
+#include <string>
+#include <utility>
 
 namespace SmartMet
 {

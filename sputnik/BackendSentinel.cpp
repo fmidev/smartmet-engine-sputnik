@@ -1,5 +1,6 @@
 #include "BackendSentinel.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 namespace SmartMet
 {

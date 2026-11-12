@@ -2,6 +2,7 @@
 
 #include "BackendService.h"
 #include <map>
+#include <memory>
 #include <mutex>
 #include <set>
 #include <string>

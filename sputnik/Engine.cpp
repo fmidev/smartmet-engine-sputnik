@@ -1,17 +1,20 @@
 #include "Engine.h"
 #include "BroadcastMessage.pb.h"
 #include "Services.h"
-#include <spine/ConfigBase.h>
-#include <boost/filesystem/operations.hpp>
 #include <boost/thread.hpp>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <macgyver/ThreadName.h>
+#include <spine/ConfigBase.h>
 #include <spine/Convenience.h>
+#include <spine/Options.h>
 #include <spine/Reactor.h>
 #include <ctime>
 #include <iostream>
 #include <memory>
+#include <sstream>
+#include <utility>
 
 namespace SmartMet
 {

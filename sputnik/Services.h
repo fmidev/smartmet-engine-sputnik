@@ -7,14 +7,25 @@
 #include "BackendService.h"
 #include "URIPrefixMap.h"
 #include <boost/thread.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <spine/Reactor.h>
 #include <spine/Thread.h>
+#include <cstdint>
 #include <iostream>
+#include <list>
 #include <map>
 #include <memory>
 #include <set>
+#include <string>
+#include <utility>
 #include <vector>
+
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+}  // namespace SmartMet::Spine::HTTP
+namespace SmartMet::Spine
+{
+class Reactor;
+}  // namespace SmartMet::Spine
 
 namespace SmartMet
 {

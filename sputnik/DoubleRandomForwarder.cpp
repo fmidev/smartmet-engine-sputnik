@@ -1,5 +1,13 @@
 #include "DoubleRandomForwarder.h"
+#include "BackendInfo.h"
+#include <boost/numeric/conversion/cast.hpp>
+#include <boost/random/discrete_distribution.hpp>
 #include <macgyver/Exception.h>
+#include <spine/Reactor.h>
+#include <spine/Thread.h>
+#include <map>
+#include <string>
+#include <vector>
 
 namespace SmartMet
 {

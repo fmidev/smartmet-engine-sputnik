@@ -6,17 +6,20 @@
 #include "LeastConnectionsForwarder.h"
 #include "RandomForwarder.h"
 #include "StickyForwarder.h"
-#include <boost/lexical_cast.hpp>
-#include <boost/make_shared.hpp>
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <spine/HTTP.h>
 #include <spine/Table.h>
+#include <cstddef>
 #include <iostream>
-#include <list>
 #include <map>
-#include <sstream>
 #include <string>
+
+namespace SmartMet::Spine
+{
+class Reactor;
+}  // namespace SmartMet::Spine
 
 using namespace std::string_literals;
 

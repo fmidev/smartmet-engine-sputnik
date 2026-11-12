@@ -1,5 +1,12 @@
 #include "InverseConnectionsForwarder.h"
+#include "BackendInfo.h"
+#include <boost/random/discrete_distribution.hpp>
 #include <macgyver/Exception.h>
+#include <spine/Reactor.h>
+#include <map>
+#include <numeric>
+#include <string>
+#include <vector>
 
 namespace SmartMet
 {

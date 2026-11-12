@@ -5,6 +5,8 @@
  */
 
 #include "BackendForwarder.h"
+#include <cstddef>
+#include <memory>
 
 namespace SmartMet
 {
